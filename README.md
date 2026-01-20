@@ -199,8 +199,8 @@ Client A    Client B    API         WebSocket Broker
 
 ```bash
 # 1. Clone o repositório
-git clone <repository-url>
-cd projeto-seplag
+git clone https://github.com/viniciusdemoraess/viniciusdemoraesespiritosantosoliveira066445.git
+cd viniciusdemoraesespiritosantosoliveira066445
 
 # 2. Inicie todos os serviços
 docker-compose up -d
