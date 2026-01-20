@@ -20,7 +20,7 @@ describe('AlbumService', () => {
     httpMock.verify();
   });
 
-  describe('getAll', () => {
+  describe('getAllAlbums', () => {
     it('should fetch paginated albums', (done) => {
       const mockResponse: Page<Album> = {
         content: [
@@ -30,18 +30,31 @@ describe('AlbumService', () => {
             artistId: 1,
             artistName: 'Serj Tankian',
             releaseYear: 2012,
-            coverUrls: [],
-            createdAt: new Date(),
-            updatedAt: new Date()
+            covers: [],
+            createdAt: '2024-01-01T00:00:00Z',
+            updatedAt: '2024-01-01T00:00:00Z'
           }
         ],
         totalElements: 1,
         totalPages: 1,
         size: 10,
-        number: 0
+        number: 0,
+        pageable: {
+          pageNumber: 0,
+          pageSize: 10,
+          offset: 0,
+          paged: true,
+          unpaged: false,
+          sort: { empty: true, sorted: false, unsorted: true }
+        },
+        first: true,
+        last: true,
+        numberOfElements: 1,
+        empty: false,
+        sort: { empty: true, sorted: false, unsorted: true }
       };
 
-      service.getAll().subscribe(response => {
+      service.getAllAlbums().subscribe(response => {
         expect(response.content.length).toBe(1);
         expect(response.content[0].title).toBe('Harakiri');
         done();
@@ -58,10 +71,23 @@ describe('AlbumService', () => {
         totalElements: 0,
         totalPages: 0,
         size: 10,
-        number: 0
+        number: 0,
+        pageable: {
+          pageNumber: 0,
+          pageSize: 10,
+          offset: 0,
+          paged: true,
+          unpaged: false,
+          sort: { empty: true, sorted: false, unsorted: true }
+        },
+        first: true,
+        last: true,
+        numberOfElements: 0,
+        empty: true,
+        sort: { empty: true, sorted: false, unsorted: true }
       };
 
-      service.getAll(0, 10, 1).subscribe(() => done());
+      service.getAllAlbums(0, 10, 'title', 'asc', 1).subscribe(() => done());
 
       const req = httpMock.expectOne(req =>
         req.url.includes('/api/v1/albums') && req.params.has('artistId')
@@ -71,7 +97,7 @@ describe('AlbumService', () => {
     });
   });
 
-  describe('getById', () => {
+  describe('getAlbumById', () => {
     it('should fetch album by id', (done) => {
       const mockAlbum: Album = {
         id: 1,
@@ -79,26 +105,26 @@ describe('AlbumService', () => {
         artistId: 1,
         artistName: 'Serj Tankian',
         releaseYear: 2012,
-        coverUrls: ['cover1.jpg'],
-        createdAt: new Date(),
-        updatedAt: new Date()
+        covers: [],
+        createdAt: '2024-01-01T00:00:00Z',
+        updatedAt: '2024-01-01T00:00:00Z'
       };
 
-      service.getById(1).subscribe(album => {
+      service.getAlbumById(1).subscribe(album => {
         expect(album.id).toBe(1);
         expect(album.title).toBe('Harakiri');
         done();
       });
 
-      const req = httpMock.expectOne(`${service['apiUrl']}/albums/1`);
+      const req = httpMock.expectOne('http://localhost:8080/api/v1/albums/1');
       expect(req.request.method).toBe('GET');
       req.flush(mockAlbum);
     });
   });
 
-  describe('create', () => {
+  describe('createAlbum', () => {
     it('should create new album', (done) => {
-      const newAlbum: Partial<Album> = {
+      const newAlbum = {
         title: 'New Album',
         artistId: 1,
         releaseYear: 2023
@@ -110,56 +136,62 @@ describe('AlbumService', () => {
         artistId: 1,
         artistName: 'Test Artist',
         releaseYear: 2023,
-        coverUrls: [],
-        createdAt: new Date(),
-        updatedAt: new Date()
+        covers: [],
+        createdAt: '2024-01-01T00:00:00Z',
+        updatedAt: '2024-01-01T00:00:00Z'
       };
 
-      service.create(newAlbum).subscribe(album => {
+      service.createAlbum(newAlbum).subscribe(album => {
         expect(album.id).toBe(2);
         expect(album.title).toBe('New Album');
         done();
       });
 
-      const req = httpMock.expectOne(`${service['apiUrl']}/albums`);
+      const req = httpMock.expectOne('http://localhost:8080/api/v1/albums');
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(newAlbum);
       req.flush(createdAlbum);
     });
   });
 
-  describe('update', () => {
+  describe('updateAlbum', () => {
     it('should update existing album', (done) => {
+      const updateData = {
+        title: 'Updated Album',
+        artistId: 1,
+        releaseYear: 2023
+      };
+
       const updatedAlbum: Album = {
         id: 1,
         title: 'Updated Album',
         artistId: 1,
         artistName: 'Test Artist',
         releaseYear: 2023,
-        coverUrls: [],
-        createdAt: new Date(),
-        updatedAt: new Date()
+        covers: [],
+        createdAt: '2024-01-01T00:00:00Z',
+        updatedAt: '2024-01-01T00:00:00Z'
       };
 
-      service.update(1, updatedAlbum).subscribe(album => {
+      service.updateAlbum(1, updateData).subscribe(album => {
         expect(album.title).toBe('Updated Album');
         done();
       });
 
-      const req = httpMock.expectOne(`${service['apiUrl']}/albums/1`);
+      const req = httpMock.expectOne('http://localhost:8080/api/v1/albums/1');
       expect(req.request.method).toBe('PUT');
       req.flush(updatedAlbum);
     });
   });
 
-  describe('delete', () => {
+  describe('deleteAlbum', () => {
     it('should delete album', (done) => {
-      service.delete(1).subscribe(() => {
+      service.deleteAlbum(1).subscribe(() => {
         expect(true).toBe(true);
         done();
       });
 
-      const req = httpMock.expectOne(`${service['apiUrl']}/albums/1`);
+      const req = httpMock.expectOne('http://localhost:8080/api/v1/albums/1');
       expect(req.request.method).toBe('DELETE');
       req.flush(null);
     });
@@ -173,15 +205,27 @@ describe('AlbumService', () => {
         new File(['content2'], 'cover2.jpg', { type: 'image/jpeg' })
       ];
 
-      const mockResponse = { coverUrls: ['url1.jpg', 'url2.jpg'] };
+      const mockResponse: Album = {
+        id: 1,
+        title: 'Test Album',
+        artistId: 1,
+        artistName: 'Test Artist',
+        releaseYear: 2024,
+        covers: [
+          { id: 1, fileName: 'cover1.jpg', url: 'url1.jpg', contentType: 'image/jpeg', fileSize: 1000, uploadedAt: '2024-01-01T00:00:00Z' },
+          { id: 2, fileName: 'cover2.jpg', url: 'url2.jpg', contentType: 'image/jpeg', fileSize: 1000, uploadedAt: '2024-01-01T00:00:00Z' }
+        ],
+        createdAt: '2024-01-01T00:00:00Z',
+        updatedAt: '2024-01-01T00:00:00Z'
+      };
 
       service.uploadCovers(albumId, mockFiles).subscribe(response => {
-        expect(response.coverUrls.length).toBe(2);
-        expect(response.coverUrls[0]).toBe('url1.jpg');
+        expect(response.covers.length).toBe(2);
+        expect(response.covers[0].fileName).toBe('cover1.jpg');
         done();
       });
 
-      const req = httpMock.expectOne(`${service['apiUrl']}/albums/upload?albumId=${albumId}`);
+      const req = httpMock.expectOne('http://localhost:8080/api/v1/albums/1/covers');
       expect(req.request.method).toBe('POST');
       expect(req.request.body instanceof FormData).toBe(true);
       req.flush(mockResponse);
@@ -191,14 +235,23 @@ describe('AlbumService', () => {
       const albumId = 1;
       const mockFiles: File[] = [];
 
-      const mockResponse = { coverUrls: [] };
+      const mockResponse: Album = {
+        id: 1,
+        title: 'Test Album',
+        artistId: 1,
+        artistName: 'Test Artist',
+        releaseYear: 2024,
+        covers: [],
+        createdAt: '2024-01-01T00:00:00Z',
+        updatedAt: '2024-01-01T00:00:00Z'
+      };
 
       service.uploadCovers(albumId, mockFiles).subscribe(response => {
-        expect(response.coverUrls.length).toBe(0);
+        expect(response.covers.length).toBe(0);
         done();
       });
 
-      const req = httpMock.expectOne(`${service['apiUrl']}/albums/upload?albumId=${albumId}`);
+      const req = httpMock.expectOne('http://localhost:8080/api/v1/albums/1/covers');
       req.flush(mockResponse);
     });
   });

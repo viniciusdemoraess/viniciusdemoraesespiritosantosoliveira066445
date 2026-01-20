@@ -3,6 +3,7 @@ import { authGuard } from './core/guards/auth.guard';
 import { LoginComponent } from './features/auth/components/login.component';
 import { ArtistListComponent } from './features/artists/components/artist-list.component';
 import { AlbumListComponent } from './features/albums/components/album-list/album-list.component';
+import { DashboardComponent } from './features/dashboard/components/dashboard.component';
 
 export const routes: Routes = [
   {
@@ -13,6 +14,11 @@ export const routes: Routes = [
   {
     path: 'auth/login',
     component: LoginComponent
+  },
+  {
+    path: 'dashboard',
+    component: DashboardComponent,
+    canActivate: [authGuard]
   },
   {
     path: 'artists',

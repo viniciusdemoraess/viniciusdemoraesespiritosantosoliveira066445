@@ -48,6 +48,23 @@ export class WebsocketService {
     });
   }
 
+  getNotifications(): Observable<any> {
+    return new Observable(observer => {
+      const subscription = this.rxStomp
+        .watch('/topic/albums')
+        .subscribe(message => {
+          const data = JSON.parse(message.body);
+          observer.next({
+            message: `Novo álbum "${data.title}" cadastrado para ${data.artistName}`,
+            type: 'info',
+            data
+          });
+        });
+
+      return () => subscription.unsubscribe();
+    });
+  }
+
   isConnected(): boolean {
     return this.connected;
   }

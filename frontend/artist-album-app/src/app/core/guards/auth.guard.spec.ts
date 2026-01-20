@@ -9,7 +9,7 @@ describe('authGuard', () => {
   let mockRouter: jasmine.SpyObj<Router>;
 
   beforeEach(() => {
-    mockAuthService = jasmine.createSpyObj('AuthService', ['isAuthenticated']);
+    mockAuthService = jasmine.createSpyObj('AuthService', ['isLoggedIn']);
     mockRouter = jasmine.createSpyObj('Router', ['navigate']);
 
     TestBed.configureTestingModule({
@@ -21,10 +21,10 @@ describe('authGuard', () => {
   });
 
   it('should allow access when user is authenticated', () => {
-    mockAuthService.isAuthenticated.and.returnValue(true);
+    mockAuthService.isLoggedIn.and.returnValue(true);
 
     const canActivate = TestBed.runInInjectionContext(() => {
-      return authGuard(null as any, null as any);
+      return authGuard();
     });
 
     expect(canActivate).toBe(true);
@@ -32,10 +32,10 @@ describe('authGuard', () => {
   });
 
   it('should redirect to login when user is not authenticated', () => {
-    mockAuthService.isAuthenticated.and.returnValue(false);
+    mockAuthService.isLoggedIn.and.returnValue(false);
 
     const canActivate = TestBed.runInInjectionContext(() => {
-      return authGuard(null as any, null as any);
+      return authGuard();
     });
 
     expect(canActivate).toBe(false);
