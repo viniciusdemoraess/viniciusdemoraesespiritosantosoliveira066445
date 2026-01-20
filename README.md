@@ -8,9 +8,9 @@ Sistema completo de gerenciamento de artistas e álbuns desenvolvido com **Sprin
 
 ## 👨‍💻 Dados do Candidato
 
-**Nome:** [Seu Nome Completo]  
-**Vaga:** Desenvolvedor Full Stack Sênior  
-**Email:** [seu.email@exemplo.com]  
+**Nome:** Vinicius de Moraes
+**Vaga:** Engenheiro da Computação Sênior  
+**Email:** viniciusdemoraespro@gmail.com  
 **Data de Entrega:** Janeiro/2026
 
 ---
@@ -549,9 +549,9 @@ projeto-seplag/
 
 ---
 
-## 🎨 Frontend (A ser implementado)
+## 🎨 Frontend
 
-O frontend será desenvolvido em **Angular 17+** com:
+O frontend foi desenvolvido em **Angular 17+** com:
 
 - ✅ **TypeScript** strict mode
 - ✅ **Tailwind CSS** para estilização
@@ -563,7 +563,7 @@ O frontend será desenvolvido em **Angular 17+** com:
 - ✅ **WebSocket client** para notificações
 - ✅ **Responsividade** mobile-first
 
-### Estrutura Planejada
+### Estrutura
 
 ```
 frontend/src/
@@ -606,16 +606,16 @@ frontend/src/
 - [x] Docker + Docker Compose
 - [x] Global Exception Handler
 
-### Frontend - 0% (Próxima Etapa) 🔄
+### Frontend - 100% Completo ✅
 
-- [ ] Setup Angular
-- [ ] Autenticação
-- [ ] Listagem de artistas
-- [ ] Detalhes do artista
-- [ ] Cadastro/Edição
-- [ ] Upload de imagens
-- [ ] WebSocket client
-- [ ] Gestão de estado
+- [x] Setup Angular
+- [x] Autenticação
+- [x] Listagem de artistas
+- [x] Detalhes do artista
+- [x] Cadastro/Edição
+- [x] Upload de imagens
+- [x] WebSocket client
+- [x] Gestão de estado
 
 ---
 
@@ -675,10 +675,10 @@ Este projeto foi desenvolvido como parte de um processo seletivo para SEPLAG.
 
 ## 👤 Autor
 
-**Desenvolvido por:** [Seu Nome]  
-**GitHub:** [seu-usuario](https://github.com/seu-usuario)  
-**LinkedIn:** [seu-perfil](https://linkedin.com/in/seu-perfil)  
-**Email:** seu.email@exemplo.com
+**Desenvolvido por:** Vinicius de Moraes Espirito Santos Oliveira
+**GitHub:** [viniciusdemoraess](https://github.com/viniciusdemoraess)  
+**LinkedIn:** [Vinicius de Moraes](https://www.linkedin.com/in/vinicius-de-moraes-781880185)  
+**Email:** viniciusdemoraespro@gmail.com
 
 ---
 
@@ -688,7 +688,7 @@ Para dúvidas ou problemas:
 1. Verifique os logs: `docker-compose logs -f api`
 2. Verifique o health check: `curl http://localhost:8080/actuator/health`
 3. Acesse o Swagger: http://localhost:8080/swagger-ui.html
-4. Entre em contato: seu.email@exemplo.com
+4. Entre em contato: viniciusdemoraespro@gmail.com
 
 ---
 
