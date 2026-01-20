@@ -1,0 +1,37 @@
+/* Dashboard Specific Styles */
+.stat-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--primary);
+  transition: var(--transition);
+}
+
+.stat-card:hover::before {
+  width: 8px;
+}
+
+.notification-item {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.skeleton-card {
+  height: 120px;
+}
+
+.skeleton-text {
+  height: 20px;
+  margin-bottom: 8px;
+}
+
+.skeleton-text:last-child {
+  width: 60%;
+}
