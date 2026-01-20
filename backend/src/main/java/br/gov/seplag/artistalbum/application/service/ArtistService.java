@@ -1,7 +1,7 @@
 package br.gov.seplag.artistalbum.application.service;
 
-import br.gov.seplag.artistalbum.application.dto.ArtistRequest;
-import br.gov.seplag.artistalbum.application.dto.ArtistResponse;
+import br.gov.seplag.artistalbum.application.io.ArtistRequest;
+import br.gov.seplag.artistalbum.application.io.ArtistResponse;
 import br.gov.seplag.artistalbum.domain.entity.Artist;
 import br.gov.seplag.artistalbum.domain.repository.ArtistRepository;
 import lombok.RequiredArgsConstructor;

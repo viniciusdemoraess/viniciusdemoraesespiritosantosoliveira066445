@@ -1,7 +1,7 @@
 package br.gov.seplag.artistalbum.presentation.controller;
 
-import br.gov.seplag.artistalbum.application.dto.ArtistRequest;
-import br.gov.seplag.artistalbum.application.dto.ArtistResponse;
+import br.gov.seplag.artistalbum.application.io.ArtistRequest;
+import br.gov.seplag.artistalbum.application.io.ArtistResponse;
 import br.gov.seplag.artistalbum.application.service.ArtistService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

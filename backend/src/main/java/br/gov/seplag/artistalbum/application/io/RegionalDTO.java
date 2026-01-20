@@ -1,4 +1,4 @@
-package br.gov.seplag.artistalbum.application.dto;
+package br.gov.seplag.artistalbum.application.io;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

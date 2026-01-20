@@ -1,6 +1,6 @@
 package br.gov.seplag.artistalbum.application.service;
 
-import br.gov.seplag.artistalbum.application.dto.RegionalDTO;
+import br.gov.seplag.artistalbum.application.io.RegionalDTO;
 import br.gov.seplag.artistalbum.domain.entity.Regional;
 import br.gov.seplag.artistalbum.domain.repository.RegionalRepository;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
 package br.gov.seplag.artistalbum.application.service;
 
-import br.gov.seplag.artistalbum.application.dto.AuthResponse;
-import br.gov.seplag.artistalbum.application.dto.LoginRequest;
+import br.gov.seplag.artistalbum.application.io.AuthResponse;
+import br.gov.seplag.artistalbum.application.io.LoginRequest;
 import br.gov.seplag.artistalbum.domain.entity.User;
 import br.gov.seplag.artistalbum.domain.repository.UserRepository;
 import br.gov.seplag.artistalbum.infrastructure.security.JwtTokenProvider;

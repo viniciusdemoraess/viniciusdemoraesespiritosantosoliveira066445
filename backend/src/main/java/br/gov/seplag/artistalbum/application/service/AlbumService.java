@@ -1,8 +1,8 @@
 package br.gov.seplag.artistalbum.application.service;
 
-import br.gov.seplag.artistalbum.application.dto.AlbumCoverResponse;
-import br.gov.seplag.artistalbum.application.dto.AlbumRequest;
-import br.gov.seplag.artistalbum.application.dto.AlbumResponse;
+import br.gov.seplag.artistalbum.application.io.AlbumCoverResponse;
+import br.gov.seplag.artistalbum.application.io.AlbumRequest;
+import br.gov.seplag.artistalbum.application.io.AlbumResponse;
 import br.gov.seplag.artistalbum.domain.entity.Album;
 import br.gov.seplag.artistalbum.domain.entity.AlbumCover;
 import br.gov.seplag.artistalbum.domain.entity.Artist;
@@ -144,7 +144,7 @@ public class AlbumService {
         for (MultipartFile file : files) {
             validateImageFile(file);
             
-            String objectKey = minioStorageService.uploadFile(file, "album-covers");
+            String objectKey = minioStorageService.uploadFile(file, "covers");
             
             AlbumCover cover = AlbumCover.builder()
                     .fileName(file.getOriginalFilename())

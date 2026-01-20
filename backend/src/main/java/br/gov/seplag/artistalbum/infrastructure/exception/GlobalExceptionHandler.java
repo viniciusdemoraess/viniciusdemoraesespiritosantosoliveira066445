@@ -1,6 +1,6 @@
 package br.gov.seplag.artistalbum.infrastructure.exception;
 
-import br.gov.seplag.artistalbum.application.dto.ErrorResponse;
+import br.gov.seplag.artistalbum.application.io.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
