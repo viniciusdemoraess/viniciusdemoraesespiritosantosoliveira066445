@@ -4,12 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { ArtistService } from '../../../core/services/artist.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { NotificationBellComponent } from '../../../shared/components/notification-bell/notification-bell.component';
 import { Artist, Page } from '../../../core/models';
 
 @Component({
   selector: 'app-artist-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, NotificationBellComponent],
   templateUrl: './artist-list.component.html',
   styleUrls: ['./artist-list.component.scss']
 })

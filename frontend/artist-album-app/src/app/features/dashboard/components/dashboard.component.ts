@@ -6,6 +6,7 @@ import { AlbumService } from '../../../core/services/album.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { WebsocketService } from '../../../core/services/websocket.service';
 import { ToastService } from '../../../core/services/toast.service';
+import { NotificationBellComponent } from '../../../shared/components/notification-bell/notification-bell.component';
 import { Subscription } from 'rxjs';
 
 interface DashboardStats {
@@ -27,7 +28,7 @@ interface RecentAlbum {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, NotificationBellComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })

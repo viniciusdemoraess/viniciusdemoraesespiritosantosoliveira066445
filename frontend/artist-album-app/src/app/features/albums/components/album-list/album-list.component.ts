@@ -6,12 +6,13 @@ import { AlbumService } from '../../../../core/services/album.service';
 import { ArtistService } from '../../../../core/services/artist.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { WebsocketService } from '../../../../core/services/websocket.service';
+import { NotificationBellComponent } from '../../../../shared/components/notification-bell/notification-bell.component';
 import { Album, Artist, Page } from '../../../../core/models';
 
 @Component({
   selector: 'app-album-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, NotificationBellComponent],
   templateUrl: './album-list.component.html',
   styleUrl: './album-list.component.scss'
 })
