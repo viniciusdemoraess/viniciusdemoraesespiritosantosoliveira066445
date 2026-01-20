@@ -36,7 +36,7 @@ export class LoginComponent {
 
     this.authService.login(this.credentials).subscribe({
       next: () => {
-        this.router.navigate(['/artists']);
+        this.router.navigate(['/dashboard']);
       },
       error: (error) => {
         this.loading = false;

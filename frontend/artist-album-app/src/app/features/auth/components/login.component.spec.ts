@@ -40,15 +40,17 @@ describe('LoginComponent', () => {
 
   it('should initialize with loading false and no error', () => {
     expect(component.loading).toBe(false);
-    expect(component.error).toBe('');
+    expect(component.errorMessage).toBe('');
   });
 
   describe('onSubmit', () => {
     it('should login successfully and navigate to artists', () => {
       const mockResponse = {
-        user: { id: 1, username: 'admin', email: 'admin@test.com' },
+        username: 'admin',
         accessToken: 'mock-token',
-        refreshToken: 'mock-refresh'
+        refreshToken: 'mock-refresh',
+        tokenType: 'Bearer',
+        expiresIn: 300
       };
 
       mockAuthService.login.and.returnValue(of(mockResponse));
@@ -57,7 +59,7 @@ describe('LoginComponent', () => {
       component.onSubmit();
 
       expect(component.loading).toBe(false);
-      expect(component.error).toBe('');
+      expect(component.errorMessage).toBe('');
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/artists']);
     });
 
@@ -69,25 +71,29 @@ describe('LoginComponent', () => {
       component.onSubmit();
 
       expect(component.loading).toBe(false);
-      expect(component.error).toBe('Invalid credentials');
+      expect(component.errorMessage).toBe('Invalid credentials');
       expect(mockRouter.navigate).not.toHaveBeenCalled();
     });
 
     it('should handle error without message', () => {
       const mockError = { error: {} };
       mockAuthService.login.and.returnValue(throwError(() => mockError));
+      component.credentials = { username: 'test', password: 'test' };
 
       component.onSubmit();
 
-      expect(component.error).toBe('Login failed. Please try again.');
+      expect(component.errorMessage).toBe('Erro ao fazer login. Verifique suas credenciais.');
     });
 
     it('should set loading to true during login', () => {
       mockAuthService.login.and.returnValue(of({
-        user: { id: 1, username: 'test', email: 'test@test.com' },
+        username: 'test',
         accessToken: 'token',
-        refreshToken: 'refresh'
+        refreshToken: 'refresh',
+        tokenType: 'Bearer',
+        expiresIn: 300
       }));
+      component.credentials = { username: 'test', password: 'test' };
 
       component.onSubmit();
       // Loading is set to true, then immediately to false after observable completes

@@ -1,89 +1,106 @@
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
-  <div class="max-w-md w-full space-y-8 bg-white p-10 rounded-2xl shadow-2xl fade-in">
-    <!-- Logo/Header -->
-    <div class="text-center">
-      <div class="mx-auto h-16 w-16 bg-primary-600 rounded-full flex items-center justify-center mb-4">
-        <svg class="h-10 w-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50 px-4 py-12">
+  <!-- Login Card -->
+  <div class="card max-w-md w-full p-8 md:p-12 fade-in">
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <!-- Logo -->
+      <div class="mx-auto mb-6 w-16 h-16 bg-primary rounded-xl flex items-center justify-center">
+        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
         </svg>
       </div>
-      <h2 class="text-3xl font-extrabold text-gray-900">Artist & Album Manager</h2>
-      <p class="mt-2 text-sm text-gray-600">Entre com suas credenciais para acessar o sistema</p>
+
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">
+        Bem-vindo
+      </h1>
+      <p class="text-gray-600 text-sm">
+        Gerenciador de Artistas & Álbuns
+      </p>
     </div>
 
     <!-- Login Form -->
-    <form class="mt-8 space-y-6" (ngSubmit)="onSubmit()">
+    <form (ngSubmit)="onSubmit()" class="space-y-5">
       <!-- Error Message -->
-      <div *ngIf="errorMessage" class="bg-red-50 border-l-4 border-red-500 p-4 rounded fade-in">
-        <div class="flex">
-          <div class="flex-shrink-0">
-            <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
-            </svg>
-          </div>
-          <div class="ml-3">
-            <p class="text-sm text-red-700">{{ errorMessage }}</p>
-          </div>
+      <div *ngIf="errorMessage" class="alert alert-error fade-in">
+        <div class="flex items-center">
+          <svg class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+          </svg>
+          <span>{{ errorMessage }}</span>
         </div>
       </div>
 
-      <div class="space-y-4">
-        <!-- Username -->
-        <div>
-          <label for="username" class="block text-sm font-medium text-gray-700 mb-1">
-            Usuário
-          </label>
-          <input
-            id="username"
-            name="username"
-            type="text"
-            required
-            [(ngModel)]="credentials.username"
-            [disabled]="loading"
-            class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition disabled:opacity-50 disabled:cursor-not-allowed"
-            placeholder="Digite seu usuário">
-        </div>
+      <!-- Username Input -->
+      <div>
+        <label for="username" class="block text-sm font-medium text-gray-700 mb-1">
+          Usuário
+        </label>
+        <input
+          id="username"
+          name="username"
+          type="text"
+          required
+          [(ngModel)]="credentials.username"
+          [disabled]="loading"
+          class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+          placeholder="Digite seu usuário"
+        />
+      </div>
 
-        <!-- Password -->
-        <div>
-          <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
-            Senha
-          </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            required
-            [(ngModel)]="credentials.password"
-            [disabled]="loading"
-            class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition disabled:opacity-50 disabled:cursor-not-allowed"
-            placeholder="Digite sua senha">
-        </div>
+      <!-- Password Input -->
+      <div>
+        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
+          Senha
+        </label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          required
+          [(ngModel)]="credentials.password"
+          [disabled]="loading"
+          class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+          placeholder="Digite sua senha"
+        />
       </div>
 
       <!-- Submit Button -->
-      <div>
-        <button
-          type="submit"
-          [disabled]="loading"
-          class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition disabled:opacity-50 disabled:cursor-not-allowed">
-          <span *ngIf="!loading">Entrar</span>
-          <span *ngIf="loading" class="flex items-center">
-            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            Entrando...
-          </span>
-        </button>
-      </div>
+      <button
+        type="submit"
+        [disabled]="loading"
+        class="btn-primary w-full py-3"
+      >
+        <span *ngIf="!loading">Entrar</span>
+        <span *ngIf="loading" class="flex items-center justify-center">
+          <svg class="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Carregando...
+        </span>
+      </button>
 
       <!-- Default Credentials Info -->
-      <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm">
-        <p class="text-blue-800 font-medium mb-1">🔐 Credenciais Padrão:</p>
-        <p class="text-blue-700">Usuário: <code class="bg-blue-100 px-2 py-1 rounded">admin</code></p>
-        <p class="text-blue-700">Senha: <code class="bg-blue-100 px-2 py-1 rounded">admin123</code></p>
+      <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <div class="text-center">
+          <p class="text-sm font-medium text-gray-700 mb-2">🔐 Credenciais Padrão</p>
+          <div class="space-y-1 text-sm text-gray-600">
+            <p>Usuário: <code class="bg-white px-2 py-0.5 rounded border border-gray-300 text-primary font-mono">admin</code></p>
+            <p>Senha: <code class="bg-white px-2 py-0.5 rounded border border-gray-300 text-primary font-mono">admin123</code></p>
+          </div>
+        </div>
       </div>
     </form>
+
+    <!-- Footer Info -->
+    <div class="mt-8 text-center">
+      <p class="text-gray-500 text-xs">
+        Sistema de Gerenciamento Musical © 2026
+      </p>
+      <div class="mt-3 flex items-center justify-center space-x-2">
+        <span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded">v1.0</span>
+        <span class="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded">SEPLAG</span>
+      </div>
+    </div>
   </div>
 </div>
