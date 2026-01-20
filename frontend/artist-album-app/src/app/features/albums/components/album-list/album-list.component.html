@@ -1,25 +1,42 @@
 <div class="min-h-screen bg-gray-50">
-  <!-- Header -->
-  <nav class="bg-white shadow-sm border-b">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between h-16">
-        <div class="flex items-center">
-          <div class="flex-shrink-0 flex items-center">
-            <div class="h-10 w-10 bg-primary-600 rounded-lg flex items-center justify-center">
-              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
-              </svg>
-            </div>
-            <span class="ml-3 text-xl font-bold text-gray-900">Album Manager</span>
+  <!-- Professional Navigation -->
+  <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex justify-between items-center h-16">
+        <!-- Logo -->
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+            </svg>
           </div>
-          <div class="ml-10 flex space-x-4">
-            <a [routerLink]="['/artists']" class="text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 border-transparent px-3 py-2 text-sm font-medium">Artistas</a>
-            <a [routerLink]="['/albums']" class="text-primary-600 border-b-2 border-primary-600 px-3 py-2 text-sm font-medium">Álbuns</a>
-          </div>
+          <span class="text-xl font-bold text-gray-900">Music Manager</span>
         </div>
+
+        <!-- Navigation Links -->
+        <div class="flex items-center space-x-1">
+          <a [routerLink]="['/dashboard']" class="px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition text-sm font-medium">
+            Dashboard
+          </a>
+          <a [routerLink]="['/artists']" class="px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition text-sm font-medium">
+            Artistas
+          </a>
+          <a [routerLink]="['/albums']" class="px-4 py-2 bg-blue-50 text-primary rounded-lg font-medium text-sm">
+            Álbuns
+          </a>
+        </div>
+
+        <!-- User Menu -->
         <div class="flex items-center space-x-4">
-          <span class="text-sm text-gray-600">Olá, {{ authService.getUsername() }}</span>
-          <button (click)="logout()" class="text-sm text-red-600 hover:text-red-700 font-medium">Sair</button>
+          <div class="text-gray-700 text-sm hidden md:block">
+            <span class="font-medium">{{ authService.getUsername() }}</span>
+          </div>
+          <button (click)="logout()" class="flex items-center space-x-1 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition text-sm font-medium">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+            </svg>
+            <span>Sair</span>
+          </button>
         </div>
       </div>
     </div>
@@ -28,143 +45,231 @@
   <!-- Main Content -->
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Page Header -->
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">Álbuns</h1>
-      <p class="mt-2 text-sm text-gray-600">Gerencie os álbuns cadastrados no sistema</p>
+    <div class="mb-6 fade-in">
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">
+        Galeria de Álbuns
+      </h1>
+      <p class="text-gray-600">Explore e gerencie sua coleção musical</p>
     </div>
 
-    <!-- Search and Add -->
-    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-      <div class="flex flex-col sm:flex-row gap-4">
-        <div class="flex-1">
+    <!-- Search and Actions Bar -->
+    <div class="card p-6 mb-6 fade-in">
+      <div class="flex flex-col md:flex-row gap-4">
+        <!-- Search Input -->
+        <div class="flex-1 relative">
           <input
             type="text"
             [(ngModel)]="searchTerm"
             (keyup.enter)="onSearch()"
-            placeholder="Buscar por título..."
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+            placeholder="Buscar álbuns..."
+            class="w-full px-4 py-2.5 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+          />
+          <button
+            (click)="onSearch()"
+            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-primary transition"
+          >
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </button>
         </div>
-        <button
-          (click)="onSearch()"
-          class="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">
-          Buscar
-        </button>
+
+        <!-- Add Button -->
         <button
           (click)="openAddModal()"
-          class="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition flex items-center">
-          <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          class="btn-primary flex items-center justify-center space-x-2 px-6"
+        >
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
           </svg>
-          Novo Álbum
+          <span>Novo Álbum</span>
         </button>
       </div>
     </div>
 
-    <!-- Albums Grid -->
-    <div *ngIf="loading" class="flex justify-center items-center py-12">
-      <svg class="animate-spin h-8 w-8 text-primary-600" fill="none" viewBox="0 0 24 24">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-      </svg>
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex justify-center items-center py-20">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
     </div>
 
-    <div *ngIf="!loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div *ngFor="let album of albums" class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition">
-        <div class="h-48 bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center">
-          <img *ngIf="album.covers.length > 0" [src]="album.covers[0].url" [alt]="album.title" class="h-full w-full object-cover">
-          <svg *ngIf="album.covers.length === 0" class="h-16 w-16 text-white opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
-          </svg>
-        </div>
-        <div class="p-4">
-          <h3 class="text-lg font-semibold text-gray-900 mb-1">{{ album.title }}</h3>
-          <p class="text-sm text-gray-600 mb-2">{{ album.artistName }} • {{ album.releaseYear }}</p>
-          <p class="text-xs text-gray-500 mb-3">{{ album.covers.length }} capa(s)</p>
-          <div class="flex space-x-2">
+    <!-- Albums Grid with Modern Cards -->
+    <div *ngIf="!loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 fade-in">
+      <div *ngFor="let album of albums" class="card p-0 overflow-hidden hover:shadow-lg transition-shadow group">
+        <!-- Album Cover -->
+        <div class="relative aspect-square bg-gray-100">
+          <img
+            *ngIf="album.covers.length > 0"
+            [src]="album.covers[0].url"
+            [alt]="album.title"
+            class="w-full h-full object-cover"
+          />
+          <div
+            *ngIf="album.covers.length === 0"
+            class="w-full h-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center"
+          >
+            <svg class="h-20 w-20 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+            </svg>
+          </div>
+
+          <!-- Overlay with Actions -->
+          <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-4">
             <button
               (click)="openUploadModal(album)"
-              class="flex-1 px-3 py-2 bg-primary-600 text-white text-sm rounded-lg hover:bg-primary-700 transition">
-              Upload Capas
+              class="flex-1 px-4 py-2 bg-white hover:bg-gray-100 text-gray-900 rounded-lg transition font-medium text-sm flex items-center justify-center"
+            >
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
             </button>
             <button
               (click)="deleteAlbum(album)"
-              class="px-3 py-2 bg-red-50 text-red-600 text-sm rounded-lg hover:bg-red-100 transition">
-              Deletar
+              class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition"
+            >
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+              </svg>
             </button>
           </div>
         </div>
+
+        <!-- Album Info -->
+        <div class="p-4">
+          <h3 class="text-lg font-bold text-gray-900 mb-1 truncate">{{ album.title }}</h3>
+          <p class="text-gray-600 text-sm mb-3">
+            {{ album.artistName }} • {{ album.releaseYear }}
+          </p>
+          <span class="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded">
+            {{ album.covers.length }} {{ album.covers.length === 1 ? 'capa' : 'capas' }}
+          </span>
+        </div>
       </div>
 
-      <div *ngIf="albums.length === 0" class="col-span-full text-center py-12 text-gray-500">
-        Nenhum álbum encontrado
+      <!-- Empty State -->
+      <div *ngIf="albums.length === 0" class="col-span-full empty-state">
+        <svg class="h-16 w-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+        </svg>
+        <h3 class="text-xl font-semibold text-gray-900 mb-2">Nenhum álbum encontrado</h3>
+        <p class="text-gray-600 mb-4">Comece adicionando seu primeiro álbum</p>
+        <button (click)="openAddModal()" class="btn-primary">
+          Adicionar Primeiro Álbum
+        </button>
       </div>
     </div>
 
     <!-- Pagination -->
-    <div *ngIf="!loading && totalPages > 1" class="mt-8 flex justify-center">
-      <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-        <button [disabled]="page === 0" (click)="onPageChange(page - 1)" class="relative inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50">Anterior</button>
-        <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
-          Página {{ page + 1 }} de {{ totalPages }}
-        </span>
-        <button [disabled]="page >= totalPages - 1" (click)="onPageChange(page + 1)" class="relative inline-flex items-center px-4 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50">Próxima</button>
-      </nav>
+    <div *ngIf="!loading && albums.length > 0" class="card p-4 mt-6 fade-in">
+      <div class="flex items-center justify-between">
+        <p class="text-gray-600 text-sm">
+          Mostrando <span class="font-semibold text-gray-900">{{ page * size + 1 }}</span> até
+          <span class="font-semibold text-gray-900">{{ Math.min((page + 1) * size, totalElements) }}</span> de
+          <span class="font-semibold text-gray-900">{{ totalElements }}</span> resultados
+        </p>
+        <div class="flex space-x-2">
+          <button
+            [disabled]="page === 0"
+            (click)="onPageChange(page - 1)"
+            class="btn-secondary text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Anterior
+          </button>
+          <button
+            [disabled]="page >= totalPages - 1"
+            (click)="onPageChange(page + 1)"
+            class="btn-secondary text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Próxima
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- Add Album Modal -->
-<div *ngIf="showAddModal" class="fixed z-10 inset-0 overflow-y-auto">
-  <div class="flex items-center justify-center min-h-screen px-4">
-    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" (click)="closeAddModal()"></div>
-    <div class="relative bg-white rounded-lg shadow-xl max-w-md w-full p-6 fade-in">
-      <h3 class="text-lg font-medium text-gray-900 mb-4">Novo Álbum</h3>
+<div *ngIf="showAddModal" class="fixed z-50 inset-0 overflow-y-auto">
+  <div class="flex items-center justify-center min-h-screen px-4 py-8">
+    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" (click)="closeAddModal()"></div>
+    <div class="card max-w-md w-full p-8 fade-in relative z-10">
+      <h3 class="text-2xl font-bold text-gray-900 mb-6">Novo Álbum</h3>
       <div class="space-y-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Título</label>
-          <input [(ngModel)]="newAlbum.title" type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Título</label>
+          <input
+            [(ngModel)]="newAlbum.title"
+            type="text"
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            placeholder="Nome do álbum"
+          />
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Ano</label>
-          <input [(ngModel)]="newAlbum.releaseYear" type="number" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Ano de Lançamento</label>
+          <input
+            [(ngModel)]="newAlbum.releaseYear"
+            type="number"
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            placeholder="2024"
+          />
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Artista</label>
-          <select [(ngModel)]="newAlbum.artistId" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Artista</label>
+          <select
+            [(ngModel)]="newAlbum.artistId"
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+          >
+            <option value="" disabled selected>Selecione um artista</option>
             <option *ngFor="let artist of artists" [value]="artist.id">{{ artist.name }}</option>
           </select>
         </div>
       </div>
       <div class="flex justify-end space-x-3 mt-6">
-        <button (click)="closeAddModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Cancelar</button>
-        <button (click)="createAlbum()" class="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700">Criar</button>
+        <button (click)="closeAddModal()" class="btn-secondary">
+          Cancelar
+        </button>
+        <button (click)="createAlbum()" class="btn-primary">
+          Criar Álbum
+        </button>
       </div>
     </div>
   </div>
 </div>
 
 <!-- Upload Covers Modal -->
-<div *ngIf="showUploadModal" class="fixed z-10 inset-0 overflow-y-auto">
-  <div class="flex items-center justify-center min-h-screen px-4">
-    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" (click)="closeUploadModal()"></div>
-    <div class="relative bg-white rounded-lg shadow-xl max-w-md w-full p-6 fade-in">
-      <h3 class="text-lg font-medium text-gray-900 mb-4">Upload de Capas</h3>
-      <p class="text-sm text-gray-600 mb-4">Álbum: <strong>{{ selectedAlbum?.title }}</strong></p>
-      <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-700 mb-2">Selecione as imagens (max 10MB cada)</label>
+<div *ngIf="showUploadModal" class="fixed z-50 inset-0 overflow-y-auto">
+  <div class="flex items-center justify-center min-h-screen px-4 py-8">
+    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" (click)="closeUploadModal()"></div>
+    <div class="card max-w-md w-full p-8 fade-in relative z-10">
+      <h3 class="text-2xl font-bold text-gray-900 mb-4">Upload de Capas</h3>
+      <p class="text-gray-600 mb-6">
+        Álbum: <strong class="text-gray-900 font-bold">{{ selectedAlbum?.title }}</strong>
+      </p>
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Selecione as imagens (max 10MB cada)
+        </label>
         <input
           type="file"
           (change)="onFileSelect($event)"
           multiple
           accept="image/*"
-          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
-        <p *ngIf="selectedFiles.length > 0" class="text-sm text-gray-600 mt-2">
-          {{ selectedFiles.length }} arquivo(s) selecionado(s)
+          class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-primary hover:file:bg-blue-100 file:cursor-pointer"
+        />
+        <p *ngIf="selectedFiles.length > 0" class="text-gray-600 text-sm mt-3">
+          ✓ {{ selectedFiles.length }} arquivo(s) selecionado(s)
         </p>
       </div>
       <div class="flex justify-end space-x-3">
-        <button (click)="closeUploadModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Cancelar</button>
-        <button (click)="uploadCovers()" [disabled]="selectedFiles.length === 0" class="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 disabled:opacity-50">Enviar</button>
+        <button (click)="closeUploadModal()" class="btn-secondary">
+          Cancelar
+        </button>
+        <button
+          (click)="uploadCovers()"
+          [disabled]="selectedFiles.length === 0"
+          class="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Enviar Imagens
+        </button>
       </div>
     </div>
   </div>

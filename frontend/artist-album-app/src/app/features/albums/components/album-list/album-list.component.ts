@@ -21,7 +21,7 @@ export class AlbumListComponent implements OnInit {
   artists: Artist[] = [];
   loading = false;
   page = 0;
-  size = 10;
+  size = 8;
   totalPages = 0;
   totalElements = 0;
   searchTerm = '';
