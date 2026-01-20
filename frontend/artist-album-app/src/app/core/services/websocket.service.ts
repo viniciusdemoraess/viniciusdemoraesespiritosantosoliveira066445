@@ -53,12 +53,22 @@ export class WebsocketService {
       const subscription = this.rxStomp
         .watch('/topic/albums')
         .subscribe(message => {
-          const data = JSON.parse(message.body);
-          observer.next({
-            message: `Novo álbum "${data.title}" cadastrado para ${data.artistName}`,
-            type: 'info',
-            data
-          });
+          try {
+            const data = JSON.parse(message.body);
+
+            observer.next({
+              message: data.message || `Novo álbum "${data.albumTitle}" cadastrado para ${data.artistName}`,
+              type: 'album',
+              albumId: data.albumId,
+              albumTitle: data.albumTitle,
+              artistId: data.artistId,
+              artistName: data.artistName,
+              timestamp: data.timestamp,
+              data
+            });
+          } catch (error) {
+            console.error('Error parsing WebSocket message:', error);
+          }
         });
 
       return () => subscription.unsubscribe();
