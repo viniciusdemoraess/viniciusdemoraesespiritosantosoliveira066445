@@ -5,7 +5,6 @@ import { ArtistService } from '../../../core/services/artist.service';
 import { AlbumService } from '../../../core/services/album.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { WebsocketService } from '../../../core/services/websocket.service';
-import { ToastService } from '../../../core/services/toast.service';
 import { NotificationBellComponent } from '../../../shared/components/notification-bell/notification-bell.component';
 import { Subscription } from 'rxjs';
 
@@ -54,7 +53,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private albumService: AlbumService,
     public authService: AuthService,
     private websocketService: WebsocketService,
-    private toastService: ToastService,
     private router: Router
   ) {}
 
@@ -124,9 +122,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       (message: any) => {
         const notification = `🎵 ${message.message || 'Nova atualização'}`;
         this.showNotification(notification);
-
-        // Show toast notification
-        this.toastService.success(notification);
 
         // Reload stats when something changes
         this.loadDashboardData();
