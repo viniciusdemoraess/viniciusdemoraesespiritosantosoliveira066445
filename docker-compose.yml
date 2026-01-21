@@ -1,4 +1,17 @@
 services:
+
+  nginx-proxy:
+    image: nginx:alpine
+    container_name: nginx-proxy
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "9002:9002"
+    depends_on:
+      - minio
+    networks:
+      - artistalbum-network
+
   # PostgreSQL Database
   postgres:
     image: postgres:15-alpine
@@ -55,6 +68,7 @@ services:
       DB_USER: postgres
       DB_PASSWORD: postgres
       MINIO_URL: http://minio:9000
+      MINIO_EXTERNAL_URL: http://localhost:9002
       MINIO_ACCESS_KEY: minioadmin
       MINIO_SECRET_KEY: minioadmin
       MINIO_BUCKET: album-covers

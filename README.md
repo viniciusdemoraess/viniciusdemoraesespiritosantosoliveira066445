@@ -8,7 +8,7 @@ Sistema completo de gerenciamento de artistas e álbuns desenvolvido com **Sprin
 
 ## 👨‍💻 Dados do Candidato
 
-**Nome:** Vinicius de Moraes
+**Nome:** Vinicius de Moraes  
 **Vaga:** Engenheiro da Computação Sênior  
 **Email:** viniciusdemoraespro@gmail.com  
 **Data de Entrega:** Janeiro/2026
