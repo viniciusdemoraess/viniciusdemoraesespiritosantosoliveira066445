@@ -3,12 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, tap } from 'rxjs';
 import { AuthResponse, LoginRequest } from '../models';
 import { Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/api/v1/auth';
+  private apiUrl = `${environment.apiUrl}/auth`;
   private currentUserSubject = new BehaviorSubject<string | null>(this.getUsername());
   public currentUser$ = this.currentUserSubject.asObservable();
 
@@ -18,10 +19,13 @@ export class AuthService {
   ) {}
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
+    console.log('🔑 AuthService: Chamando API de login:', `${this.apiUrl}/login`);
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
       tap(response => {
+        console.log('📦 AuthService: Resposta recebida:', response);
         this.setSession(response);
         this.currentUserSubject.next(response.username);
+        console.log('✅ AuthService: Sessão configurada para:', response.username);
       })
     );
   }
@@ -69,11 +73,18 @@ export class AuthService {
     const expiration = localStorage.getItem('tokenExpiration');
 
     if (!token || !expiration) {
+      console.log('⚠️ AuthService: isLoggedIn = false (sem token ou expiration)');
       return false;
     }
 
     const now = new Date().getTime();
-    return now < parseInt(expiration);
+    const isValid = now < parseInt(expiration);
+    console.log(`🔍 AuthService: isLoggedIn = ${isValid}`, {
+      now: new Date(now).toISOString(),
+      expiration: new Date(parseInt(expiration)).toISOString(),
+      hasToken: !!token
+    });
+    return isValid;
   }
 
   isTokenExpiringSoon(): boolean {
