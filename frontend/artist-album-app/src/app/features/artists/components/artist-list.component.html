@@ -1,49 +1,6 @@
 <div class="min-h-screen bg-gray-50">
-  <!-- Professional Navigation -->
-  <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
-    <div class="max-w-7xl mx-auto px-6">
-      <div class="flex justify-between items-center h-16">
-        <!-- Logo -->
-        <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
-            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
-            </svg>
-          </div>
-          <span class="text-xl font-bold text-gray-900">Music Manager</span>
-        </div>
-
-        <!-- Navigation Links -->
-        <div class="flex items-center space-x-1">
-          <a [routerLink]="['/dashboard']" class="px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition text-sm font-medium">
-            Dashboard
-          </a>
-          <a [routerLink]="['/artists']" class="px-4 py-2 bg-blue-50 text-primary rounded-lg font-medium text-sm">
-            Artistas
-          </a>
-          <a [routerLink]="['/albums']" class="px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition text-sm font-medium">
-            Álbuns
-          </a>
-        </div>
-
-        <!-- User Menu -->
-        <div class="flex items-center space-x-4">
-          <!-- Notification Bell -->
-          <app-notification-bell></app-notification-bell>
-
-          <div class="text-gray-700 text-sm hidden md:block">
-            <span class="font-medium">{{ authService.getUsername() }}</span>
-          </div>
-          <button (click)="logout()" class="flex items-center space-x-1 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition text-sm font-medium">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-            </svg>
-            <span>Sair</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </nav>
+  <!-- Reusable Header Component -->
+  <app-header title="Artistas" [showNotifications]="true"></app-header>
 
   <!-- Main Content -->
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -57,36 +14,55 @@
 
     <!-- Search and Actions Bar -->
     <div class="card p-6 mb-6 fade-in">
-      <div class="flex flex-col md:flex-row gap-4">
-        <!-- Search Input -->
-        <div class="flex-1 relative">
-          <input
-            type="text"
-            [(ngModel)]="searchTerm"
-            (keyup.enter)="onSearch()"
-            placeholder="Buscar artistas..."
-            class="w-full px-4 py-2.5 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-          />
+      <div class="flex flex-col gap-4">
+        <!-- Search and Add Row -->
+        <div class="flex flex-col md:flex-row gap-4">
+          <!-- Search Input -->
+          <div class="flex-1 relative">
+            <input
+              type="text"
+              [(ngModel)]="searchTerm"
+              (keyup.enter)="onSearch()"
+              (input)="onSearch()"
+              placeholder="Buscar artistas por nome..."
+              class="w-full px-4 py-2.5 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            />
+            <button
+              (click)="onSearch()"
+              class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-primary transition"
+            >
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Add Button -->
           <button
-            (click)="onSearch()"
-            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-primary transition"
+            (click)="openAddModal()"
+            class="btn-primary flex items-center justify-center space-x-2 px-6 whitespace-nowrap"
           >
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
+            <span>Novo Artista</span>
           </button>
         </div>
 
-        <!-- Add Button -->
-        <button
-          (click)="openAddModal()"
-          class="btn-primary flex items-center justify-center space-x-2 px-6"
-        >
-          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-          </svg>
-          <span>Novo Artista</span>
-        </button>
+        <!-- Sort Controls -->
+        <div class="flex items-center gap-3 text-sm">
+          <span class="text-gray-600 font-medium">Ordenar por nome:</span>
+          <button
+            (click)="toggleSortDirection()"
+            class="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition font-medium"
+          >
+            <span>{{ sortDirection === 'asc' ? 'A → Z' : 'Z → A' }}</span>
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path *ngIf="sortDirection === 'asc'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path>
+              <path *ngIf="sortDirection === 'desc'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h9m5-4v12m0 0l-4-4m4 4l4-4"></path>
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -159,32 +135,15 @@
       </div>
     </div>
 
-    <!-- Pagination -->
-    <div *ngIf="!loading && artists.length > 0" class="card p-4 mt-6 fade-in">
-      <div class="flex items-center justify-between">
-        <p class="text-gray-600 text-sm">
-          Mostrando <span class="font-semibold text-gray-900">{{ page * size + 1 }}</span> até
-          <span class="font-semibold text-gray-900">{{ Math.min((page + 1) * size, totalElements) }}</span> de
-          <span class="font-semibold text-gray-900">{{ totalElements }}</span> resultados
-        </p>
-        <div class="flex space-x-2">
-          <button
-            [disabled]="page === 0"
-            (click)="onPageChange(page - 1)"
-            class="btn-secondary text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Anterior
-          </button>
-          <button
-            [disabled]="page >= totalPages - 1"
-            (click)="onPageChange(page + 1)"
-            class="btn-secondary text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Próxima
-          </button>
-        </div>
-      </div>
-    </div>
+    <!-- Pagination Component -->
+    <app-pagination
+      *ngIf="!loading && totalItems > 0"
+      [currentPage]="currentPage"
+      [pageSize]="pageSize"
+      [totalItems]="totalItems"
+      [searchInfo]="searchInfo"
+      (pageChange)="onPageChange($event)"
+    ></app-pagination>
   </div>
 </div>
 

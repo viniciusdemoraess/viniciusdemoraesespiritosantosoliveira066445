@@ -1,11 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { ArtistService } from '../../../core/services/artist.service';
-import { AlbumService } from '../../../core/services/album.service';
+import { DashboardFacadeService } from '../../../core/facades/dashboard-facade.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { WebsocketService } from '../../../core/services/websocket.service';
-import { NotificationBellComponent } from '../../../shared/components/notification-bell/notification-bell.component';
+import { HeaderComponent } from '../../../shared/components/header/header.component';
 import { Subscription } from 'rxjs';
 
 interface DashboardStats {
@@ -27,7 +26,7 @@ interface RecentAlbum {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, NotificationBellComponent],
+  imports: [CommonModule, RouterModule, HeaderComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
@@ -49,14 +48,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
 
   constructor(
-    private artistService: ArtistService,
-    private albumService: AlbumService,
+    private dashboardFacade: DashboardFacadeService,
     public authService: AuthService,
     private websocketService: WebsocketService,
     private router: Router
   ) {}
 
   ngOnInit() {
+    this.subscribeToStats();
     this.loadDashboardData();
     this.subscribeToWebSocket();
   }
@@ -65,56 +64,31 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
+  /**
+   * Subscribe to reactive stats from DashboardFacadeService
+   */
+  private subscribeToStats() {
+    const statsSub = this.dashboardFacade.stats$.subscribe(stats => {
+      this.stats = stats;
+    });
+
+    const loadingSub = this.dashboardFacade.loading$.subscribe(loading => {
+      this.loading = loading;
+    });
+
+    const errorSub = this.dashboardFacade.error$.subscribe(error => {
+      this.error = error;
+    });
+
+    const recentAlbumsSub = this.dashboardFacade.recentAlbums$.subscribe(albums => {
+      this.recentAlbums = albums;
+    });
+
+    this.subscriptions.push(statsSub, loadingSub, errorSub, recentAlbumsSub);
+  }
+
   loadDashboardData() {
-    this.loading = true;
-    this.error = null;
-
-    Promise.all([
-      this.loadArtistsStats(),
-      this.loadAlbumsStats(),
-      this.loadRecentAlbums()
-    ])
-      .then(() => {
-        this.loading = false;
-      })
-      .catch((error) => {
-        this.error = 'Erro ao carregar dados do dashboard';
-        this.loading = false;
-        console.error('Dashboard error:', error);
-      });
-  }
-
-  async loadArtistsStats() {
-    const response = await this.artistService.getAllArtists(0, 1000).toPromise();
-    if (response) {
-      this.stats.totalArtists = response.totalElements;
-      this.stats.artistsWithoutAlbums = response.content.filter(a => a.albumCount === 0).length;
-    }
-  }
-
-  async loadAlbumsStats() {
-    const response = await this.albumService.getAllAlbums(0, 1000).toPromise();
-    if (response) {
-      this.stats.totalAlbums = response.totalElements;
-      this.stats.albumsWithCovers = response.content.filter(a => a.covers.length > 0).length;
-      this.stats.albumsWithoutCovers = response.content.filter(a => a.covers.length === 0).length;
-
-      if (this.stats.totalArtists > 0) {
-        this.stats.averageAlbumsPerArtist = Number((this.stats.totalAlbums / this.stats.totalArtists).toFixed(1));
-      }
-    }
-  }
-
-  async loadRecentAlbums() {
-    const response = await this.albumService.getAllAlbums(0, 5, 'releaseYear', 'desc').toPromise();
-    if (response) {
-      this.recentAlbums = response.content.map(album => ({
-        id: album.id,
-        title: album.title,
-        artistName: album.artistName,
-        releaseYear: album.releaseYear
-      }));
-    }
+    this.dashboardFacade.loadAllData();
   }
 
   subscribeToWebSocket() {

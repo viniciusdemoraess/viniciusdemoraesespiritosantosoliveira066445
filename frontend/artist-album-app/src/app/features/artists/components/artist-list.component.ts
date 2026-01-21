@@ -1,30 +1,33 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { ArtistService } from '../../../core/services/artist.service';
-import { AuthService } from '../../../core/services/auth.service';
-import { NotificationBellComponent } from '../../../shared/components/notification-bell/notification-bell.component';
-import { Artist, Page } from '../../../core/models';
+import { ArtistFacadeService } from '../../../core/facades/artist-facade.service';
+import { HeaderComponent } from '../../../shared/components/header/header.component';
+import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
+import { Artist } from '../../../core/models';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-artist-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, NotificationBellComponent],
+  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent, PaginationComponent],
   templateUrl: './artist-list.component.html',
   styleUrls: ['./artist-list.component.scss']
 })
-export class ArtistListComponent implements OnInit {
+export class ArtistListComponent implements OnInit, OnDestroy {
   Math = Math;
+  allArtists: Artist[] = [];
   artists: Artist[] = [];
   loading = false;
-  page = 0;
-  size = 9;
-  totalPages = 0;
-  totalElements = 0;
   searchTerm = '';
   sortBy = 'name';
   sortDirection = 'asc';
+
+  // Pagination
+  currentPage = 0;
+  pageSize = 9;
+  totalItems = 0;
 
   showAddModal = false;
   showEditModal = false;
@@ -33,46 +36,97 @@ export class ArtistListComponent implements OnInit {
   newArtistName = '';
   editArtistName = '';
 
+  private subscriptions: Subscription[] = [];
+
   constructor(
-    private artistService: ArtistService,
-    public authService: AuthService,
+    private artistFacade: ArtistFacadeService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
+    this.subscribeToData();
     this.loadArtists();
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  private subscribeToData(): void {
+    const artistsSub = this.artistFacade.artists$.subscribe(artists => {
+      // Apply client-side sorting and filtering
+      this.allArtists = this.filterAndSortArtists(artists);
+      this.totalItems = this.allArtists.length;
+      this.applyPagination();
+    });
+
+    const loadingSub = this.artistFacade.loading$.subscribe(loading => {
+      this.loading = loading;
+    });
+
+    this.subscriptions.push(artistsSub, loadingSub);
+  }
+
+  private applyPagination(): void {
+    const start = this.currentPage * this.pageSize;
+    const end = start + this.pageSize;
+    this.artists = this.allArtists.slice(start, end);
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    this.applyPagination();
+  }
+
+  get searchInfo(): string | undefined {
+    if (this.searchTerm.trim()) {
+      return `para "${this.searchTerm}"`;
+    }
+    return undefined;
+  }
+
+  private filterAndSortArtists(artists: Artist[]): Artist[] {
+    let filtered = [...artists];
+
+    // Apply search filter
+    if (this.searchTerm.trim()) {
+      const search = this.searchTerm.toLowerCase();
+      filtered = filtered.filter(artist =>
+        artist.name.toLowerCase().includes(search)
+      );
+    }
+
+    // Apply sorting
+    filtered.sort((a, b) => {
+      const aValue = a.name.toLowerCase();
+      const bValue = b.name.toLowerCase();
+      const comparison = aValue.localeCompare(bValue);
+      return this.sortDirection === 'asc' ? comparison : -comparison;
+    });
+
+    return filtered;
   }
 
   loadArtists(): void {
-    this.loading = true;
-    this.artistService.getAllArtists(
-      this.page,
-      this.size,
-      this.sortBy,
-      this.sortDirection,
-      this.searchTerm || undefined
-    ).subscribe({
-      next: (response: Page<Artist>) => {
-        this.artists = response.content;
-        this.totalPages = response.totalPages;
-        this.totalElements = response.totalElements;
-        this.loading = false;
-      },
-      error: (error) => {
-        console.error('Error loading artists:', error);
-        this.loading = false;
-      }
-    });
+    this.artistFacade.loadArtists();
   }
 
   onSearch(): void {
-    this.page = 0;
-    this.loadArtists();
+    // Reset to first page on search
+    this.currentPage = 0;
+    this.allArtists = this.filterAndSortArtists(this.allArtists);
+    this.totalItems = this.allArtists.length;
+    this.applyPagination();
   }
 
-  onPageChange(newPage: number): void {
-    this.page = newPage;
-    this.loadArtists();
+  toggleSortDirection(): void {
+    this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    this.currentPage = 0;
+    this.artistFacade.artists$.subscribe(artists => {
+      this.allArtists = this.filterAndSortArtists(artists);
+      this.totalItems = this.allArtists.length;
+      this.applyPagination();
+    }).unsubscribe();
   }
 
   onSort(field: string): void {
@@ -82,7 +136,8 @@ export class ArtistListComponent implements OnInit {
       this.sortBy = field;
       this.sortDirection = 'asc';
     }
-    this.loadArtists();
+    // Trigger reactive update
+    this.subscribeToData();
   }
 
   openAddModal(): void {
@@ -98,10 +153,9 @@ export class ArtistListComponent implements OnInit {
   createArtist(): void {
     if (!this.newArtistName.trim()) return;
 
-    this.artistService.createArtist(this.newArtistName).subscribe({
+    this.artistFacade.createArtist(this.newArtistName).subscribe({
       next: () => {
         this.closeAddModal();
-        this.loadArtists();
       },
       error: (error) => {
         console.error('Error creating artist:', error);
@@ -125,10 +179,9 @@ export class ArtistListComponent implements OnInit {
   updateArtist(): void {
     if (!this.selectedArtist || !this.editArtistName.trim()) return;
 
-    this.artistService.updateArtist(this.selectedArtist.id, this.editArtistName).subscribe({
+    this.artistFacade.updateArtist(this.selectedArtist.id, this.editArtistName).subscribe({
       next: () => {
         this.closeEditModal();
-        this.loadArtists();
       },
       error: (error) => {
         console.error('Error updating artist:', error);
@@ -150,10 +203,9 @@ export class ArtistListComponent implements OnInit {
   deleteArtist(): void {
     if (!this.selectedArtist) return;
 
-    this.artistService.deleteArtist(this.selectedArtist.id).subscribe({
+    this.artistFacade.deleteArtist(this.selectedArtist.id).subscribe({
       next: () => {
         this.closeDeleteModal();
-        this.loadArtists();
       },
       error: (error) => {
         console.error('Error deleting artist:', error);
@@ -164,9 +216,5 @@ export class ArtistListComponent implements OnInit {
 
   viewAlbums(artistId: number): void {
     this.router.navigate(['/albums'], { queryParams: { artistId } });
-  }
-
-  logout(): void {
-    this.authService.logout();
   }
 }

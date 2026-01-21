@@ -1,32 +1,39 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
-import { AlbumService } from '../../../../core/services/album.service';
-import { ArtistService } from '../../../../core/services/artist.service';
-import { AuthService } from '../../../../core/services/auth.service';
+import { AlbumFacadeService } from '../../../../core/facades/album-facade.service';
+import { ArtistFacadeService } from '../../../../core/facades/artist-facade.service';
 import { WebsocketService } from '../../../../core/services/websocket.service';
-import { NotificationBellComponent } from '../../../../shared/components/notification-bell/notification-bell.component';
-import { Album, Artist, Page } from '../../../../core/models';
+import { HeaderComponent } from '../../../../shared/components/header/header.component';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
+import { Album, Artist } from '../../../../core/models';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-album-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, NotificationBellComponent],
+  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent, PaginationComponent],
   templateUrl: './album-list.component.html',
   styleUrl: './album-list.component.scss'
 })
-export class AlbumListComponent implements OnInit {
+export class AlbumListComponent implements OnInit, OnDestroy {
   Math = Math;
+  allAlbums: Album[] = [];
   albums: Album[] = [];
   artists: Artist[] = [];
   loading = false;
-  page = 0;
-  size = 8;
-  totalPages = 0;
-  totalElements = 0;
   searchTerm = '';
   filterArtistId?: number;
+
+  // Pagination
+  currentPage = 0;
+  pageSize = 8;
+  totalItems = 0;
+
+  // Sorting
+  sortBy = 'title';
+  sortDirection: 'asc' | 'desc' = 'asc';
 
   showAddModal = false;
   showUploadModal = false;
@@ -39,11 +46,11 @@ export class AlbumListComponent implements OnInit {
   };
 
   selectedFiles: File[] = [];
+  private subscriptions: Subscription[] = [];
 
   constructor(
-    private albumService: AlbumService,
-    private artistService: ArtistService,
-    public authService: AuthService,
+    private albumFacade: AlbumFacadeService,
+    private artistFacade: ArtistFacadeService,
     private websocketService: WebsocketService,
     private router: Router,
     private route: ActivatedRoute
@@ -56,59 +63,140 @@ export class AlbumListComponent implements OnInit {
       }
     });
 
-    this.loadArtists();
-    this.loadAlbums();
+    this.subscribeToData();
+    this.loadData();
     this.setupWebSocket();
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  private subscribeToData(): void {
+    const albumsSub = this.albumFacade.albums$.subscribe(albums => {
+      this.allAlbums = this.filterAlbums(albums);
+      this.totalItems = this.allAlbums.length;
+      this.applyPagination();
+    });
+
+    const artistsSub = this.artistFacade.artists$.subscribe(artists => {
+      this.artists = artists;
+    });
+
+    const loadingSub = this.albumFacade.loading$.subscribe(loading => {
+      this.loading = loading;
+    });
+
+    this.subscriptions.push(albumsSub, artistsSub, loadingSub);
+  }
+
+  private applyPagination(): void {
+    const start = this.currentPage * this.pageSize;
+    const end = start + this.pageSize;
+    this.albums = this.allAlbums.slice(start, end);
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    this.applyPagination();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  get searchInfo(): string | undefined {
+    const parts: string[] = [];
+    if (this.searchTerm.trim()) {
+      parts.push(`para "${this.searchTerm}"`);
+    }
+    if (this.filterArtistId) {
+      parts.push('(filtrado por artista)');
+    }
+    return parts.length > 0 ? parts.join(' ') : undefined;
+  }
+
+  private filterAlbums(albums: Album[]): Album[] {
+    let filtered = [...albums];
+
+    // Apply artist filter
+    if (this.filterArtistId) {
+      filtered = filtered.filter(album => album.artistId === this.filterArtistId);
+    }
+
+    // Apply search filter
+    if (this.searchTerm.trim()) {
+      const search = this.searchTerm.toLowerCase();
+      filtered = filtered.filter(album =>
+        album.title.toLowerCase().includes(search) ||
+        album.artistName.toLowerCase().includes(search)
+      );
+    }
+
+    // Apply sorting
+    filtered.sort((a, b) => {
+      let comparison = 0;
+
+      switch (this.sortBy) {
+        case 'title':
+          comparison = a.title.toLowerCase().localeCompare(b.title.toLowerCase());
+          break;
+        case 'year':
+          comparison = a.releaseYear - b.releaseYear;
+          break;
+        case 'artist':
+          comparison = a.artistName.toLowerCase().localeCompare(b.artistName.toLowerCase());
+          break;
+      }
+
+      return this.sortDirection === 'asc' ? comparison : -comparison;
+    });
+
+    return filtered;
   }
 
   setupWebSocket(): void {
     this.websocketService.connect();
-    this.websocketService.watchAlbumNotifications().subscribe(album => {
+    const wsSub = this.websocketService.watchAlbumNotifications().subscribe(album => {
       console.log('New album notification:', album);
-      this.loadAlbums();
+      this.loadData();
     });
+    this.subscriptions.push(wsSub);
   }
 
-  loadArtists(): void {
-    this.artistService.getAllArtists(0, 100).subscribe({
-      next: (response: Page<Artist>) => {
-        this.artists = response.content;
-      },
-      error: (error) => console.error('Error loading artists:', error)
-    });
-  }
-
-  loadAlbums(): void {
-    this.loading = true;
-    this.albumService.getAllAlbums(
-      this.page,
-      this.size,
-      'title',
-      'asc',
-      this.filterArtistId,
-      this.searchTerm || undefined
-    ).subscribe({
-      next: (response: Page<Album>) => {
-        this.albums = response.content;
-        this.totalPages = response.totalPages;
-        this.totalElements = response.totalElements;
-        this.loading = false;
-      },
-      error: (error) => {
-        console.error('Error loading albums:', error);
-        this.loading = false;
-      }
-    });
+  loadData(): void {
+    this.albumFacade.loadAlbums();
+    this.artistFacade.loadArtists();
   }
 
   onSearch(): void {
-    this.page = 0;
-    this.loadAlbums();
+    // Reset to first page on search
+    this.currentPage = 0;
+    this.allAlbums = this.filterAlbums(this.allAlbums);
+    this.totalItems = this.allAlbums.length;
+    this.applyPagination();
   }
 
-  onPageChange(newPage: number): void {
-    this.page = newPage;
-    this.loadAlbums();
+  setSortBy(field: 'title' | 'year' | 'artist'): void {
+    if (this.sortBy === field) {
+      this.toggleSortDirection();
+    } else {
+      this.sortBy = field;
+      this.sortDirection = 'asc';
+    }
+    this.currentPage = 0;
+    this.albumFacade.albums$.subscribe(albums => {
+      this.allAlbums = this.filterAlbums(albums);
+      this.totalItems = this.allAlbums.length;
+      this.applyPagination();
+    }).unsubscribe();
+  }
+
+  toggleSortDirection(): void {
+    this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    this.currentPage = 0;
+    this.albumFacade.albums$.subscribe(albums => {
+      this.allAlbums = this.filterAlbums(albums);
+      this.totalItems = this.allAlbums.length;
+      this.applyPagination();
+    }).unsubscribe();
   }
 
   openAddModal(): void {
@@ -127,10 +215,9 @@ export class AlbumListComponent implements OnInit {
   createAlbum(): void {
     if (!this.newAlbum.title || !this.newAlbum.artistId) return;
 
-    this.albumService.createAlbum(this.newAlbum).subscribe({
+    this.albumFacade.createAlbum(this.newAlbum).subscribe({
       next: () => {
         this.closeAddModal();
-        this.loadAlbums();
       },
       error: (error) => {
         console.error('Error creating album:', error);
@@ -159,10 +246,10 @@ export class AlbumListComponent implements OnInit {
   uploadCovers(): void {
     if (!this.selectedAlbum || this.selectedFiles.length === 0) return;
 
-    this.albumService.uploadCovers(this.selectedAlbum.id, this.selectedFiles).subscribe({
+    this.albumFacade.uploadCovers(this.selectedAlbum.id, this.selectedFiles).subscribe({
       next: () => {
         this.closeUploadModal();
-        this.loadAlbums();
+        this.loadData();
         alert('Capas enviadas com sucesso!');
       },
       error: (error) => {
@@ -175,17 +262,12 @@ export class AlbumListComponent implements OnInit {
   deleteAlbum(album: Album): void {
     if (!confirm(`Deseja deletar o álbum "${album.title}"?`)) return;
 
-    this.albumService.deleteAlbum(album.id).subscribe({
-      next: () => this.loadAlbums(),
+    this.albumFacade.deleteAlbum(album.id).subscribe({
+      next: () => {},
       error: (error) => {
         console.error('Error deleting album:', error);
         alert(error.error?.message || 'Erro ao deletar álbum');
       }
     });
-  }
-
-  logout(): void {
-    this.websocketService.disconnect();
-    this.authService.logout();
   }
 }
