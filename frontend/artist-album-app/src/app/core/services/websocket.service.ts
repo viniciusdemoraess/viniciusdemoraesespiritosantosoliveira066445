@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { RxStomp } from '@stomp/rx-stomp';
 import { Observable } from 'rxjs';
 import { Album } from '../models';
+import { environment } from '../../../environments/environment';
+import SockJS from 'sockjs-client';
 
 @Injectable({
   providedIn: 'root'
@@ -18,10 +20,16 @@ export class WebsocketService {
     if (this.connected) return;
 
     this.rxStomp.configure({
-      brokerURL: 'ws://localhost:8080/ws',
+      // Use SockJS for better compatibility
+      webSocketFactory: () => {
+        return new SockJS(environment.wsUrl);
+      },
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
+      debug: (msg: string) => {
+        console.log('🔌 WebSocket:', msg);
+      }
     });
 
     this.rxStomp.activate();
