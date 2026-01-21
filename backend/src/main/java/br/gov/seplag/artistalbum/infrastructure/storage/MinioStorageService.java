@@ -27,8 +27,8 @@ public class MinioStorageService {
     @Value("${minio.url}")
     private String minioUrl;
 
-    // @Value("${minio.external-url}")
-    // private String minioExternalUrl;
+    @Value("${minio.external-url}")
+    private String minioExternalUrl;
 
     @Value("${minio.access-key}")
     private String accessKey;
@@ -124,12 +124,13 @@ public class MinioStorageService {
             
             // Replace internal Docker hostname with external URL
             // This allows browser to access MinIO from outside Docker network
-            // if (!minioUrl.equals(minioExternalUrl)) {
-            //     presignedUrl = presignedUrl.replace(minioUrl, minioExternalUrl);
-            //     log.debug("Replaced internal URL with external URL: {}", presignedUrl);
-            // }
+            if (!minioUrl.equals(minioExternalUrl)) {
+                presignedUrl = presignedUrl.replace(minioUrl, minioExternalUrl);
+                log.info("Replaced '{}' with '{}' in presigned URL", minioUrl, minioExternalUrl);
+            }
             
-            return presignedUrl.replace("http://minio:9000", "http://localhost:9002");
+            log.info("Generated presigned URL: {}", presignedUrl);
+            return presignedUrl;
         } catch (Exception e) {
             log.error("Error generating presigned URL for object: {}", objectKey, e);
             throw new RuntimeException("Failed to generate presigned URL", e);
