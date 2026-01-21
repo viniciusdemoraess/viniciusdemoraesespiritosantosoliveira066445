@@ -35,12 +35,18 @@ export class LoginComponent {
     this.errorMessage = '';
 
     this.authService.login(this.credentials).subscribe({
-      next: () => {
-        this.router.navigate(['/dashboard']);
+      next: (response) => {
+        setTimeout(() => {
+          this.loading = false;
+          this.router.navigate(['/dashboard']);
+        }, 100);
       },
       error: (error) => {
         this.loading = false;
         this.errorMessage = error.error?.message || 'Erro ao fazer login. Verifique suas credenciais.';
+      },
+      complete: () => {
+        console.log('');
       }
     });
   }
