@@ -3,6 +3,8 @@ package br.gov.seplag.artistalbum.application.service;
 import br.gov.seplag.artistalbum.application.io.ArtistRequest;
 import br.gov.seplag.artistalbum.application.io.ArtistResponse;
 import br.gov.seplag.artistalbum.domain.entity.Artist;
+import br.gov.seplag.artistalbum.domain.exception.DuplicateResourceException;
+import br.gov.seplag.artistalbum.domain.exception.ResourceNotFoundException;
 import br.gov.seplag.artistalbum.domain.repository.ArtistRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +42,7 @@ public class ArtistService {
     public ArtistResponse getArtistById(Long id) {
         log.debug("Fetching artist by ID: {}", id);
         Artist artist = artistRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Artist not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Artist", "id", id));
         return toResponse(artist);
     }
 
@@ -49,7 +51,7 @@ public class ArtistService {
         log.info("Creating artist: {}", request.getName());
 
         if (artistRepository.existsByNameIgnoreCase(request.getName())) {
-            throw new RuntimeException("Artist with name '" + request.getName() + "' already exists");
+            throw new DuplicateResourceException("Artist", "name", request.getName());
         }
 
         Artist artist = Artist.builder()
@@ -67,10 +69,10 @@ public class ArtistService {
         log.info("Updating artist ID: {}", id);
 
         Artist artist = artistRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Artist not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Artist", "id", id));
 
         if (artistRepository.existsByNameIgnoreCaseAndIdNot(request.getName(), id)) {
-            throw new RuntimeException("Artist with name '" + request.getName() + "' already exists");
+            throw new DuplicateResourceException("Artist", "name", request.getName());
         }
 
         artist.setName(request.getName());
@@ -85,7 +87,7 @@ public class ArtistService {
         log.info("Deleting artist ID: {}", id);
 
         if (!artistRepository.existsById(id)) {
-            throw new RuntimeException("Artist not found with ID: " + id);
+            throw new ResourceNotFoundException("Artist", "id", id);
         }
 
         artistRepository.deleteById(id);

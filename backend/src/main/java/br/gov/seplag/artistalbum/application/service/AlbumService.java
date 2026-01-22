@@ -6,6 +6,9 @@ import br.gov.seplag.artistalbum.application.io.AlbumResponse;
 import br.gov.seplag.artistalbum.domain.entity.Album;
 import br.gov.seplag.artistalbum.domain.entity.AlbumCover;
 import br.gov.seplag.artistalbum.domain.entity.Artist;
+import br.gov.seplag.artistalbum.domain.exception.DuplicateResourceException;
+import br.gov.seplag.artistalbum.domain.exception.InvalidFileException;
+import br.gov.seplag.artistalbum.domain.exception.ResourceNotFoundException;
 import br.gov.seplag.artistalbum.domain.repository.AlbumCoverRepository;
 import br.gov.seplag.artistalbum.domain.repository.AlbumRepository;
 import br.gov.seplag.artistalbum.domain.repository.ArtistRepository;
@@ -60,7 +63,7 @@ public class AlbumService {
     public AlbumResponse getAlbumById(Long id) {
         log.debug("Fetching album by ID: {}", id);
         Album album = albumRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Album not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Album", "id", id));
         return toResponse(album);
     }
 
@@ -69,10 +72,10 @@ public class AlbumService {
         log.info("Creating album: {}", request.getTitle());
 
         Artist artist = artistRepository.findById(request.getArtistId())
-                .orElseThrow(() -> new RuntimeException("Artist not found with ID: " + request.getArtistId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Artist", "id", request.getArtistId()));
 
         if (albumRepository.existsByTitleAndArtistId(request.getTitle(), request.getArtistId())) {
-            throw new RuntimeException("Album '" + request.getTitle() + "' already exists for this artist");
+            throw new DuplicateResourceException("Album", "title", request.getTitle());
         }
 
         Album album = Album.builder()
@@ -95,13 +98,13 @@ public class AlbumService {
         log.info("Updating album ID: {}", id);
 
         Album album = albumRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Album not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Album", "id", id));
 
         Artist artist = artistRepository.findById(request.getArtistId())
-                .orElseThrow(() -> new RuntimeException("Artist not found with ID: " + request.getArtistId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Artist", "id", request.getArtistId()));
 
         if (albumRepository.existsByTitleAndArtistIdAndIdNot(request.getTitle(), request.getArtistId(), id)) {
-            throw new RuntimeException("Album '" + request.getTitle() + "' already exists for this artist");
+            throw new DuplicateResourceException("Album", "title", request.getTitle());
         }
 
         album.setTitle(request.getTitle());
@@ -119,7 +122,7 @@ public class AlbumService {
         log.info("Deleting album ID: {}", id);
 
         Album album = albumRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Album not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Album", "id", id));
 
         // Delete covers from MinIO
         album.getCovers().forEach(cover -> {
@@ -139,7 +142,7 @@ public class AlbumService {
         log.info("Uploading {} covers for album ID: {}", files.size(), albumId);
 
         Album album = albumRepository.findById(albumId)
-                .orElseThrow(() -> new RuntimeException("Album not found with ID: " + albumId));
+                .orElseThrow(() -> new ResourceNotFoundException("Album", "id", albumId));
 
         for (MultipartFile file : files) {
             validateImageFile(file);
@@ -165,17 +168,17 @@ public class AlbumService {
 
     private void validateImageFile(MultipartFile file) {
         if (file.isEmpty()) {
-            throw new RuntimeException("File is empty");
+            throw new InvalidFileException("File is empty");
         }
 
         String contentType = file.getContentType();
         if (contentType == null || !contentType.startsWith("image/")) {
-            throw new RuntimeException("File must be an image");
+            throw new InvalidFileException("File must be an image");
         }
 
         // Max 10MB
         if (file.getSize() > 10 * 1024 * 1024) {
-            throw new RuntimeException("File size must not exceed 10MB");
+            throw new InvalidFileException("File size must not exceed 10MB");
         }
     }
 

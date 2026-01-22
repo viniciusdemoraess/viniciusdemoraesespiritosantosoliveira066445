@@ -1,5 +1,6 @@
 package br.gov.seplag.artistalbum.infrastructure.storage;
 
+import br.gov.seplag.artistalbum.domain.exception.StorageException;
 import io.minio.*;
 import io.minio.errors.*;
 import io.minio.http.Method;
@@ -74,7 +75,7 @@ public class MinioStorageService {
             }
         } catch (Exception e) {
             log.error("Error creating bucket", e);
-            throw new RuntimeException("Failed to create MinIO bucket", e);
+            throw new StorageException("create bucket", e.getMessage(), e);
         }
     }
 
@@ -103,7 +104,7 @@ public class MinioStorageService {
 
         } catch (Exception e) {
             log.error("Error uploading file to MinIO", e);
-            throw new RuntimeException("Failed to upload file", e);
+            throw new StorageException("upload file", e.getMessage(), e);
         }
     }
 
@@ -133,7 +134,7 @@ public class MinioStorageService {
             return presignedUrl;
         } catch (Exception e) {
             log.error("Error generating presigned URL for object: {}", objectKey, e);
-            throw new RuntimeException("Failed to generate presigned URL", e);
+            throw new StorageException("generate presigned URL", e.getMessage(), e);
         }
     }
 
@@ -151,7 +152,7 @@ public class MinioStorageService {
             log.info("File deleted successfully: {}", objectKey);
         } catch (Exception e) {
             log.error("Error deleting file from MinIO", e);
-            throw new RuntimeException("Failed to delete file", e);
+            throw new StorageException("delete file", e.getMessage(), e);
         }
     }
 

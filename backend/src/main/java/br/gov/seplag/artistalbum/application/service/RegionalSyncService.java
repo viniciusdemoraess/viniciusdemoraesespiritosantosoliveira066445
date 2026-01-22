@@ -2,6 +2,7 @@ package br.gov.seplag.artistalbum.application.service;
 
 import br.gov.seplag.artistalbum.application.io.RegionalDTO;
 import br.gov.seplag.artistalbum.domain.entity.Regional;
+import br.gov.seplag.artistalbum.domain.exception.SynchronizationException;
 import br.gov.seplag.artistalbum.domain.repository.RegionalRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -119,7 +120,7 @@ public class RegionalSyncService {
 
         } catch (Exception e) {
             log.error("Error during regional synchronization", e);
-            throw new RuntimeException("Failed to synchronize regionais", e);
+            throw new SynchronizationException("regionais", e.getMessage(), e);
         }
     }
 

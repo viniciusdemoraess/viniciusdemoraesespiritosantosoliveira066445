@@ -3,6 +3,9 @@ package br.gov.seplag.artistalbum.application.service;
 import br.gov.seplag.artistalbum.application.io.AuthResponse;
 import br.gov.seplag.artistalbum.application.io.LoginRequest;
 import br.gov.seplag.artistalbum.domain.entity.User;
+import br.gov.seplag.artistalbum.domain.exception.AuthenticationFailedException;
+import br.gov.seplag.artistalbum.domain.exception.InvalidTokenException;
+import br.gov.seplag.artistalbum.domain.exception.ResourceNotFoundException;
 import br.gov.seplag.artistalbum.domain.repository.UserRepository;
 import br.gov.seplag.artistalbum.infrastructure.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -53,7 +56,7 @@ public class AuthService {
 
         } catch (AuthenticationException e) {
             log.error("Authentication failed for user: {}", request.getUsername());
-            throw new RuntimeException("Invalid username or password");
+            throw new AuthenticationFailedException("Invalid username or password");
         }
     }
 
@@ -62,7 +65,7 @@ public class AuthService {
         try {
             String username = jwtTokenProvider.extractUsername(refreshToken);
             User user = userRepository.findByUsername(username)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
 
             if (jwtTokenProvider.validateToken(refreshToken, user)) {
                 String newAccessToken = jwtTokenProvider.generateToken(user);
@@ -79,11 +82,11 @@ public class AuthService {
                         .build();
             }
 
-            throw new RuntimeException("Invalid refresh token");
+            throw new InvalidTokenException("Invalid refresh token");
 
         } catch (Exception e) {
             log.error("Token refresh failed", e);
-            throw new RuntimeException("Failed to refresh token");
+            throw new InvalidTokenException("Failed to refresh token", e);
         }
     }
 }
