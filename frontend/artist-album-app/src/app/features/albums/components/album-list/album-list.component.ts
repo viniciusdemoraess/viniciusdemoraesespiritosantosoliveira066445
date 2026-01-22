@@ -57,7 +57,7 @@ export class AlbumListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params: any) => {
       if (params['artistId']) {
         this.filterArtistId = +params['artistId'];
       }
@@ -73,17 +73,17 @@ export class AlbumListComponent implements OnInit, OnDestroy {
   }
 
   private subscribeToData(): void {
-    const albumsSub = this.albumFacade.albums$.subscribe(albums => {
+    const albumsSub = this.albumFacade.albums$.subscribe((albums: Album[]) => {
       this.allAlbums = this.filterAlbums(albums);
       this.totalItems = this.allAlbums.length;
       this.applyPagination();
     });
 
-    const artistsSub = this.artistFacade.artists$.subscribe(artists => {
+    const artistsSub = this.artistFacade.artists$.subscribe((artists: Artist[]) => {
       this.artists = artists;
     });
 
-    const loadingSub = this.albumFacade.loading$.subscribe(loading => {
+    const loadingSub = this.albumFacade.loading$.subscribe((loading: boolean) => {
       this.loading = loading;
     });
 
@@ -154,7 +154,7 @@ export class AlbumListComponent implements OnInit, OnDestroy {
 
   setupWebSocket(): void {
     this.websocketService.connect();
-    const wsSub = this.websocketService.watchAlbumNotifications().subscribe(album => {
+    const wsSub = this.websocketService.watchAlbumNotifications().subscribe((album: Album) => {
       console.log('New album notification:', album);
       this.loadData();
     });
@@ -182,7 +182,7 @@ export class AlbumListComponent implements OnInit, OnDestroy {
       this.sortDirection = 'asc';
     }
     this.currentPage = 0;
-    this.albumFacade.albums$.subscribe(albums => {
+    this.albumFacade.albums$.subscribe((albums: Album[]) => {
       this.allAlbums = this.filterAlbums(albums);
       this.totalItems = this.allAlbums.length;
       this.applyPagination();
@@ -192,7 +192,7 @@ export class AlbumListComponent implements OnInit, OnDestroy {
   toggleSortDirection(): void {
     this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     this.currentPage = 0;
-    this.albumFacade.albums$.subscribe(albums => {
+    this.albumFacade.albums$.subscribe((albums: Album[]) => {
       this.allAlbums = this.filterAlbums(albums);
       this.totalItems = this.allAlbums.length;
       this.applyPagination();
@@ -221,7 +221,6 @@ export class AlbumListComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Error creating album:', error);
-        alert(error.error?.message || 'Erro ao criar álbum');
       }
     });
   }
@@ -250,11 +249,9 @@ export class AlbumListComponent implements OnInit, OnDestroy {
       next: () => {
         this.closeUploadModal();
         this.loadData();
-        alert('Capas enviadas com sucesso!');
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error uploading covers:', error);
-        alert(error.error?.message || 'Erro ao enviar capas');
       }
     });
   }
@@ -264,9 +261,8 @@ export class AlbumListComponent implements OnInit, OnDestroy {
 
     this.albumFacade.deleteAlbum(album.id).subscribe({
       next: () => {},
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error deleting album:', error);
-        alert(error.error?.message || 'Erro ao deletar álbum');
       }
     });
   }

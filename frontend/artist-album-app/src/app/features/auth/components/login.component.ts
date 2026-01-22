@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
-import { LoginRequest } from '../../../core/models';
+import { AuthResponse, LoginRequest } from '../../../core/models';
 
 @Component({
   selector: 'app-login',
@@ -35,13 +35,13 @@ export class LoginComponent {
     this.errorMessage = '';
 
     this.authService.login(this.credentials).subscribe({
-      next: (response) => {
+      next: (response: AuthResponse) => {
         setTimeout(() => {
           this.loading = false;
           this.router.navigate(['/dashboard']);
         }, 100);
       },
-      error: (error) => {
+      error: (error: any) => {
         this.loading = false;
         this.errorMessage = error.error?.message || 'Erro ao fazer login. Verifique suas credenciais.';
       },

@@ -2,11 +2,11 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { ArtistFacadeService } from '../../../core/facades/artist-facade.service';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
 import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
 import { Artist } from '../../../core/models';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-artist-list',
@@ -53,14 +53,14 @@ export class ArtistListComponent implements OnInit, OnDestroy {
   }
 
   private subscribeToData(): void {
-    const artistsSub = this.artistFacade.artists$.subscribe(artists => {
+    const artistsSub = this.artistFacade.artists$.subscribe((artists: Artist[]) => {
       // Apply client-side sorting and filtering
       this.allArtists = this.filterAndSortArtists(artists);
       this.totalItems = this.allArtists.length;
       this.applyPagination();
     });
 
-    const loadingSub = this.artistFacade.loading$.subscribe(loading => {
+    const loadingSub = this.artistFacade.loading$.subscribe((loading: boolean) => {
       this.loading = loading;
     });
 
@@ -122,7 +122,7 @@ export class ArtistListComponent implements OnInit, OnDestroy {
   toggleSortDirection(): void {
     this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     this.currentPage = 0;
-    this.artistFacade.artists$.subscribe(artists => {
+    this.artistFacade.artists$.subscribe((artists: Artist[]) => {
       this.allArtists = this.filterAndSortArtists(artists);
       this.totalItems = this.allArtists.length;
       this.applyPagination();
@@ -157,9 +157,8 @@ export class ArtistListComponent implements OnInit, OnDestroy {
       next: () => {
         this.closeAddModal();
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error creating artist:', error);
-        alert(error.error?.message || 'Erro ao criar artista');
       }
     });
   }
@@ -183,9 +182,8 @@ export class ArtistListComponent implements OnInit, OnDestroy {
       next: () => {
         this.closeEditModal();
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error updating artist:', error);
-        alert(error.error?.message || 'Erro ao atualizar artista');
       }
     });
   }
@@ -207,9 +205,8 @@ export class ArtistListComponent implements OnInit, OnDestroy {
       next: () => {
         this.closeDeleteModal();
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error deleting artist:', error);
-        alert(error.error?.message || 'Erro ao deletar artista');
       }
     });
   }
