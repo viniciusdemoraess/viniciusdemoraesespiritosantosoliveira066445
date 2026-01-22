@@ -1,4 +1,4 @@
-package br.gov.seplag.artistalbum.presentation.controller;
+package br.gov.seplag.artistalbum.application.adapter;
 
 import br.gov.seplag.artistalbum.application.io.AlbumRequest;
 import br.gov.seplag.artistalbum.application.io.AlbumResponse;
@@ -24,7 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Albums", description = "Album management endpoints")
-public class AlbumController {
+public class AlbumRestAdapter {
 
     private final AlbumService albumService;
 

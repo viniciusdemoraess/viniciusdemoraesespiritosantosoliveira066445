@@ -1,4 +1,4 @@
-package br.gov.seplag.artistalbum.presentation.controller;
+package br.gov.seplag.artistalbum.application.adapter;
 
 import br.gov.seplag.artistalbum.application.service.RegionalSyncService;
 import br.gov.seplag.artistalbum.domain.entity.Regional;
@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Regionais", description = "External API integration for Polícia Civil regionais")
-public class RegionalController {
+public class RegionalRestAdapter {
 
     private final RegionalSyncService regionalSyncService;
 

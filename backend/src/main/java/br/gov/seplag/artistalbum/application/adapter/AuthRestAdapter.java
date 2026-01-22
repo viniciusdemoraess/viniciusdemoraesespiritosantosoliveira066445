@@ -1,4 +1,4 @@
-package br.gov.seplag.artistalbum.presentation.controller;
+package br.gov.seplag.artistalbum.application.adapter;
 
 import br.gov.seplag.artistalbum.application.io.AuthResponse;
 import br.gov.seplag.artistalbum.application.io.LoginRequest;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 @Tag(name = "Authentication", description = "Authentication endpoints")
-public class AuthController {
+public class AuthRestAdapter {
 
     private final AuthService authService;
 

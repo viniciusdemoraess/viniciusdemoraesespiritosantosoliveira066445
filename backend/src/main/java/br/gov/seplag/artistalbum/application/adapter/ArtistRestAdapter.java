@@ -1,4 +1,4 @@
-package br.gov.seplag.artistalbum.presentation.controller;
+package br.gov.seplag.artistalbum.application.adapter;
 
 import br.gov.seplag.artistalbum.application.io.ArtistRequest;
 import br.gov.seplag.artistalbum.application.io.ArtistResponse;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Artists", description = "Artist management endpoints")
-public class ArtistController {
+public class ArtistRestAdapter {
 
     private final ArtistService artistService;
 
