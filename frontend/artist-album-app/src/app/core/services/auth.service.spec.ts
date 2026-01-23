@@ -139,7 +139,9 @@ describe('AuthService', () => {
 
   describe('isLoggedIn', () => {
     it('should return true if user has access token', () => {
+      const futureExpiration = new Date().getTime() + 300000; // 5 minutes in future
       localStorage.setItem('accessToken', 'test-token');
+      localStorage.setItem('tokenExpiration', futureExpiration.toString());
       expect(service.isLoggedIn()).toBe(true);
     });
 

@@ -44,7 +44,7 @@ describe('LoginComponent', () => {
   });
 
   describe('onSubmit', () => {
-    it('should login successfully and navigate to artists', () => {
+    it('should login successfully and navigate to artists', (done) => {
       const mockResponse = {
         username: 'admin',
         accessToken: 'mock-token',
@@ -58,9 +58,12 @@ describe('LoginComponent', () => {
 
       component.onSubmit();
 
-      expect(component.loading).toBe(false);
-      expect(component.errorMessage).toBe('');
-      expect(mockRouter.navigate).toHaveBeenCalledWith(['/artists']);
+      setTimeout(() => {
+        expect(component.loading).toBe(false);
+        expect(component.errorMessage).toBe('');
+        expect(mockRouter.navigate).toHaveBeenCalledWith(['/dashboard']);
+        done();
+      }, 100);
     });
 
     it('should handle login error', () => {
@@ -85,7 +88,9 @@ describe('LoginComponent', () => {
       expect(component.errorMessage).toBe('Erro ao fazer login. Verifique suas credenciais.');
     });
 
-    it('should set loading to true during login', () => {
+    it('should set loading to true during login', (done) => {
+      let loadingStates: boolean[] = [];
+
       mockAuthService.login.and.returnValue(of({
         username: 'test',
         accessToken: 'token',
@@ -95,10 +100,20 @@ describe('LoginComponent', () => {
       }));
       component.credentials = { username: 'test', password: 'test' };
 
+      // Capture loading state before submit
+      loadingStates.push(component.loading);
+
       component.onSubmit();
-      // Loading is set to true, then immediately to false after observable completes
-      // We can only verify final state
-      expect(component.loading).toBe(false);
+
+      // Capture loading state immediately after submit (should be true)
+      loadingStates.push(component.loading);
+
+      setTimeout(() => {
+        // Capture loading state after async operation
+        loadingStates.push(component.loading);
+        expect(loadingStates).toEqual([false, true, false]);
+        done();
+      }, 100);
     });
   });
 });

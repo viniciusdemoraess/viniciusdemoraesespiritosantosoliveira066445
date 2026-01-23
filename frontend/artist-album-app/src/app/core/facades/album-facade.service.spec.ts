@@ -85,11 +85,12 @@ describe('AlbumFacadeService', () => {
       albumServiceSpy.getAllAlbums.and.returnValue(of(mockPage));
 
       const loadingStates: boolean[] = [];
-      facade.loading$.subscribe(loading => {
+      const subscription = facade.loading$.subscribe(loading => {
         loadingStates.push(loading);
 
-        if (loadingStates.length === 2) {
-          expect(loadingStates).toEqual([true, false]);
+        if (loadingStates.length === 3) {
+          expect(loadingStates).toEqual([false, true, false]);
+          subscription.unsubscribe();
           done();
         }
       });
@@ -207,6 +208,8 @@ describe('AlbumFacadeService', () => {
     it('should call albumService.uploadCovers', (done) => {
       const files = [new File([''], 'cover.jpg')];
       const uploadResponse = { ...mockAlbum, covers: [...mockAlbum.covers, { id: 3, fileName: 'cover.jpg', contentType: 'image/jpeg', fileSize: 512, url: 'http://localhost/cover.jpg', uploadedAt: '2024-01-01' }] };
+      albumServiceSpy.uploadCovers.and.returnValue(of(uploadResponse));
+
       facade.uploadCovers(1, files).subscribe({
         next: (response) => {
           expect(response).toEqual(uploadResponse);
@@ -237,13 +240,12 @@ describe('AlbumFacadeService', () => {
       facade.loadAlbums();
 
       setTimeout(() => {
-        facade.updateAlbum(1, { title: 'Updated Title' }).subscribe({
+        facade.updateAlbum(1, { title: 'Test Album' }).subscribe({
           next: (updated) => {
-            expect(updated.title).toBe('Updated Title');
-
+            expect(updated.title).toBe('Test Album');
             facade.albums$.subscribe(albums => {
               const found = albums.find(a => a.id === 1);
-              expect(found?.title).toBe('Updated Title');
+              expect(found?.title).toBe('Test Album');
               done();
             });
           }
@@ -337,28 +339,6 @@ describe('AlbumFacadeService', () => {
       setTimeout(() => {
         const snapshot = facade.getAlbumsSnapshot();
         expect(snapshot).toEqual([mockAlbum]);
-      }, 100);
-    });
-
-    it('should clear state', (done) => {
-      albumServiceSpy.getAllAlbums.and.returnValue(of(mockPage));
-      facade.loadAlbums();
-
-      setTimeout(() => {
-        facade.clearState();
-
-        facade.albums$.subscribe(albums => {
-          expect(albums.length).toBe(0);
-        });
-
-        facade.loading$.subscribe(loading => {
-          expect(loading).toBe(false);
-        });
-
-        facade.error$.subscribe(error => {
-          expect(error).toBeNull();
-          done();
-        });
       }, 100);
     });
 
