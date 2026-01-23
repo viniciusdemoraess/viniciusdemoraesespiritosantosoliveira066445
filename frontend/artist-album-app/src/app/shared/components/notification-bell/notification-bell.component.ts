@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WebsocketService } from '../../../core/services/websocket.service';
 import { ToastService } from '../../../core/services/toast.service';
+import { AlbumFacadeService } from '../../../core/facades/album-facade.service';
 import { Subscription } from 'rxjs';
 
 interface Notification {
@@ -29,7 +30,8 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
 
   constructor(
     private websocketService: WebsocketService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private albumFacade: AlbumFacadeService
   ) {}
 
   ngOnInit() {
@@ -61,6 +63,12 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
         };
 
         this.addNotification(notification);
+
+        // Recarregar álbuns automaticamente quando novo álbum for adicionado
+        if (message.type === 'album' || message.albumId) {
+          console.log('🔄 Recarregando lista de álbuns...');
+          this.albumFacade.loadAlbums();
+        }
 
         // Mostrar toast com informações do álbum
         const toastMessage = message.albumTitle && message.artistName
