@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { AlbumFacadeService } from '../../../../core/facades/album-facade.service';
 import { ArtistFacadeService } from '../../../../core/facades/artist-facade.service';
-import { WebsocketService } from '../../../../core/services/websocket.service';
 import { HeaderComponent } from '../../../../shared/components/header/header.component';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import { Album, Artist } from '../../../../core/models';
@@ -51,7 +50,6 @@ export class AlbumListComponent implements OnInit, OnDestroy {
   constructor(
     private albumFacade: AlbumFacadeService,
     private artistFacade: ArtistFacadeService,
-    private websocketService: WebsocketService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
@@ -65,7 +63,6 @@ export class AlbumListComponent implements OnInit, OnDestroy {
 
     this.subscribeToData();
     this.loadData();
-    this.setupWebSocket();
   }
 
   ngOnDestroy(): void {
@@ -152,15 +149,6 @@ export class AlbumListComponent implements OnInit, OnDestroy {
     return filtered;
   }
 
-  setupWebSocket(): void {
-    this.websocketService.connect();
-    const wsSub = this.websocketService.watchAlbumNotifications().subscribe((album: Album) => {
-      console.log('New album notification:', album);
-      this.loadData();
-    });
-    this.subscriptions.push(wsSub);
-  }
-
   loadData(): void {
     this.albumFacade.loadAlbums();
     this.artistFacade.loadArtists();
@@ -172,6 +160,33 @@ export class AlbumListComponent implements OnInit, OnDestroy {
     this.allAlbums = this.filterAlbums(this.allAlbums);
     this.totalItems = this.allAlbums.length;
     this.applyPagination();
+  }
+
+  clearSearch(): void {
+    this.searchTerm = '';
+    this.currentPage = 0;
+    this.onSearch();
+  }
+
+  clearFilters(): void {
+    this.searchTerm = '';
+    this.filterArtistId = undefined;
+    this.sortBy = 'title';
+    this.sortDirection = 'asc';
+    this.currentPage = 0;
+    this.loadData();
+  }
+
+  get showClearFiltersButton(): boolean {
+    return this.hasActiveFilters();
+  }
+
+  hasActiveFilters(): boolean {
+    const hasSearch = this.searchTerm.trim() !== '';
+    const hasArtistFilter = this.filterArtistId !== undefined;
+    const hasNonDefaultSort = this.sortBy !== 'title' || this.sortDirection !== 'asc';
+
+    return hasSearch || hasArtistFilter || hasNonDefaultSort;
   }
 
   setSortBy(field: 'title' | 'year' | 'artist'): void {

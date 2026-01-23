@@ -119,6 +119,23 @@ export class ArtistListComponent implements OnInit, OnDestroy {
     this.applyPagination();
   }
 
+  clearSearch(): void {
+    this.searchTerm = '';
+    this.currentPage = 0;
+    this.onSearch();
+  }
+
+  clearFilters(): void {
+    this.searchTerm = '';
+    this.sortDirection = 'asc';
+    this.currentPage = 0;
+    this.loadArtists();
+  }
+
+  get showClearFiltersButton(): boolean {
+    return this.searchTerm.trim() !== '' || this.sortDirection !== 'asc';
+  }
+
   toggleSortDirection(): void {
     this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     this.currentPage = 0;
