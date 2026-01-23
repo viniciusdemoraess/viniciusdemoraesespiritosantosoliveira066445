@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { RxStomp } from '@stomp/rx-stomp';
+import { RxStomp, RxStompState } from '@stomp/rx-stomp';
 import { Observable } from 'rxjs';
 import { Album } from '../models';
 import { environment } from '../../../environments/environment';
@@ -14,26 +14,55 @@ export class WebsocketService {
 
   constructor() {
     this.rxStomp = new RxStomp();
+    this.setupConnectionStateLogging();
+  }
+
+  private setupConnectionStateLogging(): void {
+    this.rxStomp.connectionState$.subscribe((state: RxStompState) => {
+      console.log('🔌 WebSocket State:', RxStompState[state]);
+      this.connected = state === RxStompState.OPEN;
+    });
+  }
+
+  private getWebSocketUrl(): string {
+    let wsUrl = environment.wsUrl;
+
+    // Se a URL for relativa, construir URL absoluta
+    if (wsUrl.startsWith('/')) {
+      const protocol = window.location.protocol === 'https:' ? 'https:' : 'http:';
+      const host = window.location.host;
+      wsUrl = `${protocol}//${host}${wsUrl}`;
+    }
+
+    console.log('🔌 WebSocket URL resolved to:', wsUrl);
+    return wsUrl;
   }
 
   connect(): void {
-    if (this.connected) return;
+    if (this.connected) {
+      console.log('🔌 WebSocket already connected');
+      return;
+    }
+
+    const wsUrl = this.getWebSocketUrl();
+    console.log('🔌 Initiating WebSocket connection to:', wsUrl);
 
     this.rxStomp.configure({
       // Use SockJS for better compatibility
       webSocketFactory: () => {
-        return new SockJS(environment.wsUrl);
+        console.log('🔌 Creating SockJS connection...');
+        return new SockJS(wsUrl);
       },
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
       debug: (msg: string) => {
-        console.log('🔌 WebSocket:', msg);
+        console.log('🔌 WebSocket Debug:', msg);
       }
     });
 
     this.rxStomp.activate();
-    this.connected = true;
+    console.log('✅ WebSocket activation initiated');
   }
 
   disconnect(): void {
