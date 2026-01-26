@@ -1,12 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { AlbumListComponent } from './album-list.component';
-import { AlbumFacadeService } from '../../../../core/facades/album-facade.service';
-import { ArtistFacadeService } from '../../../../core/facades/artist-facade.service';
+import { AlbumListComponent } from '@features/albums/components/album-list/album-list.component';
+import { AlbumFacadeService } from '@core/facades/album-facade.service';
+import { ArtistFacadeService } from '@core/facades/artist-facade.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { of, BehaviorSubject } from 'rxjs';
-import { Album, Artist } from '../../../../core/models';
+import { Album, Artist } from '@core/models';
 
 describe('AlbumListComponent', () => {
   let component: AlbumListComponent;

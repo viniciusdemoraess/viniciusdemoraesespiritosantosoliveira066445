@@ -1,11 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { ArtistListComponent } from './artist-list.component';
-import { ArtistFacadeService } from '../../../core/facades/artist-facade.service';
+import { ArtistListComponent } from '@features/artists/components/artist-list.component';
+import { ArtistFacadeService } from '@core/facades/artist-facade.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { of, BehaviorSubject } from 'rxjs';
-import { Artist } from '../../../core/models';
+import { Artist } from '@core/models';
 
 describe('ArtistListComponent', () => {
   let component: ArtistListComponent;

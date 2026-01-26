@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../../core/services/auth.service';
-import { NotificationBellComponent } from '../notification-bell/notification-bell.component';
+import { AuthService } from '@core/services/auth.service';
+import { NotificationBellComponent } from '@shared/components/notification-bell/notification-bell.component';
 
 @Component({
   selector: 'app-header',

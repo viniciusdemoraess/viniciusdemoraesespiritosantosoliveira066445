@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { RxStomp, RxStompState } from '@stomp/rx-stomp';
 import { Observable } from 'rxjs';
-import { Album } from '../models';
-import { environment } from '../../../environments/environment';
+import { Album } from '@core/models';
+import { environment } from '@environments/environment';
 import SockJS from 'sockjs-client';
 
 @Injectable({

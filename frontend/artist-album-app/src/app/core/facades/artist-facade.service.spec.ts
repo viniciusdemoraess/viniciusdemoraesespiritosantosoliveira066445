@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
-import { ArtistFacadeService } from './artist-facade.service';
-import { ArtistService } from '../services/artist.service';
-import { Artist, Page } from '../models';
+import { ArtistFacadeService } from '@core/facades/artist-facade.service';
+import { ArtistService } from '@core/services/artist.service';
+import { Artist, Page } from '@core/models';
 import { of, throwError } from 'rxjs';
 
 describe('ArtistFacadeService', () => {

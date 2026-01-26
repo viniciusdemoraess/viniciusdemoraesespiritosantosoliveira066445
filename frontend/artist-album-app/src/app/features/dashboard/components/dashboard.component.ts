@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { DashboardFacadeService } from '../../../core/facades/dashboard-facade.service';
-import { AuthService } from '../../../core/services/auth.service';
-import { WebsocketService } from '../../../core/services/websocket.service';
-import { HeaderComponent } from '../../../shared/components/header/header.component';
+import { DashboardFacadeService } from '@core/facades/dashboard-facade.service';
+import { AuthService } from '@core/services/auth.service';
+import { WebsocketService } from '@core/services/websocket.service';
+import { HeaderComponent } from '@shared/components/header/header.component';
 import { Subscription } from 'rxjs';
 
 interface DashboardStats {

@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './components/login.component';
+import { LoginComponent } from '@features/auth/components/login.component';
 
 export const AUTH_ROUTES: Routes = [
   {

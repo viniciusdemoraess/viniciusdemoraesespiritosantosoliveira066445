@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { WebsocketService } from '../../../core/services/websocket.service';
-import { ToastService } from '../../../core/services/toast.service';
-import { AlbumFacadeService } from '../../../core/facades/album-facade.service';
+import { WebsocketService } from '@core/services/websocket.service';
+import { ToastService } from '@core/services/toast.service';
+import { AlbumFacadeService } from '@core/facades/album-facade.service';
 import { Subscription } from 'rxjs';
 
 interface Notification {

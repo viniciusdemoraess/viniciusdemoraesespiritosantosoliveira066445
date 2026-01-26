@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { AlbumService } from './album.service';
-import { Album, Page } from '../models';
+import { AlbumService } from '@core/services/album.service';
+import { Album, Page } from '@core/models';
 
 describe('AlbumService', () => {
   let service: AlbumService;

@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { ArtistFacadeService } from '../../../core/facades/artist-facade.service';
-import { HeaderComponent } from '../../../shared/components/header/header.component';
-import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
-import { Artist } from '../../../core/models';
+import { ArtistFacadeService } from '@core/facades/artist-facade.service';
+import { HeaderComponent } from '@shared/components/header/header.component';
+import { PaginationComponent } from '@shared/components/pagination/pagination.component';
+import { Artist } from '@core/models';
 
 @Component({
   selector: 'app-artist-list',

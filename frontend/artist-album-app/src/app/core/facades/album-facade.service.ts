@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, map } from 'rxjs';
-import { AlbumService } from '../services/album.service';
-import { Album, Page } from '../models';
+import { AlbumService } from '@core/services/album.service';
+import { Album, Page } from '@core/models';
 
 /**
  * Album Facade Service

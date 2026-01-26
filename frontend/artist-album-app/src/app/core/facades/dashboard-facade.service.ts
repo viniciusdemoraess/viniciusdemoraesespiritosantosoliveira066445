@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, combineLatest, map } from 'rxjs';
-import { ArtistFacadeService } from './artist-facade.service';
-import { AlbumFacadeService } from './album-facade.service';
+import { ArtistFacadeService } from '@core/facades/artist-facade.service';
+import { AlbumFacadeService } from '@core/facades/album-facade.service';
 
 /**
  * Dashboard Facade Service

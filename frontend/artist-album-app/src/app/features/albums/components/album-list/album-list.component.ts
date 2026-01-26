@@ -2,11 +2,11 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
-import { AlbumFacadeService } from '../../../../core/facades/album-facade.service';
-import { ArtistFacadeService } from '../../../../core/facades/artist-facade.service';
-import { HeaderComponent } from '../../../../shared/components/header/header.component';
-import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
-import { Album, Artist } from '../../../../core/models';
+import { AlbumFacadeService } from '@core/facades/album-facade.service';
+import { ArtistFacadeService } from '@core/facades/artist-facade.service';
+import { HeaderComponent } from '@shared/components/header/header.component';
+import { PaginationComponent } from '@shared/components/pagination/pagination.component';
+import { Album, Artist } from '@core/models';
 import { Subscription } from 'rxjs';
 
 @Component({

@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
-import { AlbumFacadeService } from './album-facade.service';
-import { AlbumService } from '../services/album.service';
-import { Album, Page } from '../models';
+import { AlbumFacadeService } from '@core/facades/album-facade.service';
+import { AlbumService } from '@core/services/album.service';
+import { Album, Page } from '@core/models';
 import { of, throwError } from 'rxjs';
 
 describe('AlbumFacadeService', () => {

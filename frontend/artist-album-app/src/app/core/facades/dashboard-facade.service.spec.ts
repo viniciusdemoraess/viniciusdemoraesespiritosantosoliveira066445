@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
-import { DashboardFacadeService } from './dashboard-facade.service';
-import { ArtistFacadeService } from './artist-facade.service';
-import { AlbumFacadeService } from './album-facade.service';
-import { Artist, Album } from '../models';
+import { DashboardFacadeService } from '@core/facades/dashboard-facade.service';
+import { ArtistFacadeService } from '@core/facades/artist-facade.service';
+import { AlbumFacadeService } from '@core/facades/album-facade.service';
+import { Artist, Album } from '@core/models';
 import { BehaviorSubject } from 'rxjs';
 
 describe('DashboardFacadeService', () => {
