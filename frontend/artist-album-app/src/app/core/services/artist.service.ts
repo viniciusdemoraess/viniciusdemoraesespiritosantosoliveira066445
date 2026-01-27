@@ -36,12 +36,12 @@ export class ArtistService {
     return this.http.get<Artist>(`${this.apiUrl}/${id}`);
   }
 
-  createArtist(name: string): Observable<Artist> {
-    return this.http.post<Artist>(this.apiUrl, { name });
+  createArtist(artistData: Partial<Artist>): Observable<Artist> {
+    return this.http.post<Artist>(this.apiUrl, artistData);
   }
 
-  updateArtist(id: number, name: string): Observable<Artist> {
-    return this.http.put<Artist>(`${this.apiUrl}/${id}`, { name });
+  updateArtist(id: number, artistData: Partial<Artist>): Observable<Artist> {
+    return this.http.put<Artist>(`${this.apiUrl}/${id}`, artistData);
   }
 
   deleteArtist(id: number): Observable<void> {

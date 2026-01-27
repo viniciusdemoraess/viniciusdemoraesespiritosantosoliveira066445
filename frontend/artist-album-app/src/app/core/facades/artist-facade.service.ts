@@ -56,9 +56,14 @@ export class ArtistFacadeService {
   /**
    * Create a new artist and update the state
    */
-  createArtist(name: string): Observable<Artist> {
+  createArtist(artistData: Partial<Artist> | string): Observable<Artist> {
+    // Suporta tanto o formato antigo (string) quanto o novo (objeto)
+    const data = typeof artistData === 'string' 
+      ? { name: artistData } 
+      : artistData;
+
     return new Observable(observer => {
-      this.artistService.createArtist(name).subscribe({
+      this.artistService.createArtist(data).subscribe({
         next: (artist) => {
           const current = this.artistsSubject.value;
           this.artistsSubject.next([...current, artist]);
@@ -76,9 +81,14 @@ export class ArtistFacadeService {
   /**
    * Update an existing artist
    */
-  updateArtist(id: number, name: string): Observable<Artist> {
+  updateArtist(id: number, artistData: Partial<Artist> | string): Observable<Artist> {
+    // Suporta tanto o formato antigo (string) quanto o novo (objeto)
+    const data = typeof artistData === 'string' 
+      ? { name: artistData } 
+      : artistData;
+
     return new Observable(observer => {
-      this.artistService.updateArtist(id, name).subscribe({
+      this.artistService.updateArtist(id, data).subscribe({
         next: (updatedArtist) => {
           const current = this.artistsSubject.value;
           const index = current.findIndex(a => a.id === id);

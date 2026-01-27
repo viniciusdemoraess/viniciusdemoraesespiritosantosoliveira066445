@@ -20,6 +20,9 @@ export interface AuthResponse {
 export interface Artist {
   id: number;
   name: string;
+  artistType?: string;
+  country?: string;
+  biography?: string;
   albumCount: number;
   createdAt: string;
   updatedAt: string;
@@ -29,6 +32,10 @@ export interface Album {
   id: number;
   title: string;
   releaseYear: number;
+  genre?: string;
+  recordLabel?: string;
+  totalTracks?: number;
+  totalDurationSeconds?: number;
   artistId: number;
   artistName: string;
   covers: AlbumCover[];

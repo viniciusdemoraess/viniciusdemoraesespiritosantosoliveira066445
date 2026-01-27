@@ -19,6 +19,18 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'artists/:id/edit',
+    loadComponent: () => import('./features/artists/components/artist-edit.component')
+      .then(m => m.ArtistEditComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'artists/:id',
+    loadComponent: () => import('./features/artists/components/artist-detail.component')
+      .then(m => m.ArtistDetailComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: 'artists',
     loadComponent: () => import('./features/artists/components/artist-list.component')
       .then(m => m.ArtistListComponent),
