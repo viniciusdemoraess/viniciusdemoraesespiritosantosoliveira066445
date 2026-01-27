@@ -120,31 +120,42 @@
         </div>
 
         <!-- Artist Actions -->
-        <div class="flex gap-2 mt-4">
+        <div class="grid grid-cols-2 gap-2 mt-4">
+          <button
+            (click)="viewArtistDetails(artist.id)"
+            class="col-span-2 btn-primary text-sm flex items-center justify-center gap-2"
+          >
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Ver Detalhes
+          </button>
           <button
             (click)="viewAlbums(artist.id)"
-            class="flex-1 btn-secondary text-sm"
+            class="btn-secondary text-sm"
           >
-            Ver Álbuns
+            Álbuns
           </button>
-          <button
-            (click)="openEditModal(artist)"
-            class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
-            title="Editar"
-          >
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-            </svg>
-          </button>
-          <button
-            (click)="openDeleteModal(artist)"
-            class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
-            title="Deletar"
-          >
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-            </svg>
-          </button>
+          <div class="flex gap-1">
+            <button
+              (click)="openEditModal(artist)"
+              class="flex-1 p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+              title="Editar"
+            >
+              <svg class="h-5 w-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+              </svg>
+            </button>
+            <button
+              (click)="openDeleteModal(artist)"
+              class="flex-1 p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
+              title="Deletar"
+            >
+              <svg class="h-5 w-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -177,47 +188,81 @@
 <div *ngIf="showAddModal" class="fixed z-50 inset-0 overflow-y-auto">
   <div class="flex items-center justify-center min-h-screen px-4 py-8">
     <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" (click)="closeAddModal()"></div>
-    <div class="card max-w-md w-full p-8 fade-in relative z-10">
+    <div class="card max-w-2xl w-full p-8 fade-in relative z-10 max-h-[90vh] overflow-y-auto">
       <h3 class="text-2xl font-bold text-gray-900 mb-6">Novo Artista</h3>
-      <input
-        [(ngModel)]="newArtistName"
-        (keyup.enter)="createArtist()"
-        type="text"
-        placeholder="Nome do artista"
-        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all mb-6"
-        autofocus
-      />
-      <div class="flex justify-end space-x-3">
+      
+      <div class="space-y-4">
+        <!-- Nome do Artista -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Nome do Artista <span class="text-red-500">*</span>
+          </label>
+          <input
+            [(ngModel)]="newArtistName"
+            (keyup.enter)="createArtist()"
+            type="text"
+            placeholder="Ex: Serj Tankian"
+            minlength="3"
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            autofocus
+          />
+          <p class="text-xs text-gray-500 mt-1">Mínimo 3 caracteres</p>
+        </div>
+
+        <!-- Tipo do Artista -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Tipo de Artista
+          </label>
+          <input
+            [(ngModel)]="newArtistType"
+            type="text"
+            placeholder="Ex: Solo, Banda, Duo"
+            maxlength="100"
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+          />
+        </div>
+
+        <!-- País -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            País
+          </label>
+          <input
+            [(ngModel)]="newArtistCountry"
+            type="text"
+            placeholder="Ex: Estados Unidos, Brasil"
+            maxlength="100"
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+          />
+        </div>
+
+        <!-- Biografia -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Biografia
+          </label>
+          <textarea
+            [(ngModel)]="newArtistBiography"
+            rows="4"
+            placeholder="Breve descrição sobre o artista..."
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="flex justify-end space-x-3 mt-6">
         <button (click)="closeAddModal()" class="btn-secondary">
           Cancelar
         </button>
-        <button (click)="createArtist()" class="btn-primary">
+        <button 
+          (click)="createArtist()" 
+          [disabled]="!newArtistName || newArtistName.trim().length < 3"
+          [class.opacity-50]="!newArtistName || newArtistName.trim().length < 3"
+          [class.cursor-not-allowed]="!newArtistName || newArtistName.trim().length < 3"
+          class="btn-primary"
+        >
           Criar Artista
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Edit Modal -->
-<div *ngIf="showEditModal" class="fixed z-50 inset-0 overflow-y-auto">
-  <div class="flex items-center justify-center min-h-screen px-4 py-8">
-    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" (click)="closeEditModal()"></div>
-    <div class="card max-w-md w-full p-8 fade-in relative z-10">
-      <h3 class="text-2xl font-bold text-gray-900 mb-6">Editar Artista</h3>
-      <input
-        [(ngModel)]="editArtistName"
-        (keyup.enter)="updateArtist()"
-        type="text"
-        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all mb-6"
-        autofocus
-      />
-      <div class="flex justify-end space-x-3">
-        <button (click)="closeEditModal()" class="btn-secondary">
-          Cancelar
-        </button>
-        <button (click)="updateArtist()" class="btn-primary">
-          Salvar Alterações
         </button>
       </div>
     </div>

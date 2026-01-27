@@ -1,0 +1,250 @@
+<app-header title="Detalhes do Artista"></app-header>
+
+<div class="min-h-screen bg-gradient-to-br from-primary-light to-primary-dark">
+  <div class="container mx-auto px-4 py-8">
+    <!-- Back Button -->
+    <button 
+      (click)="goBack()"
+      class="mb-6 flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 rounded-lg transition font-medium shadow-sm"
+    >
+      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+      </svg>
+      <span>Voltar</span>
+    </button>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex justify-center items-center py-20">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+    </div>
+
+    <!-- Artist Not Found -->
+    <div *ngIf="!loading && !artist" class="card p-8 text-center">
+      <svg class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      <h3 class="text-xl font-semibold text-gray-900 mb-2">Artista não encontrado</h3>
+      <p class="text-gray-600">O artista que você está procurando não existe ou foi removido.</p>
+    </div>
+
+    <!-- Artist Details -->
+    <div *ngIf="!loading && artist" class="space-y-6 fade-in">
+      <!-- Artist Info Card -->
+      <div class="card p-8">
+        <div class="flex items-start justify-between mb-6">
+          <div class="flex items-center gap-6">
+            <!-- Avatar -->
+            <div class="w-24 h-24 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+              <span class="text-white text-4xl font-bold">{{ artist.name.charAt(0).toUpperCase() }}</span>
+            </div>
+            
+            <!-- Artist Info -->
+            <div>
+              <h1 class="text-4xl font-bold text-gray-900 mb-2">{{ artist.name }}</h1>
+              <div class="flex items-center gap-3 flex-wrap">
+                <span class="px-3 py-1 text-sm font-medium bg-green-100 text-green-800 rounded-full">
+                  {{ albums.length }} {{ albums.length === 1 ? 'álbum' : 'álbuns' }}
+                </span>
+                <span *ngIf="artist.artistType" class="px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-full">
+                  {{ artist.artistType }}
+                </span>
+                <span *ngIf="artist.country" class="px-3 py-1 text-sm font-medium bg-purple-100 text-purple-800 rounded-full">
+                  {{ artist.country }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Edit Button -->
+          <button 
+            (click)="editArtist()"
+            class="btn-primary flex items-center gap-2"
+          >
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+            </svg>
+            Editar
+          </button>
+        </div>
+
+        <!-- Biography -->
+        <div *ngIf="artist.biography" class="mt-6 pt-6 border-t border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">Biografia</h3>
+          <p class="text-gray-700 leading-relaxed whitespace-pre-line">{{ artist.biography }}</p>
+        </div>
+
+        <!-- Metadata -->
+        <div class="mt-6 pt-6 border-t border-gray-200 grid grid-cols-2 gap-4 text-sm">
+          <div>
+            <span class="text-gray-500">Criado em:</span>
+            <span class="ml-2 text-gray-900 font-medium">{{ artist.createdAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+          <div>
+            <span class="text-gray-500">Última atualização:</span>
+            <span class="ml-2 text-gray-900 font-medium">{{ artist.updatedAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Albums Section -->
+      <div class="card p-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Álbuns</h2>
+
+        <!-- No Albums Message -->
+        <div *ngIf="albums.length === 0" class="text-center py-12">
+          <svg class="h-20 w-20 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+          </svg>
+          <h3 class="text-xl font-semibold text-gray-700 mb-2">Nenhum álbum encontrado</h3>
+          <p class="text-gray-500">Este artista ainda não possui álbuns cadastrados.</p>
+        </div>
+
+        <!-- Albums List -->
+        <div *ngIf="albums.length > 0" class="space-y-3">
+          <div 
+            *ngFor="let album of albums; let i = index"
+            class="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition"
+          >
+            <!-- Album Header (Clickable) -->
+            <button
+              (click)="toggleAlbum(album.id)"
+              class="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition text-left"
+            >
+              <div class="flex items-center gap-4 flex-1">
+                <!-- Album Number -->
+                <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span class="text-primary font-bold">{{ i + 1 }}</span>
+                </div>
+
+                <!-- Album Info -->
+                <div class="flex-1">
+                  <h3 class="text-lg font-semibold text-gray-900">{{ album.title }}</h3>
+                  <div class="flex items-center gap-3 mt-1 flex-wrap">
+                    <span *ngIf="album.releaseYear" class="text-sm text-gray-600">
+                      {{ album.releaseYear }}
+                    </span>
+                    <span *ngIf="album.genre" class="px-2 py-0.5 text-xs font-medium bg-indigo-100 text-indigo-800 rounded">
+                      {{ album.genre }}
+                    </span>
+                    <span *ngIf="album.totalTracks" class="text-sm text-gray-600">
+                      {{ album.totalTracks }} {{ album.totalTracks === 1 ? 'faixa' : 'faixas' }}
+                    </span>
+                    <span *ngIf="album.covers && album.covers.length > 0" class="text-sm text-gray-500">
+                      {{ album.covers.length }} {{ album.covers.length === 1 ? 'capa' : 'capas' }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Chevron Icon -->
+              <svg 
+                class="h-6 w-6 text-gray-400 transition-transform duration-200"
+                [class.rotate-180]="isAlbumExpanded(album.id)"
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+
+            <!-- Album Details (Expandable) -->
+            <div 
+              *ngIf="isAlbumExpanded(album.id)"
+              class="px-6 pb-6 pt-2 bg-gray-50 border-t border-gray-200 animate-fadeIn"
+            >
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Album Information -->
+                <div class="space-y-3">
+                  <h4 class="font-semibold text-gray-900 mb-3">Informações</h4>
+                  
+                  <div *ngIf="album.recordLabel" class="flex items-start">
+                    <span class="text-sm text-gray-500 min-w-[120px]">Gravadora:</span>
+                    <span class="text-sm text-gray-900 font-medium">{{ album.recordLabel }}</span>
+                  </div>
+
+                  <div *ngIf="album.totalDurationSeconds" class="flex items-start">
+                    <span class="text-sm text-gray-500 min-w-[120px]">Duração:</span>
+                    <span class="text-sm text-gray-900 font-medium">
+                      {{ Math.floor(album.totalDurationSeconds / 60) }}:{{ (album.totalDurationSeconds % 60).toString().padStart(2, '0') }}
+                    </span>
+                  </div>
+
+                  <div class="flex items-start">
+                    <span class="text-sm text-gray-500 min-w-[120px]">Criado em:</span>
+                    <span class="text-sm text-gray-900 font-medium">{{ album.createdAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+                  </div>
+
+                  <div class="flex items-start">
+                    <span class="text-sm text-gray-500 min-w-[120px]">Atualizado em:</span>
+                    <span class="text-sm text-gray-900 font-medium">{{ album.updatedAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+                  </div>
+                </div>
+
+                <!-- Album Covers Carousel -->
+                <div>
+                  <h4 class="font-semibold text-gray-900 mb-3">
+                    Capas 
+                    <span *ngIf="album.covers && album.covers.length > 0" class="text-sm font-normal text-gray-500">
+                      ({{ getCurrentCoverIndex(album.id) + 1 }} de {{ album.covers.length }})
+                    </span>
+                  </h4>
+                  
+                  <!-- No Covers -->
+                  <div *ngIf="!album.covers || album.covers.length === 0" class="flex items-center justify-center h-64 bg-gray-200 rounded-lg">
+                    <div class="text-center">
+                      <svg class="h-16 w-16 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                      </svg>
+                      <p class="text-sm text-gray-500">Sem capas</p>
+                    </div>
+                  </div>
+
+                  <!-- Carousel -->
+                  <div *ngIf="album.covers && album.covers.length > 0" class="relative">
+                    <img 
+                      [src]="getCurrentCover(album)" 
+                      [alt]="album.title"
+                      class="w-full h-64 object-cover rounded-lg shadow-md"
+                    />
+
+                    <!-- Carousel Controls (only if more than 1 cover) -->
+                    <div *ngIf="album.covers.length > 1" class="absolute inset-0 flex items-center justify-between px-2">
+                      <button 
+                        (click)="previousCover(album, $event)"
+                        class="bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition"
+                      >
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                      </button>
+                      <button 
+                        (click)="nextCover(album, $event)"
+                        class="bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition"
+                      >
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                      </button>
+                    </div>
+
+                    <!-- Dots Indicator -->
+                    <div *ngIf="album.covers.length > 1" class="flex justify-center gap-2 mt-3">
+                      <button
+                        *ngFor="let cover of album.covers; let idx = index"
+                        (click)="currentCoverIndexMap.set(album.id, idx)"
+                        class="w-2 h-2 rounded-full transition"
+                        [class.bg-primary]="getCurrentCoverIndex(album.id) === idx"
+                        [class.bg-gray-300]="getCurrentCoverIndex(album.id) !== idx"
+                      ></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

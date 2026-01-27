@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ArtistFacadeService } from '@core/facades/artist-facade.service';
+import { AlbumFacadeService } from '@core/facades/album-facade.service';
 import { HeaderComponent } from '@shared/components/header/header.component';
 import { PaginationComponent } from '@shared/components/pagination/pagination.component';
 import { Artist } from '@core/models';
@@ -30,11 +31,12 @@ export class ArtistListComponent implements OnInit, OnDestroy {
   totalItems = 0;
 
   showAddModal = false;
-  showEditModal = false;
   showDeleteModal = false;
   selectedArtist: Artist | null = null;
   newArtistName = '';
-  editArtistName = '';
+  newArtistType = '';
+  newArtistCountry = '';
+  newArtistBiography = '';
 
   private subscriptions: Subscription[] = [];
 
@@ -159,18 +161,38 @@ export class ArtistListComponent implements OnInit, OnDestroy {
 
   openAddModal(): void {
     this.newArtistName = '';
+    this.newArtistType = '';
+    this.newArtistCountry = '';
+    this.newArtistBiography = '';
     this.showAddModal = true;
   }
 
   closeAddModal(): void {
     this.showAddModal = false;
     this.newArtistName = '';
+    this.newArtistType = '';
+    this.newArtistCountry = '';
+    this.newArtistBiography = '';
   }
 
   createArtist(): void {
-    if (!this.newArtistName.trim()) return;
+    if (!this.newArtistName.trim() || this.newArtistName.trim().length < 3) return;
 
-    this.artistFacade.createArtist(this.newArtistName).subscribe({
+    const newArtist: Partial<Artist> = {
+      name: this.newArtistName.trim()
+    };
+
+    if (this.newArtistType.trim()) {
+      newArtist.artistType = this.newArtistType.trim();
+    }
+    if (this.newArtistCountry.trim()) {
+      newArtist.country = this.newArtistCountry.trim();
+    }
+    if (this.newArtistBiography.trim()) {
+      newArtist.biography = this.newArtistBiography.trim();
+    }
+
+    this.artistFacade.createArtist(newArtist).subscribe({
       next: () => {
         this.closeAddModal();
       },
@@ -181,28 +203,7 @@ export class ArtistListComponent implements OnInit, OnDestroy {
   }
 
   openEditModal(artist: Artist): void {
-    this.selectedArtist = artist;
-    this.editArtistName = artist.name;
-    this.showEditModal = true;
-  }
-
-  closeEditModal(): void {
-    this.showEditModal = false;
-    this.selectedArtist = null;
-    this.editArtistName = '';
-  }
-
-  updateArtist(): void {
-    if (!this.selectedArtist || !this.editArtistName.trim()) return;
-
-    this.artistFacade.updateArtist(this.selectedArtist.id, this.editArtistName).subscribe({
-      next: () => {
-        this.closeEditModal();
-      },
-      error: (error: any) => {
-        console.error('Error updating artist:', error);
-      }
-    });
+    this.router.navigate(['/artists', artist.id, 'edit']);
   }
 
   openDeleteModal(artist: Artist): void {
@@ -230,5 +231,9 @@ export class ArtistListComponent implements OnInit, OnDestroy {
 
   viewAlbums(artistId: number): void {
     this.router.navigate(['/albums'], { queryParams: { artistId } });
+  }
+  
+  viewArtistDetails(artistId: number): void {
+    this.router.navigate(['/artists', artistId]);
   }
 }

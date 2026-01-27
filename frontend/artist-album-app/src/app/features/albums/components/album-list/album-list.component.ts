@@ -41,6 +41,10 @@ export class AlbumListComponent implements OnInit, OnDestroy {
   newAlbum = {
     title: '',
     releaseYear: new Date().getFullYear(),
+    genre: '',
+    recordLabel: '',
+    totalTracks: undefined as number | undefined,
+    totalDurationSeconds: undefined as number | undefined,
     artistId: 0
   };
 
@@ -218,6 +222,10 @@ export class AlbumListComponent implements OnInit, OnDestroy {
     this.newAlbum = {
       title: '',
       releaseYear: new Date().getFullYear(),
+      genre: '',
+      recordLabel: '',
+      totalTracks: undefined,
+      totalDurationSeconds: undefined,
       artistId: this.artists.length > 0 ? this.artists[0].id : 0
     };
     this.showAddModal = true;
@@ -228,7 +236,7 @@ export class AlbumListComponent implements OnInit, OnDestroy {
   }
 
   createAlbum(): void {
-    if (!this.newAlbum.title || !this.newAlbum.artistId) return;
+    if (!this.newAlbum.title || this.newAlbum.title.trim().length < 3 || !this.newAlbum.artistId) return;
 
     this.albumFacade.createAlbum(this.newAlbum).subscribe({
       next: () => {
