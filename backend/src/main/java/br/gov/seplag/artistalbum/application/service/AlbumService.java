@@ -81,6 +81,10 @@ public class AlbumService {
         Album album = Album.builder()
                 .title(request.getTitle())
                 .releaseYear(request.getReleaseYear())
+                .genre(request.getGenre())
+                .recordLabel(request.getRecordLabel())
+                .totalTracks(request.getTotalTracks())
+                .totalDurationSeconds(request.getTotalDurationSeconds())
                 .artist(artist)
                 .build();
 
@@ -109,6 +113,10 @@ public class AlbumService {
 
         album.setTitle(request.getTitle());
         album.setReleaseYear(request.getReleaseYear());
+        album.setGenre(request.getGenre());
+        album.setRecordLabel(request.getRecordLabel());
+        album.setTotalTracks(request.getTotalTracks());
+        album.setTotalDurationSeconds(request.getTotalDurationSeconds());
         album.setArtist(artist);
 
         Album updatedAlbum = albumRepository.save(album);
@@ -193,6 +201,10 @@ public class AlbumService {
                 .id(album.getId())
                 .title(album.getTitle())
                 .releaseYear(album.getReleaseYear())
+                .genre(album.getGenre())
+                .recordLabel(album.getRecordLabel())
+                .totalTracks(album.getTotalTracks())
+                .totalDurationSeconds(album.getTotalDurationSeconds())
                 .artistId(album.getArtist().getId())
                 .artistName(album.getArtist().getName())
                 .covers(coverResponses)

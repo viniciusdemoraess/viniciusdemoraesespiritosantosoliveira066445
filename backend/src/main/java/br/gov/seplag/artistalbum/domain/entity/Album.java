@@ -26,6 +26,18 @@ public class Album {
     @Column(name = "release_year")
     private Integer releaseYear;
 
+    @Column(length = 100)
+    private String genre;
+
+    @Column(name = "record_label", length = 200)
+    private String recordLabel;
+
+    @Column(name = "total_tracks")
+    private Integer totalTracks;
+
+    @Column(name = "total_duration_seconds")
+    private Integer totalDurationSeconds;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "artist_id", nullable = false)
     private Artist artist;

@@ -17,8 +17,22 @@ import lombok.NoArgsConstructor;
 public class ArtistRequest {
 
     @NotBlank(message = "Artist name is required")
-    @Size(min = 2, max = 200, message = "Artist name must be between 2 and 200 characters")
+    @Size(min = 3, max = 200, message = "Artist name must be between 3 and 200 characters")
     @Schema(description = "Artist name", example = "Serj Tankian", required = true)
     @JsonProperty("name")
     private String name;
+
+    @Size(max = 100, message = "Artist type must not exceed 100 characters")
+    @Schema(description = "Artist type", example = "Cantor")
+    @JsonProperty("artistType")
+    private String artistType;
+
+    @Size(max = 100, message = "Country must not exceed 100 characters")
+    @Schema(description = "Country of origin", example = "Brasil")
+    @JsonProperty("country")
+    private String country;
+
+    @Schema(description = "Artist biography")
+    @JsonProperty("biography")
+    private String biography;
 }

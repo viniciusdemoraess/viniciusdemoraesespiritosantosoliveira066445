@@ -56,6 +56,9 @@ public class ArtistService {
 
         Artist artist = Artist.builder()
                 .name(request.getName())
+                .artistType(request.getArtistType())
+                .country(request.getCountry())
+                .biography(request.getBiography())
                 .build();
 
         Artist savedArtist = artistRepository.save(artist);
@@ -76,6 +79,9 @@ public class ArtistService {
         }
 
         artist.setName(request.getName());
+        artist.setArtistType(request.getArtistType());
+        artist.setCountry(request.getCountry());
+        artist.setBiography(request.getBiography());
         Artist updatedArtist = artistRepository.save(artist);
 
         log.info("Artist updated successfully: {}", id);
@@ -98,6 +104,9 @@ public class ArtistService {
         return ArtistResponse.builder()
                 .id(artist.getId())
                 .name(artist.getName())
+                .artistType(artist.getArtistType())
+                .country(artist.getCountry())
+                .biography(artist.getBiography())
                 .albumCount(artist.getAlbumCount())
                 .createdAt(artist.getCreatedAt())
                 .updatedAt(artist.getUpdatedAt())

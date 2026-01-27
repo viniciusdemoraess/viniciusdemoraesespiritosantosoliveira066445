@@ -29,6 +29,22 @@ public class AlbumResponse {
     @Schema(description = "Release year", example = "2012")
     private Integer releaseYear;
 
+    @JsonProperty("genre")
+    @Schema(description = "Music genre", example = "Rock")
+    private String genre;
+
+    @JsonProperty("recordLabel")
+    @Schema(description = "Record label", example = "Universal Music")
+    private String recordLabel;
+
+    @JsonProperty("totalTracks")
+    @Schema(description = "Total number of tracks", example = "12")
+    private Integer totalTracks;
+
+    @JsonProperty("totalDurationSeconds")
+    @Schema(description = "Total duration in seconds", example = "2400")
+    private Integer totalDurationSeconds;
+
     @JsonProperty("artistId")
     @Schema(description = "Artist ID", example = "1")
     private Long artistId;

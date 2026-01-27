@@ -24,6 +24,18 @@ public class ArtistResponse {
     @Schema(description = "Artist name", example = "Serj Tankian")
     private String name;
 
+    @JsonProperty("artistType")
+    @Schema(description = "Artist type", example = "Cantor")
+    private String artistType;
+
+    @JsonProperty("country")
+    @Schema(description = "Country of origin", example = "Brasil")
+    private String country;
+
+    @JsonProperty("biography")
+    @Schema(description = "Artist biography")
+    private String biography;
+
     @JsonProperty("albumCount")
     @Schema(description = "Number of albums", example = "3")
     private Integer albumCount;

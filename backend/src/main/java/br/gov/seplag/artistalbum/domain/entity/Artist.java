@@ -23,6 +23,15 @@ public class Artist {
     @Column(nullable = false, length = 200)
     private String name;
 
+    @Column(name = "artist_type", length = 100)
+    private String artistType;
+
+    @Column(length = 100)
+    private String country;
+
+    @Column(columnDefinition = "TEXT")
+    private String biography;
+
     @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
     private List<Album> albums = new ArrayList<>();
