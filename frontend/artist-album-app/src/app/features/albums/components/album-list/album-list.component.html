@@ -1,12 +1,12 @@
-<div class="min-h-screen bg-gray-50">
+<div class="min-h-screen bg-spotify-black">
   <!-- Reusable Header Component -->
-  <app-header title="Galeria de Álbuns" [showNotifications]="true"></app-header>
+  <app-header title="Music Manager" [showNotifications]="true"></app-header>
 
   <!-- Main Content -->
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Page Header -->
     <div class="mb-6 fade-in">
-      <h1 class="text-3xl font-bold text-gray-900 mb-2">
+      <h1 class="text-3xl font-bold text-spotify-white mb-2">
         Galeria de Álbuns
       </h1>
       <p class="text-gray-600">Explore e gerencie sua coleção musical</p>
@@ -25,7 +25,7 @@
               (keyup.enter)="onSearch()"
               (input)="onSearch()"
               placeholder="Buscar álbuns por título ou artista..."
-              class="w-full px-4 py-2.5 pr-20 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+              class="w-full px-4 py-2.5 pr-20 border border-spotify-gray-light rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
             />
             <div class="absolute right-3 top-1/2 transform -translate-y-1/2 flex gap-1">
               <button
@@ -71,7 +71,7 @@
               [class.bg-primary]="sortBy === 'title'"
               [class.text-white]="sortBy === 'title'"
               [class.bg-gray-100]="sortBy !== 'title'"
-              [class.text-gray-700]="sortBy !== 'title'"
+              [class.text-spotify-gray-lighter]="sortBy !== 'title'"
               class="px-4 py-2 hover:bg-gray-200 rounded-lg transition font-medium"
             >
               Título
@@ -81,7 +81,7 @@
               [class.bg-primary]="sortBy === 'year'"
               [class.text-white]="sortBy === 'year'"
               [class.bg-gray-100]="sortBy !== 'year'"
-              [class.text-gray-700]="sortBy !== 'year'"
+              [class.text-spotify-gray-lighter]="sortBy !== 'year'"
               class="px-4 py-2 hover:bg-gray-200 rounded-lg transition font-medium"
             >
               Ano
@@ -91,7 +91,7 @@
               [class.bg-primary]="sortBy === 'artist'"
               [class.text-white]="sortBy === 'artist'"
               [class.bg-gray-100]="sortBy !== 'artist'"
-              [class.text-gray-700]="sortBy !== 'artist'"
+              [class.text-spotify-gray-lighter]="sortBy !== 'artist'"
               class="px-4 py-2 hover:bg-gray-200 rounded-lg transition font-medium"
             >
               Artista
@@ -99,7 +99,7 @@
           </div>
           <button
             (click)="toggleSortDirection()"
-            class="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition font-medium"
+            class="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-spotify-gray-lighter rounded-lg transition font-medium"
           >
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path *ngIf="sortDirection === 'asc'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path>
@@ -153,7 +153,7 @@
           <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-4">
             <button
               (click)="openUploadModal(album)"
-              class="flex-1 px-4 py-2 bg-white hover:bg-gray-100 text-gray-900 rounded-lg transition font-medium text-sm flex items-center justify-center"
+              class="flex-1 px-4 py-2 bg-white hover:bg-gray-100 text-spotify-white rounded-lg transition font-medium text-sm flex items-center justify-center"
             >
               <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
@@ -172,7 +172,7 @@
 
         <!-- Album Info -->
         <div class="p-4">
-          <h3 class="text-lg font-bold text-gray-900 mb-1 truncate">{{ album.title }}</h3>
+          <h3 class="text-lg font-bold text-spotify-white mb-1 truncate">{{ album.title }}</h3>
           <p class="text-gray-600 text-sm mb-3">
             {{ album.artistName }} • {{ album.releaseYear }}
           </p>
@@ -187,7 +187,7 @@
         <svg class="h-16 w-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
         </svg>
-        <h3 class="text-xl font-semibold text-gray-900 mb-2">Nenhum álbum encontrado</h3>
+        <h3 class="text-xl font-semibold text-spotify-white mb-2">Nenhum álbum encontrado</h3>
         <p class="text-gray-600 mb-4">Comece adicionando seu primeiro álbum</p>
         <button (click)="openAddModal()" class="btn-primary">
           Adicionar Primeiro Álbum
@@ -212,82 +212,82 @@
   <div class="flex items-center justify-center min-h-screen px-4 py-8">
     <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" (click)="closeAddModal()"></div>
     <div class="card max-w-2xl w-full p-8 fade-in relative z-10 max-h-[90vh] overflow-y-auto">
-      <h3 class="text-2xl font-bold text-gray-900 mb-6">Novo Álbum</h3>
+      <h3 class="text-2xl font-bold text-spotify-white mb-6">Novo Álbum</h3>
       <div class="space-y-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Título *</label>
+          <label class="block text-sm font-medium text-spotify-gray-lighter mb-2">Título *</label>
           <input
             [(ngModel)]="newAlbum.title"
             type="text"
             minlength="3"
-            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            class="w-full px-4 py-2.5 border border-spotify-gray-light rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
             placeholder="Nome do álbum (mínimo 3 caracteres)"
           />
         </div>
 
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Ano de Lançamento</label>
+            <label class="block text-sm font-medium text-spotify-gray-lighter mb-2">Ano de Lançamento</label>
             <input
               [(ngModel)]="newAlbum.releaseYear"
               type="number"
               min="1900"
               max="2100"
-              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+              class="w-full px-4 py-2.5 border border-spotify-gray-light rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
               placeholder="2024"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Gênero Musical</label>
+            <label class="block text-sm font-medium text-spotify-gray-lighter mb-2">Gênero Musical</label>
             <input
               [(ngModel)]="newAlbum.genre"
               type="text"
-              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+              class="w-full px-4 py-2.5 border border-spotify-gray-light rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
               placeholder="Ex: Rock, Pop, Sertanejo"
             />
           </div>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Gravadora</label>
+          <label class="block text-sm font-medium text-spotify-gray-lighter mb-2">Gravadora</label>
           <input
             [(ngModel)]="newAlbum.recordLabel"
             type="text"
-            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            class="w-full px-4 py-2.5 border border-spotify-gray-light rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
             placeholder="Ex: Universal Music, Sony Music"
           />
         </div>
 
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Total de Faixas</label>
+            <label class="block text-sm font-medium text-spotify-gray-lighter mb-2">Total de Faixas</label>
             <input
               [(ngModel)]="newAlbum.totalTracks"
               type="number"
               min="1"
-              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+              class="w-full px-4 py-2.5 border border-spotify-gray-light rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
               placeholder="12"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Duração Total (segundos)</label>
+            <label class="block text-sm font-medium text-spotify-gray-lighter mb-2">Duração Total (segundos)</label>
             <input
               [(ngModel)]="newAlbum.totalDurationSeconds"
               type="number"
               min="1"
-              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+              class="w-full px-4 py-2.5 border border-spotify-gray-light rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
               placeholder="2400"
             />
           </div>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Artista *</label>
+          <label class="block text-sm font-medium text-spotify-gray-lighter mb-2">Artista *</label>
           <select
             [(ngModel)]="newAlbum.artistId"
-            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            class="w-full px-4 py-2.5 border border-spotify-gray-light rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
           >
             <option value="0" disabled>Selecione um artista</option>
             <option *ngFor="let artist of artists" [value]="artist.id">{{ artist.name }}</option>
@@ -317,12 +317,12 @@
   <div class="flex items-center justify-center min-h-screen px-4 py-8">
     <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" (click)="closeUploadModal()"></div>
     <div class="card max-w-md w-full p-8 fade-in relative z-10">
-      <h3 class="text-2xl font-bold text-gray-900 mb-4">Upload de Capas</h3>
+      <h3 class="text-2xl font-bold text-spotify-white mb-4">Upload de Capas</h3>
       <p class="text-gray-600 mb-6">
-        Álbum: <strong class="text-gray-900 font-bold">{{ selectedAlbum?.title }}</strong>
+        Álbum: <strong class="text-spotify-white font-bold">{{ selectedAlbum?.title }}</strong>
       </p>
       <div class="mb-6">
-        <label class="block text-sm font-medium text-gray-700 mb-2">
+        <label class="block text-sm font-medium text-spotify-gray-lighter mb-2">
           Selecione as imagens (max 10MB cada)
         </label>
         <input
@@ -330,7 +330,7 @@
           (change)="onFileSelect($event)"
           multiple
           accept="image/*"
-          class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-primary hover:file:bg-blue-100 file:cursor-pointer"
+          class="w-full px-4 py-2.5 border border-spotify-gray-light rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-primary hover:file:bg-blue-100 file:cursor-pointer"
         />
         <p *ngIf="selectedFiles.length > 0" class="text-gray-600 text-sm mt-3">
           ✓ {{ selectedFiles.length }} arquivo(s) selecionado(s)

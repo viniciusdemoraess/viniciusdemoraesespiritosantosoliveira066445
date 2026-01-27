@@ -5,7 +5,7 @@
     <!-- Back Button -->
     <button 
       (click)="goBack()"
-      class="mb-6 flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 rounded-lg transition font-medium shadow-sm"
+      class="mb-6 flex items-center gap-2 px-4 py-2 bg-white hover:bg-spotify-black text-spotify-gray-lighter rounded-lg transition font-medium shadow-sm"
     >
       <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
@@ -23,7 +23,7 @@
       <svg class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
       </svg>
-      <h3 class="text-xl font-semibold text-gray-900 mb-2">Artista não encontrado</h3>
+      <h3 class="text-xl font-semibold text-spotify-white mb-2">Artista não encontrado</h3>
       <p class="text-gray-600">O artista que você está procurando não existe ou foi removido.</p>
     </div>
 
@@ -40,7 +40,7 @@
             
             <!-- Artist Info -->
             <div>
-              <h1 class="text-4xl font-bold text-gray-900 mb-2">{{ artist.name }}</h1>
+              <h1 class="text-4xl font-bold text-spotify-white mb-2">{{ artist.name }}</h1>
               <div class="flex items-center gap-3 flex-wrap">
                 <span class="px-3 py-1 text-sm font-medium bg-green-100 text-green-800 rounded-full">
                   {{ albums.length }} {{ albums.length === 1 ? 'álbum' : 'álbuns' }}
@@ -69,34 +69,34 @@
 
         <!-- Biography -->
         <div *ngIf="artist.biography" class="mt-6 pt-6 border-t border-gray-200">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">Biografia</h3>
-          <p class="text-gray-700 leading-relaxed whitespace-pre-line">{{ artist.biography }}</p>
+          <h3 class="text-lg font-semibold text-spotify-white mb-3">Biografia</h3>
+          <p class="text-spotify-gray-lighter leading-relaxed whitespace-pre-line">{{ artist.biography }}</p>
         </div>
 
         <!-- Metadata -->
         <div class="mt-6 pt-6 border-t border-gray-200 grid grid-cols-2 gap-4 text-sm">
           <div>
-            <span class="text-gray-500">Criado em:</span>
-            <span class="ml-2 text-gray-900 font-medium">{{ artist.createdAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+            <span class="text-spotify-text-muted">Criado em:</span>
+            <span class="ml-2 text-spotify-white font-medium">{{ artist.createdAt | date: 'dd/MM/yyyy HH:mm' }}</span>
           </div>
           <div>
-            <span class="text-gray-500">Última atualização:</span>
-            <span class="ml-2 text-gray-900 font-medium">{{ artist.updatedAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+            <span class="text-spotify-text-muted">Última atualização:</span>
+            <span class="ml-2 text-spotify-white font-medium">{{ artist.updatedAt | date: 'dd/MM/yyyy HH:mm' }}</span>
           </div>
         </div>
       </div>
 
       <!-- Albums Section -->
       <div class="card p-8">
-        <h2 class="text-2xl font-bold text-gray-900 mb-6">Álbuns</h2>
+        <h2 class="text-2xl font-bold text-spotify-white mb-6">Álbuns</h2>
 
         <!-- No Albums Message -->
         <div *ngIf="albums.length === 0" class="text-center py-12">
           <svg class="h-20 w-20 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
           </svg>
-          <h3 class="text-xl font-semibold text-gray-700 mb-2">Nenhum álbum encontrado</h3>
-          <p class="text-gray-500">Este artista ainda não possui álbuns cadastrados.</p>
+          <h3 class="text-xl font-semibold text-spotify-gray-lighter mb-2">Nenhum álbum encontrado</h3>
+          <p class="text-spotify-text-muted">Este artista ainda não possui álbuns cadastrados.</p>
         </div>
 
         <!-- Albums List -->
@@ -108,7 +108,7 @@
             <!-- Album Header (Clickable) -->
             <button
               (click)="toggleAlbum(album.id)"
-              class="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition text-left"
+              class="w-full px-6 py-4 flex items-center justify-between hover:bg-spotify-black transition text-left"
             >
               <div class="flex items-center gap-4 flex-1">
                 <!-- Album Number -->
@@ -118,7 +118,7 @@
 
                 <!-- Album Info -->
                 <div class="flex-1">
-                  <h3 class="text-lg font-semibold text-gray-900">{{ album.title }}</h3>
+                  <h3 class="text-lg font-semibold text-spotify-white">{{ album.title }}</h3>
                   <div class="flex items-center gap-3 mt-1 flex-wrap">
                     <span *ngIf="album.releaseYear" class="text-sm text-gray-600">
                       {{ album.releaseYear }}
@@ -129,7 +129,7 @@
                     <span *ngIf="album.totalTracks" class="text-sm text-gray-600">
                       {{ album.totalTracks }} {{ album.totalTracks === 1 ? 'faixa' : 'faixas' }}
                     </span>
-                    <span *ngIf="album.covers && album.covers.length > 0" class="text-sm text-gray-500">
+                    <span *ngIf="album.covers && album.covers.length > 0" class="text-sm text-spotify-text-muted">
                       {{ album.covers.length }} {{ album.covers.length === 1 ? 'capa' : 'capas' }}
                     </span>
                   </div>
@@ -151,41 +151,41 @@
             <!-- Album Details (Expandable) -->
             <div 
               *ngIf="isAlbumExpanded(album.id)"
-              class="px-6 pb-6 pt-2 bg-gray-50 border-t border-gray-200 animate-fadeIn"
+              class="px-6 pb-6 pt-2 bg-spotify-black border-t border-gray-200 animate-fadeIn"
             >
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Album Information -->
                 <div class="space-y-3">
-                  <h4 class="font-semibold text-gray-900 mb-3">Informações</h4>
+                  <h4 class="font-semibold text-spotify-white mb-3">Informações</h4>
                   
                   <div *ngIf="album.recordLabel" class="flex items-start">
-                    <span class="text-sm text-gray-500 min-w-[120px]">Gravadora:</span>
-                    <span class="text-sm text-gray-900 font-medium">{{ album.recordLabel }}</span>
+                    <span class="text-sm text-spotify-text-muted min-w-[120px]">Gravadora:</span>
+                    <span class="text-sm text-spotify-white font-medium">{{ album.recordLabel }}</span>
                   </div>
 
                   <div *ngIf="album.totalDurationSeconds" class="flex items-start">
-                    <span class="text-sm text-gray-500 min-w-[120px]">Duração:</span>
-                    <span class="text-sm text-gray-900 font-medium">
+                    <span class="text-sm text-spotify-text-muted min-w-[120px]">Duração:</span>
+                    <span class="text-sm text-spotify-white font-medium">
                       {{ Math.floor(album.totalDurationSeconds / 60) }}:{{ (album.totalDurationSeconds % 60).toString().padStart(2, '0') }}
                     </span>
                   </div>
 
                   <div class="flex items-start">
-                    <span class="text-sm text-gray-500 min-w-[120px]">Criado em:</span>
-                    <span class="text-sm text-gray-900 font-medium">{{ album.createdAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+                    <span class="text-sm text-spotify-text-muted min-w-[120px]">Criado em:</span>
+                    <span class="text-sm text-spotify-white font-medium">{{ album.createdAt | date: 'dd/MM/yyyy HH:mm' }}</span>
                   </div>
 
                   <div class="flex items-start">
-                    <span class="text-sm text-gray-500 min-w-[120px]">Atualizado em:</span>
-                    <span class="text-sm text-gray-900 font-medium">{{ album.updatedAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+                    <span class="text-sm text-spotify-text-muted min-w-[120px]">Atualizado em:</span>
+                    <span class="text-sm text-spotify-white font-medium">{{ album.updatedAt | date: 'dd/MM/yyyy HH:mm' }}</span>
                   </div>
                 </div>
 
                 <!-- Album Covers Carousel -->
                 <div>
-                  <h4 class="font-semibold text-gray-900 mb-3">
+                  <h4 class="font-semibold text-spotify-white mb-3">
                     Capas 
-                    <span *ngIf="album.covers && album.covers.length > 0" class="text-sm font-normal text-gray-500">
+                    <span *ngIf="album.covers && album.covers.length > 0" class="text-sm font-normal text-spotify-text-muted">
                       ({{ getCurrentCoverIndex(album.id) + 1 }} de {{ album.covers.length }})
                     </span>
                   </h4>
@@ -196,7 +196,7 @@
                       <svg class="h-16 w-16 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                       </svg>
-                      <p class="text-sm text-gray-500">Sem capas</p>
+                      <p class="text-sm text-spotify-text-muted">Sem capas</p>
                     </div>
                   </div>
 
