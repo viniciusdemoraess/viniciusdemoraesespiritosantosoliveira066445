@@ -123,13 +123,13 @@ class ArtistTest {
     @DisplayName("Should create artist with all args constructor")
     void shouldCreateArtistWithAllArgsConstructor() {
         LocalDateTime now = LocalDateTime.now();
-        Artist newArtist = new Artist(
-                2L,
-                "Metallica",
-                null,
-                now,
-                now
-        );
+        Artist newArtist = Artist.builder()
+                .id(2L)
+                .name("Metallica")
+                .albums(null)
+                .createdAt(now)
+                .updatedAt(now)
+                .build();
 
         assertThat(newArtist.getId()).isEqualTo(2L);
         assertThat(newArtist.getName()).isEqualTo("Metallica");

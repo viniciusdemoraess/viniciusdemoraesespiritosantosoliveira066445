@@ -128,11 +128,23 @@ class AlbumRequestTest {
     @Test
     @DisplayName("Should create with all args constructor")
     void shouldCreateWithAllArgsConstructor() {
-        AlbumRequest request = new AlbumRequest("Hypnotize", 2005, 3L);
+        AlbumRequest request = AlbumRequest.builder()
+                .title("Hypnotize")
+                .releaseYear(2005)
+                .artistId(3L)
+                .genre("Rock")
+                .recordLabel("Columbia Records")
+                .totalTracks(12)
+                .totalDurationSeconds(2400)
+                .build();
 
         assertThat(request.getTitle()).isEqualTo("Hypnotize");
         assertThat(request.getReleaseYear()).isEqualTo(2005);
         assertThat(request.getArtistId()).isEqualTo(3L);
+        assertThat(request.getGenre()).isEqualTo("Rock");
+        assertThat(request.getRecordLabel()).isEqualTo("Columbia Records");
+        assertThat(request.getTotalTracks()).isEqualTo(12);
+        assertThat(request.getTotalDurationSeconds()).isEqualTo(2400);
     }
 
     @Test

@@ -139,15 +139,15 @@ class AlbumTest {
     @DisplayName("Should create album with all args constructor")
     void shouldCreateAlbumWithAllArgsConstructor() {
         LocalDateTime now = LocalDateTime.now();
-        Album newAlbum = new Album(
-                2L,
-                "Hypnotize",
-                2005,
-                artist,
-                null,
-                now,
-                now
-        );
+        Album newAlbum = Album.builder()
+                .id(2L)
+                .title("Hypnotize")
+                .releaseYear(2005)
+                .artist(artist)
+                .covers(null)
+                .createdAt(now)
+                .updatedAt(now)
+                .build();
 
         assertThat(newAlbum.getId()).isEqualTo(2L);
         assertThat(newAlbum.getTitle()).isEqualTo("Hypnotize");

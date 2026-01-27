@@ -83,7 +83,11 @@ class AlbumServiceTest {
                 .updatedAt(LocalDateTime.now())
                 .build();
 
-        albumRequest = new AlbumRequest("Toxicity", 2001, 1L);
+        albumRequest = AlbumRequest.builder()
+                .title("Toxicity")
+                .releaseYear(2001)
+                .artistId(1L)
+                .build();
     }
 
     @Test
@@ -193,7 +197,11 @@ class AlbumServiceTest {
     void shouldThrowExceptionWhenArtistNotFoundDuringCreation() {
         when(artistRepository.findById(999L)).thenReturn(Optional.empty());
 
-        AlbumRequest request = new AlbumRequest("Test Album", 2024, 999L);
+        AlbumRequest request = AlbumRequest.builder()
+                .title("Test Album")
+                .releaseYear(2024)
+                .artistId(999L)
+                .build();
 
         assertThatThrownBy(() -> albumService.createAlbum(request))
                 .isInstanceOf(ResourceNotFoundException.class)
@@ -236,7 +244,11 @@ class AlbumServiceTest {
     @Test
     @DisplayName("Should update album successfully")
     void shouldUpdateAlbumSuccessfully() {
-        AlbumRequest updateRequest = new AlbumRequest("Updated Title", 2024, 1L);
+        AlbumRequest updateRequest = AlbumRequest.builder()
+                .title("Updated Title")
+                .releaseYear(2024)
+                .artistId(1L)
+                .build();
         
         when(albumRepository.findById(1L)).thenReturn(Optional.of(testAlbum));
         when(artistRepository.findById(1L)).thenReturn(Optional.of(testArtist));
@@ -255,7 +267,11 @@ class AlbumServiceTest {
     @Test
     @DisplayName("Should throw ResourceNotFoundException when updating non-existent album")
     void shouldThrowExceptionWhenUpdatingNonExistentAlbum() {
-        AlbumRequest updateRequest = new AlbumRequest("Updated Title", 2024, 1L);
+        AlbumRequest updateRequest = AlbumRequest.builder()
+                .title("Updated Title")
+                .releaseYear(2024)
+                .artistId(1L)
+                .build();
         
         when(albumRepository.findById(999L)).thenReturn(Optional.empty());
 
@@ -267,7 +283,11 @@ class AlbumServiceTest {
     @Test
     @DisplayName("Should throw ResourceNotFoundException when updating album with non-existent artist")
     void shouldThrowExceptionWhenUpdatingAlbumWithNonExistentArtist() {
-        AlbumRequest updateRequest = new AlbumRequest("Updated Title", 2024, 999L);
+        AlbumRequest updateRequest = AlbumRequest.builder()
+                .title("Updated Title")
+                .releaseYear(2024)
+                .artistId(999L)
+                .build();
         
         when(albumRepository.findById(1L)).thenReturn(Optional.of(testAlbum));
         when(artistRepository.findById(999L)).thenReturn(Optional.empty());
@@ -280,7 +300,11 @@ class AlbumServiceTest {
     @Test
     @DisplayName("Should throw DuplicateResourceException when updating to existing title")
     void shouldThrowExceptionWhenUpdatingToExistingTitle() {
-        AlbumRequest updateRequest = new AlbumRequest("Existing Title", 2024, 1L);
+        AlbumRequest updateRequest = AlbumRequest.builder()
+                .title("Existing Title")
+                .releaseYear(2024)
+                .artistId(1L)
+                .build();
         
         when(albumRepository.findById(1L)).thenReturn(Optional.of(testAlbum));
         when(artistRepository.findById(1L)).thenReturn(Optional.of(testArtist));

@@ -87,16 +87,16 @@ class AlbumResponseTest {
         LocalDateTime now = LocalDateTime.now();
         List<AlbumCoverResponse> covers = Collections.emptyList();
 
-        AlbumResponse response = new AlbumResponse(
-                3L,
-                "Hypnotize",
-                2005,
-                3L,
-                "Artist Name",
-                covers,
-                now,
-                now
-        );
+        AlbumResponse response = AlbumResponse.builder()
+                .id(3L)
+                .title("Hypnotize")
+                .releaseYear(2005)
+                .artistId(3L)
+                .artistName("Artist Name")
+                .covers(covers)
+                .createdAt(now)
+                .updatedAt(now)
+                .build();
 
         assertThat(response.getId()).isEqualTo(3L);
         assertThat(response.getTitle()).isEqualTo("Hypnotize");
