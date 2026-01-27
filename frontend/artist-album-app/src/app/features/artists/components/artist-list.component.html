@@ -1,12 +1,12 @@
-<div class="min-h-screen bg-gray-50">
+<div class="min-h-screen bg-spotify-black">
   <!-- Reusable Header Component -->
-  <app-header title="Artistas" [showNotifications]="true"></app-header>
+  <app-header title="Music Manager" [showNotifications]="true"></app-header>
 
   <!-- Main Content -->
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Page Header -->
     <div class="mb-6 fade-in">
-      <h1 class="text-3xl font-bold text-gray-900 mb-2">
+      <h1 class="text-3xl font-bold text-spotify-white mb-2">
         Artistas
       </h1>
       <p class="text-gray-600">Gerencie sua coleção de artistas musicais</p>
@@ -25,7 +25,7 @@
               (keyup.enter)="onSearch()"
               (input)="onSearch()"
               placeholder="Buscar artistas por nome..."
-              class="w-full px-4 py-2.5 pr-20 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+              class="w-full px-4 py-2.5 pr-20 border border-spotify-gray-light rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
             />
             <div class="absolute right-3 top-1/2 transform -translate-y-1/2 flex gap-1">
               <button
@@ -67,7 +67,7 @@
           <span class="text-gray-600 font-medium">Ordenar por nome:</span>
           <button
             (click)="toggleSortDirection()"
-            class="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition font-medium"
+            class="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-spotify-gray-lighter rounded-lg transition font-medium"
           >
             <span>{{ sortDirection === 'asc' ? 'A → Z' : 'Z → A' }}</span>
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -101,57 +101,81 @@
 
     <!-- Artists Grid -->
     <div *ngIf="!loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 fade-in">
-      <div *ngFor="let artist of artists" class="card p-6 hover:shadow-lg transition-shadow">
-        <!-- Artist Header -->
-        <div class="flex items-start justify-between mb-4">
-          <div class="flex-1">
-            <h3 class="text-xl font-bold text-gray-900 mb-2">{{ artist.name }}</h3>
-            <div class="flex items-center space-x-2">
-              <span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded">
-                {{ artist.albumCount }} {{ artist.albumCount === 1 ? 'álbum' : 'álbuns' }}
-              </span>
-            </div>
-          </div>
+      <div *ngFor="let artist of artists" class="card group hover-scale cursor-pointer">
+        <!-- Artist Header com click para detalhes -->
+        <div (click)="viewArtistDetails(artist.id)" class="p-6 pb-4">
+          <div class="flex items-start justify-between mb-4">
+            <div class="flex-1">
+              <h3 class="text-xl font-bold text-spotify-white mb-2 group-hover:text-spotify-green transition">
+                {{ artist.name }}
+              </h3>
+              
+              <!-- Informações do artista -->
+              <div class="space-y-1 mt-3">
+                <div *ngIf="artist.artistType" class="flex items-center text-sm text-spotify-gray-lighter">
+                  <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                  </svg>
+                  {{ artist.artistType }}
+                </div>
+                <div *ngIf="artist.country" class="flex items-center text-sm text-spotify-gray-lighter">
+                  <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  {{ artist.country }}
+                </div>
+              </div>
 
-          <!-- Avatar Circle -->
-          <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
-            <span class="text-white text-lg font-bold">{{ artist.name.charAt(0).toUpperCase() }}</span>
+              <!-- Badge de álbuns -->
+              <div class="mt-4">
+                <span class="inline-flex items-center px-3 py-1 text-xs font-bold bg-spotify-green/20 text-spotify-green rounded-full border border-spotify-green/30">
+                  <svg class="h-3 w-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+                  </svg>
+                  {{ artist.albumCount }} {{ artist.albumCount === 1 ? 'álbum' : 'álbuns' }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Avatar Circle -->
+            <div class="w-16 h-16 bg-gradient-to-br from-spotify-green to-spotify-green-dark rounded-full flex items-center justify-center flex-shrink-0 shadow-spotify group-hover:scale-110 transition-transform">
+              <span class="text-spotify-black text-2xl font-bold">{{ artist.name.charAt(0).toUpperCase() }}</span>
+            </div>
           </div>
         </div>
 
+        <!-- Divider -->
+        <div class="border-t border-spotify-gray-light"></div>
+
         <!-- Artist Actions -->
-        <div class="grid grid-cols-2 gap-2 mt-4">
+        <div class="p-4 pt-3 flex items-center justify-between">
           <button
-            (click)="viewArtistDetails(artist.id)"
-            class="col-span-2 btn-primary text-sm flex items-center justify-center gap-2"
+            (click)="viewArtistDetails(artist.id); $event.stopPropagation()"
+            class="text-sm font-bold text-spotify-gray-lighter hover:text-spotify-white transition flex items-center gap-1"
           >
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
             </svg>
             Ver Detalhes
           </button>
-          <button
-            (click)="viewAlbums(artist.id)"
-            class="btn-secondary text-sm"
-          >
-            Álbuns
-          </button>
-          <div class="flex gap-1">
+
+          <div class="flex gap-2">
             <button
-              (click)="openEditModal(artist)"
-              class="flex-1 p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
-              title="Editar"
+              (click)="openEditModal(artist); $event.stopPropagation()"
+              class="p-2 text-spotify-green hover:bg-spotify-gray-medium rounded-lg transition"
+              title="Editar Artista"
             >
-              <svg class="h-5 w-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
               </svg>
             </button>
             <button
-              (click)="openDeleteModal(artist)"
-              class="flex-1 p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
-              title="Deletar"
+              (click)="openDeleteModal(artist); $event.stopPropagation()"
+              class="p-2 text-red-500 hover:bg-spotify-gray-medium rounded-lg transition"
+              title="Deletar Artista"
             >
-              <svg class="h-5 w-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
               </svg>
             </button>
@@ -164,7 +188,7 @@
         <svg class="h-16 w-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
         </svg>
-        <h3 class="text-xl font-semibold text-gray-900 mb-2">Nenhum artista encontrado</h3>
+        <h3 class="text-xl font-semibold text-spotify-white mb-2">Nenhum artista encontrado</h3>
         <p class="text-gray-600 mb-4">Comece adicionando seu primeiro artista</p>
         <button (click)="openAddModal()" class="btn-primary">
           Adicionar Primeiro Artista
@@ -189,12 +213,12 @@
   <div class="flex items-center justify-center min-h-screen px-4 py-8">
     <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" (click)="closeAddModal()"></div>
     <div class="card max-w-2xl w-full p-8 fade-in relative z-10 max-h-[90vh] overflow-y-auto">
-      <h3 class="text-2xl font-bold text-gray-900 mb-6">Novo Artista</h3>
+      <h3 class="text-2xl font-bold text-spotify-white mb-6">Novo Artista</h3>
       
       <div class="space-y-4">
         <!-- Nome do Artista -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
+          <label class="block text-sm font-medium text-spotify-gray-lighter mb-2">
             Nome do Artista <span class="text-red-500">*</span>
           </label>
           <input
@@ -203,15 +227,15 @@
             type="text"
             placeholder="Ex: Serj Tankian"
             minlength="3"
-            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            class="w-full px-4 py-2.5 border border-spotify-gray-light rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
             autofocus
           />
-          <p class="text-xs text-gray-500 mt-1">Mínimo 3 caracteres</p>
+          <p class="text-xs text-spotify-text-muted mt-1">Mínimo 3 caracteres</p>
         </div>
 
         <!-- Tipo do Artista -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
+          <label class="block text-sm font-medium text-spotify-gray-lighter mb-2">
             Tipo de Artista
           </label>
           <input
@@ -219,13 +243,13 @@
             type="text"
             placeholder="Ex: Solo, Banda, Duo"
             maxlength="100"
-            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            class="w-full px-4 py-2.5 border border-spotify-gray-light rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
           />
         </div>
 
         <!-- País -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
+          <label class="block text-sm font-medium text-spotify-gray-lighter mb-2">
             País
           </label>
           <input
@@ -233,20 +257,20 @@
             type="text"
             placeholder="Ex: Estados Unidos, Brasil"
             maxlength="100"
-            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            class="w-full px-4 py-2.5 border border-spotify-gray-light rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
           />
         </div>
 
         <!-- Biografia -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
+          <label class="block text-sm font-medium text-spotify-gray-lighter mb-2">
             Biografia
           </label>
           <textarea
             [(ngModel)]="newArtistBiography"
             rows="4"
             placeholder="Breve descrição sobre o artista..."
-            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
+            class="w-full px-4 py-2.5 border border-spotify-gray-light rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
           ></textarea>
         </div>
       </div>
@@ -274,10 +298,10 @@
   <div class="flex items-center justify-center min-h-screen px-4 py-8">
     <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" (click)="closeDeleteModal()"></div>
     <div class="card max-w-md w-full p-8 fade-in relative z-10">
-      <h3 class="text-2xl font-bold text-gray-900 mb-4">Confirmar Exclusão</h3>
+      <h3 class="text-2xl font-bold text-spotify-white mb-4">Confirmar Exclusão</h3>
       <p class="text-gray-600 mb-6">
         Tem certeza que deseja deletar o artista
-        <strong class="text-gray-900 font-bold">{{ selectedArtist?.name }}</strong>?
+        <strong class="text-spotify-white font-bold">{{ selectedArtist?.name }}</strong>?
       </p>
       <div class="flex justify-end space-x-3">
         <button (click)="closeDeleteModal()" class="btn-secondary">

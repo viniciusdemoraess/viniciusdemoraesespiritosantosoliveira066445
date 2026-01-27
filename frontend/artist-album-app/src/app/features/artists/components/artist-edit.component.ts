@@ -40,6 +40,17 @@ export class ArtistEditComponent implements OnInit, OnDestroy {
   newAlbumRecordLabel = '';
   newAlbumTotalTracks: number | null = null;
   newAlbumTotalDuration: number | null = null;
+  newAlbumCoverFile: File | null = null;
+  newAlbumCoverPreview: string | null = null;
+
+  // Edit album state
+  editingAlbumId: number | null = null;
+  editAlbumTitle = '';
+  editAlbumYear: number | null = null;
+  editAlbumGenre = '';
+  editAlbumRecordLabel = '';
+  editAlbumTotalTracks: number | null = null;
+  editAlbumTotalDuration: number | null = null;
 
   private subscriptions: Subscription[] = [];
   private artistId!: number;
@@ -177,6 +188,41 @@ export class ArtistEditComponent implements OnInit, OnDestroy {
     this.newAlbumRecordLabel = '';
     this.newAlbumTotalTracks = null;
     this.newAlbumTotalDuration = null;
+    this.newAlbumCoverFile = null;
+    this.newAlbumCoverPreview = null;
+  }
+
+  onCoverFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        alert('Por favor, selecione apenas arquivos de imagem');
+        return;
+      }
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('A imagem deve ter no máximo 5MB');
+        return;
+      }
+
+      this.newAlbumCoverFile = file;
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.newAlbumCoverPreview = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  removeCoverPreview(): void {
+    this.newAlbumCoverFile = null;
+    this.newAlbumCoverPreview = null;
   }
 
   createAlbum(): void {
@@ -202,6 +248,72 @@ export class ArtistEditComponent implements OnInit, OnDestroy {
       },
       error: (error: any) => {
         console.error('Error creating album:', error);
+      }
+    });
+  }
+
+  // Edit album methods
+  startEditAlbum(album: Album): void {
+    this.editingAlbumId = album.id;
+    this.editAlbumTitle = album.title;
+    this.editAlbumYear = album.releaseYear ?? null;
+    this.editAlbumGenre = album.genre ?? '';
+    this.editAlbumRecordLabel = album.recordLabel ?? '';
+    this.editAlbumTotalTracks = album.totalTracks ?? null;
+    this.editAlbumTotalDuration = album.totalDurationSeconds ?? null;
+  }
+
+  isEditingAlbum(albumId: number): boolean {
+    return this.editingAlbumId === albumId;
+  }
+
+  saveEditAlbum(album: Album): void {
+    if (!this.editAlbumTitle.trim() || this.editAlbumTitle.trim().length < 3) {
+      return;
+    }
+
+    const updatedAlbum = {
+      ...album,
+      title: this.editAlbumTitle.trim(),
+      releaseYear: this.editAlbumYear ?? undefined,
+      genre: this.editAlbumGenre.trim() || undefined,
+      recordLabel: this.editAlbumRecordLabel.trim() || undefined,
+      totalTracks: this.editAlbumTotalTracks ?? undefined,
+      totalDurationSeconds: this.editAlbumTotalDuration ?? undefined
+    };
+
+    this.albumFacade.updateAlbum(album.id, updatedAlbum).subscribe({
+      next: () => {
+        this.cancelEditAlbum();
+        this.loadArtistData();
+      },
+      error: (error: any) => {
+        console.error('Error updating album:', error);
+      }
+    });
+  }
+
+  cancelEditAlbum(): void {
+    this.editingAlbumId = null;
+    this.editAlbumTitle = '';
+    this.editAlbumYear = null;
+    this.editAlbumGenre = '';
+    this.editAlbumRecordLabel = '';
+    this.editAlbumTotalTracks = null;
+    this.editAlbumTotalDuration = null;
+  }
+
+  deleteAlbum(album: Album): void {
+    if (!confirm(`Tem certeza que deseja excluir o álbum "${album.title}"?`)) {
+      return;
+    }
+
+    this.albumFacade.deleteAlbum(album.id).subscribe({
+      next: () => {
+        this.loadArtistData();
+      },
+      error: (error: any) => {
+        console.error('Error deleting album:', error);
       }
     });
   }

@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-gray-50">
+<div class="min-h-screen bg-spotify-black">
   <!-- Navigation Header -->
   <app-header [title]="'Music Manager'" [showNotifications]="true"></app-header>
 
@@ -6,8 +6,8 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Header -->
     <div class="mb-8">
-      <h1 class="text-3xl font-semibold text-gray-900">Dashboard</h1>
-      <p class="mt-1 text-sm text-gray-500">Visão geral do sistema de gerenciamento musical</p>
+      <h1 class="text-4xl font-bold text-spotify-white">Dashboard</h1>
+      <p class="mt-2 text-sm text-spotify-gray-lighter">Visão geral do sistema de gerenciamento musical</p>
     </div>
 
     <!-- Error State -->
@@ -37,55 +37,55 @@
     <!-- Stats Cards -->
     <div *ngIf="!loading && !error" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 fade-in">
       <!-- Total Artists -->
-      <div class="card stat-card p-6">
+      <div class="card stat-card p-6 hover-scale">
         <div class="flex items-center justify-between mb-4">
-          <div class="p-3 bg-blue-50 rounded-lg">
-            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="p-3 bg-spotify-green/20 rounded-lg">
+            <svg class="w-6 h-6 text-spotify-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
             </svg>
           </div>
         </div>
-        <p class="text-2xl font-semibold text-gray-900">{{ stats.totalArtists }}</p>
-        <p class="text-sm text-gray-500 mt-1">Total de Artistas</p>
+        <p class="text-3xl font-bold text-spotify-white">{{ stats.totalArtists }}</p>
+        <p class="text-sm text-spotify-gray-lighter mt-1 font-medium">Total de Artistas</p>
       </div>
 
       <!-- Total Albums -->
-      <div class="card stat-card p-6">
+      <div class="card stat-card p-6 hover-scale">
         <div class="flex items-center justify-between mb-4">
-          <div class="p-3 bg-green-50 rounded-lg">
-            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="p-3 bg-spotify-green/20 rounded-lg">
+            <svg class="w-6 h-6 text-spotify-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
             </svg>
           </div>
         </div>
-        <p class="text-2xl font-semibold text-gray-900">{{ stats.totalAlbums }}</p>
-        <p class="text-sm text-gray-500 mt-1">Total de Álbuns</p>
+        <p class="text-3xl font-bold text-spotify-white">{{ stats.totalAlbums }}</p>
+        <p class="text-sm text-spotify-gray-lighter mt-1 font-medium">Total de Álbuns</p>
       </div>
 
       <!-- Average -->
-      <div class="card stat-card p-6">
+      <div class="card stat-card p-6 hover-scale">
         <div class="flex items-center justify-between mb-4">
-          <div class="p-3 bg-purple-50 rounded-lg">
-            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="p-3 bg-purple-500/20 rounded-lg">
+            <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
             </svg>
           </div>
         </div>
-        <p class="text-2xl font-semibold text-gray-900">{{ stats.averageAlbumsPerArtist }}</p>
-        <p class="text-sm text-gray-500 mt-1">Média Álbuns/Artista</p>
+        <p class="text-3xl font-bold text-spotify-white">{{ stats.averageAlbumsPerArtist }}</p>
+        <p class="text-sm text-spotify-gray-lighter mt-1 font-medium">Média Álbuns/Artista</p>
       </div>
 
       <!-- Alerts -->
-      <div class="card stat-card p-6">
+      <div class="card stat-card p-6 hover-scale">
         <div class="flex items-center justify-between mb-4">
-          <div class="p-3 bg-yellow-50 rounded-lg">
-            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="p-3 bg-yellow-500/20 rounded-lg">
+            <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
             </svg>
           </div>
         </div>
-        <p class="text-2xl font-semibold text-gray-900">{{ stats.albumsWithoutCovers }}</p>
-        <p class="text-sm text-gray-500 mt-1">Álbuns sem Capa</p>
+        <p class="text-3xl font-bold text-spotify-white">{{ stats.albumsWithoutCovers }}</p>
+        <p class="text-sm text-spotify-gray-lighter mt-1 font-medium">Álbuns sem Capa</p>
       </div>
     </div>
 
@@ -93,59 +93,59 @@
     <div *ngIf="!loading && !error" class="grid grid-cols-1 lg:grid-cols-3 gap-6 fade-in">
       <!-- Recent Albums -->
       <div class="lg:col-span-2 card p-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">Álbuns Recentes</h2>
+        <h2 class="text-xl font-bold text-spotify-white mb-6">Álbuns Recentes</h2>
 
         <div *ngIf="recentAlbums.length === 0" class="empty-state">
           <div class="empty-state-icon">🎵</div>
-          <p class="text-base font-medium mb-2">Nenhum álbum cadastrado ainda</p>
-          <p class="text-sm mb-4">Comece adicionando o primeiro álbum ao sistema</p>
+          <p class="text-base font-bold text-spotify-white mb-2">Nenhum álbum cadastrado ainda</p>
+          <p class="text-sm text-spotify-gray-lighter mb-4">Comece adicionando o primeiro álbum ao sistema</p>
           <a [routerLink]="['/albums']" class="btn-primary inline-block">
             Adicionar Álbum
           </a>
         </div>
 
-        <div *ngIf="recentAlbums.length > 0" class="space-y-3">
-          <div *ngFor="let album of recentAlbums" class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition">
+        <div *ngIf="recentAlbums.length > 0" class="space-y-2">
+          <div *ngFor="let album of recentAlbums" class="flex items-center justify-between p-4 hover:bg-spotify-gray-medium rounded-lg transition cursor-pointer group">
             <div>
-              <p class="font-medium text-gray-900">{{ album.title }}</p>
-              <p class="text-sm text-gray-500">{{ album.artistName }}</p>
+              <p class="font-bold text-spotify-white group-hover:text-spotify-green transition">{{ album.title }}</p>
+              <p class="text-sm text-spotify-gray-lighter mt-1">{{ album.artistName }}</p>
             </div>
-            <span class="badge badge-primary">{{ album.releaseYear }}</span>
+            <span class="badge badge-success">{{ album.releaseYear }}</span>
           </div>
         </div>
       </div>
 
       <!-- Quick Stats -->
       <div class="card p-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">Estatísticas Rápidas</h2>
-        <div class="space-y-4">
+        <h2 class="text-xl font-bold text-spotify-white mb-6">Estatísticas Rápidas</h2>
+        <div class="space-y-6">
           <div>
-            <div class="flex justify-between items-center mb-1">
-              <span class="text-sm text-gray-600">Artistas sem Álbuns</span>
-              <span class="text-sm font-semibold">{{ stats.artistsWithoutAlbums }}</span>
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-sm text-spotify-gray-lighter font-bold">Artistas sem Álbuns</span>
+              <span class="text-sm font-bold text-spotify-white">{{ stats.artistsWithoutAlbums }}</span>
             </div>
-            <div class="w-full bg-gray-200 rounded-full h-2">
-              <div class="bg-red-500 h-2 rounded-full" [style.width.%]="stats.totalArtists > 0 ? (stats.artistsWithoutAlbums / stats.totalArtists * 100) : 0"></div>
+            <div class="w-full bg-spotify-gray-medium rounded-full h-2">
+              <div class="bg-red-500 h-2 rounded-full transition-all" [style.width.%]="stats.totalArtists > 0 ? (stats.artistsWithoutAlbums / stats.totalArtists * 100) : 0"></div>
             </div>
           </div>
 
           <div>
-            <div class="flex justify-between items-center mb-1">
-              <span class="text-sm text-gray-600">Álbuns com Capa</span>
-              <span class="text-sm font-semibold">{{ stats.albumsWithCovers }}</span>
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-sm text-spotify-gray-lighter font-bold">Álbuns com Capa</span>
+              <span class="text-sm font-bold text-spotify-white">{{ stats.albumsWithCovers }}</span>
             </div>
-            <div class="w-full bg-gray-200 rounded-full h-2">
-              <div class="bg-green-500 h-2 rounded-full" [style.width.%]="stats.totalAlbums > 0 ? (stats.albumsWithCovers / stats.totalAlbums * 100) : 0"></div>
+            <div class="w-full bg-spotify-gray-medium rounded-full h-2">
+              <div class="bg-spotify-green h-2 rounded-full transition-all" [style.width.%]="stats.totalAlbums > 0 ? (stats.albumsWithCovers / stats.totalAlbums * 100) : 0"></div>
             </div>
           </div>
 
           <div>
-            <div class="flex justify-between items-center mb-1">
-              <span class="text-sm text-gray-600">Álbuns sem Capa</span>
-              <span class="text-sm font-semibold">{{ stats.albumsWithoutCovers }}</span>
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-sm text-spotify-gray-lighter font-bold">Álbuns sem Capa</span>
+              <span class="text-sm font-bold text-spotify-white">{{ stats.albumsWithoutCovers }}</span>
             </div>
-            <div class="w-full bg-gray-200 rounded-full h-2">
-              <div class="bg-yellow-500 h-2 rounded-full" [style.width.%]="stats.totalAlbums > 0 ? (stats.albumsWithoutCovers / stats.totalAlbums * 100) : 0"></div>
+            <div class="w-full bg-spotify-gray-medium rounded-full h-2">
+              <div class="bg-yellow-500 h-2 rounded-full transition-all" [style.width.%]="stats.totalAlbums > 0 ? (stats.albumsWithoutCovers / stats.totalAlbums * 100) : 0"></div>
             </div>
           </div>
         </div>
@@ -155,13 +155,13 @@
     <!-- Real-time Notifications -->
     <div *ngIf="notifications.length > 0" class="mt-6 card p-6 fade-in">
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-lg font-semibold text-gray-900">Notificações em Tempo Real</h2>
-        <button (click)="clearNotifications()" class="text-sm text-gray-600 hover:text-gray-900">
+        <h2 class="text-lg font-bold text-spotify-white">Notificações em Tempo Real</h2>
+        <button (click)="clearNotifications()" class="text-sm text-spotify-gray-lighter hover:text-spotify-white transition font-bold">
           Limpar tudo
         </button>
       </div>
       <div class="space-y-2">
-        <div *ngFor="let notification of notifications" class="notification-item p-3 bg-blue-50 rounded-lg text-sm text-blue-900">
+        <div *ngFor="let notification of notifications" class="notification-item p-3 bg-spotify-gray-medium rounded-lg text-sm text-spotify-white">
           {{ notification }}
         </div>
       </div>
