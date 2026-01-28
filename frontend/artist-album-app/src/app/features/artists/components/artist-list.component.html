@@ -25,13 +25,13 @@
               (keyup.enter)="onSearch()"
               (input)="onSearch()"
               placeholder="Buscar artistas por nome..."
-              class="w-full px-4 py-2.5 pr-20 border border-spotify-gray-light rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+              class="w-full px-4 py-3 pr-20 bg-spotify-gray-dark border border-spotify-gray-light text-spotify-white rounded-lg focus:outline-none focus:border-spotify-green hover:border-spotify-gray-lighter transition-all placeholder:text-spotify-text-muted"
             />
             <div class="absolute right-3 top-1/2 transform -translate-y-1/2 flex gap-1">
               <button
                 *ngIf="searchTerm"
                 (click)="clearSearch()"
-                class="text-gray-400 hover:text-red-500 transition"
+                class="text-spotify-gray-lighter hover:text-red-500 transition"
                 title="Limpar busca"
               >
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -40,7 +40,7 @@
               </button>
               <button
                 (click)="onSearch()"
-                class="text-gray-400 hover:text-primary transition"
+                class="text-spotify-gray-lighter hover:text-spotify-green transition"
                 title="Buscar"
               >
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -218,7 +218,7 @@
       <div class="space-y-4">
         <!-- Nome do Artista -->
         <div>
-          <label class="block text-sm font-medium text-spotify-gray-lighter mb-2">
+          <label class="block text-sm font-bold text-spotify-white mb-2">
             Nome do Artista <span class="text-red-500">*</span>
           </label>
           <input
@@ -227,7 +227,7 @@
             type="text"
             placeholder="Ex: Serj Tankian"
             minlength="3"
-            class="w-full px-4 py-2.5 border border-spotify-gray-light rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            class="w-full px-4 py-3 bg-spotify-gray-dark border border-spotify-gray-light text-spotify-white rounded-lg focus:outline-none focus:border-spotify-green hover:border-spotify-gray-lighter transition-all placeholder:text-spotify-text-muted"
             autofocus
           />
           <p class="text-xs text-spotify-text-muted mt-1">Mínimo 3 caracteres</p>
@@ -235,7 +235,7 @@
 
         <!-- Tipo do Artista -->
         <div>
-          <label class="block text-sm font-medium text-spotify-gray-lighter mb-2">
+          <label class="block text-sm font-bold text-spotify-white mb-2">
             Tipo de Artista
           </label>
           <input
@@ -243,13 +243,13 @@
             type="text"
             placeholder="Ex: Solo, Banda, Duo"
             maxlength="100"
-            class="w-full px-4 py-2.5 border border-spotify-gray-light rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            class="w-full px-4 py-3 bg-spotify-gray-dark border border-spotify-gray-light text-spotify-white rounded-lg focus:outline-none focus:border-spotify-green hover:border-spotify-gray-lighter transition-all placeholder:text-spotify-text-muted"
           />
         </div>
 
         <!-- País -->
         <div>
-          <label class="block text-sm font-medium text-spotify-gray-lighter mb-2">
+          <label class="block text-sm font-bold text-spotify-white mb-2">
             País
           </label>
           <input
@@ -257,20 +257,20 @@
             type="text"
             placeholder="Ex: Estados Unidos, Brasil"
             maxlength="100"
-            class="w-full px-4 py-2.5 border border-spotify-gray-light rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            class="w-full px-4 py-3 bg-spotify-gray-dark border border-spotify-gray-light text-spotify-white rounded-lg focus:outline-none focus:border-spotify-green hover:border-spotify-gray-lighter transition-all placeholder:text-spotify-text-muted"
           />
         </div>
 
         <!-- Biografia -->
         <div>
-          <label class="block text-sm font-medium text-spotify-gray-lighter mb-2">
+          <label class="block text-sm font-bold text-spotify-white mb-2">
             Biografia
           </label>
           <textarea
             [(ngModel)]="newArtistBiography"
             rows="4"
             placeholder="Breve descrição sobre o artista..."
-            class="w-full px-4 py-2.5 border border-spotify-gray-light rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
+            class="w-full px-4 py-3 bg-spotify-gray-dark border border-spotify-gray-light text-spotify-white rounded-lg focus:outline-none focus:border-spotify-green hover:border-spotify-gray-lighter transition-all resize-none placeholder:text-spotify-text-muted"
           ></textarea>
         </div>
       </div>

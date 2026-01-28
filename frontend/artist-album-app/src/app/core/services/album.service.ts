@@ -41,11 +41,29 @@ export class AlbumService {
     return this.http.get<Album>(`${this.apiUrl}/${id}`);
   }
 
-  createAlbum(album: { title: string; releaseYear: number; artistId: number }): Observable<Album> {
+  createAlbum(album: { 
+    title: string; 
+    releaseYear: number; 
+    genre?: string;
+    recordLabel?: string;
+    totalTracks?: number;
+    totalDurationSeconds?: number;
+    artistId?: number;  // Legacy support
+    artistIds?: number[]; // New N:N support
+  }): Observable<Album> {
     return this.http.post<Album>(this.apiUrl, album);
   }
 
-  updateAlbum(id: number, album: { title: string; releaseYear: number; artistId: number }): Observable<Album> {
+  updateAlbum(id: number, album: { 
+    title: string; 
+    releaseYear: number; 
+    genre?: string;
+    recordLabel?: string;
+    totalTracks?: number;
+    totalDurationSeconds?: number;
+    artistId?: number;  // Legacy support
+    artistIds?: number[]; // New N:N support
+  }): Observable<Album> {
     return this.http.put<Album>(`${this.apiUrl}/${id}`, album);
   }
 

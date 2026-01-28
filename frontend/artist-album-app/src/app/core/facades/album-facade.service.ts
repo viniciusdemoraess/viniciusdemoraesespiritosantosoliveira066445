@@ -60,7 +60,16 @@ export class AlbumFacadeService {
   /**
    * Create a new album and update the state
    */
-  createAlbum(album: { title: string; releaseYear: number; artistId: number }): Observable<Album> {
+  createAlbum(album: { 
+    title: string; 
+    releaseYear: number; 
+    genre?: string;
+    recordLabel?: string;
+    totalTracks?: number;
+    totalDurationSeconds?: number;
+    artistId?: number;  // Legacy support
+    artistIds?: number[]; // New N:N support
+  }): Observable<Album> {
     return new Observable(observer => {
       this.albumService.createAlbum(album).subscribe({
         next: (newAlbum) => {

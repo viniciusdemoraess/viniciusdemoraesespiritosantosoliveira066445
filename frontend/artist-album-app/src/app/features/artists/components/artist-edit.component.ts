@@ -33,6 +33,11 @@ export class ArtistEditComponent implements OnInit, OnDestroy {
   currentCoverIndexMap: Map<number, number> = new Map();
   showAddAlbumForm = false;
 
+  // Available artists for multi-select
+  allArtists: Artist[] = [];
+  selectedNewAlbumArtistIds: Set<number> = new Set();
+  showNewAlbumArtistDropdown = false;
+
   // New album form
   newAlbumTitle = '';
   newAlbumYear: number | null = null;
@@ -40,8 +45,8 @@ export class ArtistEditComponent implements OnInit, OnDestroy {
   newAlbumRecordLabel = '';
   newAlbumTotalTracks: number | null = null;
   newAlbumTotalDuration: number | null = null;
-  newAlbumCoverFile: File | null = null;
-  newAlbumCoverPreview: string | null = null;
+  newAlbumCoverFiles: File[] = [];
+  newAlbumCoverPreviews: string[] = [];
 
   // Edit album state
   editingAlbumId: number | null = null;
@@ -51,9 +56,11 @@ export class ArtistEditComponent implements OnInit, OnDestroy {
   editAlbumRecordLabel = '';
   editAlbumTotalTracks: number | null = null;
   editAlbumTotalDuration: number | null = null;
+  editAlbumCoverFiles: File[] = [];
+  editAlbumCoverPreviews: string[] = [];
 
   private subscriptions: Subscription[] = [];
-  private artistId!: number;
+  artistId!: number; // Public para usar no template
 
   constructor(
     private route: ActivatedRoute,
@@ -79,6 +86,7 @@ export class ArtistEditComponent implements OnInit, OnDestroy {
     // Load artist
     this.artistFacade.loadArtists();
     const artistSub = this.artistFacade.artists$.subscribe(artists => {
+      this.allArtists = artists; // Store all artists for multi-select
       this.artist = artists.find(a => a.id === this.artistId) || null;
       if (this.artist) {
         this.artistName = this.artist.name;
@@ -188,45 +196,91 @@ export class ArtistEditComponent implements OnInit, OnDestroy {
     this.newAlbumRecordLabel = '';
     this.newAlbumTotalTracks = null;
     this.newAlbumTotalDuration = null;
-    this.newAlbumCoverFile = null;
-    this.newAlbumCoverPreview = null;
+    this.newAlbumCoverFiles = [];
+    this.newAlbumCoverPreviews = [];
+    this.selectedNewAlbumArtistIds.clear();
+    // Pre-select current artist
+    if (this.artist) {
+      this.selectedNewAlbumArtistIds.add(this.artist.id);
+    }
   }
 
-  onCoverFileSelected(event: Event): void {
+  onCoverFileSelected(event: Event, isEditMode = false): void {
     const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      const file = input.files[0];
-      
+    if (!input.files || input.files.length === 0) return;
+
+    const files = Array.from(input.files);
+    const validFiles: File[] = [];
+    const previews: string[] = [];
+
+    let invalidFiles = 0;
+
+    files.forEach(file => {
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        alert('Por favor, selecione apenas arquivos de imagem');
+        invalidFiles++;
         return;
       }
       
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        alert('A imagem deve ter no máximo 5MB');
+        invalidFiles++;
         return;
       }
 
-      this.newAlbumCoverFile = file;
+      validFiles.push(file);
       
       // Create preview
       const reader = new FileReader();
       reader.onload = (e: any) => {
-        this.newAlbumCoverPreview = e.target.result;
+        previews.push(e.target.result);
+        
+        // Update arrays when all files are read
+        if (previews.length === validFiles.length) {
+          if (isEditMode) {
+            this.editAlbumCoverFiles.push(...validFiles);
+            this.editAlbumCoverPreviews.push(...previews);
+          } else {
+            this.newAlbumCoverFiles.push(...validFiles);
+            this.newAlbumCoverPreviews.push(...previews);
+          }
+        }
       };
       reader.readAsDataURL(file);
+    });
+
+    if (invalidFiles > 0) {
+      alert(`${invalidFiles} arquivo(s) inválido(s). Apenas imagens de até 5MB são aceitas.`);
+    }
+
+    // Reset input
+    input.value = '';
+  }
+
+  removeCoverPreview(index: number, isEditMode = false): void {
+    if (isEditMode) {
+      this.editAlbumCoverFiles.splice(index, 1);
+      this.editAlbumCoverPreviews.splice(index, 1);
+    } else {
+      this.newAlbumCoverFiles.splice(index, 1);
+      this.newAlbumCoverPreviews.splice(index, 1);
     }
   }
 
-  removeCoverPreview(): void {
-    this.newAlbumCoverFile = null;
-    this.newAlbumCoverPreview = null;
+  toggleNewAlbumArtistSelection(artistId: number): void {
+    if (this.selectedNewAlbumArtistIds.has(artistId)) {
+      this.selectedNewAlbumArtistIds.delete(artistId);
+    } else {
+      this.selectedNewAlbumArtistIds.add(artistId);
+    }
+  }
+
+  isNewAlbumArtistSelected(artistId: number): boolean {
+    return this.selectedNewAlbumArtistIds.has(artistId);
   }
 
   createAlbum(): void {
-    if (!this.artist || !this.newAlbumTitle.trim() || this.newAlbumTitle.trim().length < 3) {
+    if (!this.artist || !this.newAlbumTitle.trim() || this.newAlbumTitle.trim().length < 3 || this.selectedNewAlbumArtistIds.size === 0) {
       return;
     }
 
@@ -237,7 +291,7 @@ export class ArtistEditComponent implements OnInit, OnDestroy {
       recordLabel: this.newAlbumRecordLabel.trim() || undefined,
       totalTracks: this.newAlbumTotalTracks || undefined,
       totalDurationSeconds: this.newAlbumTotalDuration || undefined,
-      artistId: this.artist.id
+      artistIds: Array.from(this.selectedNewAlbumArtistIds)
     };
 
     this.albumFacade.createAlbum(newAlbum).subscribe({
@@ -301,6 +355,8 @@ export class ArtistEditComponent implements OnInit, OnDestroy {
     this.editAlbumRecordLabel = '';
     this.editAlbumTotalTracks = null;
     this.editAlbumTotalDuration = null;
+    this.editAlbumCoverFiles = [];
+    this.editAlbumCoverPreviews = [];
   }
 
   deleteAlbum(album: Album): void {

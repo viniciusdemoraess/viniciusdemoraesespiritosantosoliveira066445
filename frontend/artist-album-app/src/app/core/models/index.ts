@@ -28,6 +28,13 @@ export interface Artist {
   updatedAt: string;
 }
 
+export interface ArtistSummary {
+  id: number;
+  name: string;
+  artistType?: string;
+  country?: string;
+}
+
 export interface Album {
   id: number;
   title: string;
@@ -36,8 +43,9 @@ export interface Album {
   recordLabel?: string;
   totalTracks?: number;
   totalDurationSeconds?: number;
-  artistId: number;
-  artistName: string;
+  artistId: number; // Deprecated, use artists
+  artistName: string; // Deprecated, use artists
+  artists: ArtistSummary[];
   covers: AlbumCover[];
   createdAt: string;
   updatedAt: string;

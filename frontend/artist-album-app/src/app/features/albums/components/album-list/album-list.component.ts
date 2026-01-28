@@ -36,6 +36,7 @@ export class AlbumListComponent implements OnInit, OnDestroy {
 
   showAddModal = false;
   showUploadModal = false;
+  showArtistDropdown = false;
   selectedAlbum: Album | null = null;
 
   newAlbum = {
@@ -45,8 +46,11 @@ export class AlbumListComponent implements OnInit, OnDestroy {
     recordLabel: '',
     totalTracks: undefined as number | undefined,
     totalDurationSeconds: undefined as number | undefined,
-    artistId: 0
+    artistIds: [] as number[]
   };
+
+  // Track selected artists for multi-select
+  selectedArtistIds: Set<number> = new Set();
 
   selectedFiles: File[] = [];
   private subscriptions: Subscription[] = [];
@@ -226,17 +230,35 @@ export class AlbumListComponent implements OnInit, OnDestroy {
       recordLabel: '',
       totalTracks: undefined,
       totalDurationSeconds: undefined,
-      artistId: this.artists.length > 0 ? this.artists[0].id : 0
+      artistIds: []
     };
+    this.selectedArtistIds.clear();
+    this.showArtistDropdown = false;
     this.showAddModal = true;
   }
 
   closeAddModal(): void {
     this.showAddModal = false;
+    this.showArtistDropdown = false;
+  }
+
+  toggleArtistSelection(artistId: number): void {
+    if (this.selectedArtistIds.has(artistId)) {
+      this.selectedArtistIds.delete(artistId);
+    } else {
+      this.selectedArtistIds.add(artistId);
+    }
+  }
+
+  isArtistSelected(artistId: number): boolean {
+    return this.selectedArtistIds.has(artistId);
   }
 
   createAlbum(): void {
-    if (!this.newAlbum.title || this.newAlbum.title.trim().length < 3 || !this.newAlbum.artistId) return;
+    if (!this.newAlbum.title || this.newAlbum.title.trim().length < 3 || this.selectedArtistIds.size === 0) return;
+
+    // Convert Set to Array
+    this.newAlbum.artistIds = Array.from(this.selectedArtistIds);
 
     this.albumFacade.createAlbum(this.newAlbum).subscribe({
       next: () => {
@@ -288,5 +310,12 @@ export class AlbumListComponent implements OnInit, OnDestroy {
         console.error('Error deleting album:', error);
       }
     });
+  }
+
+  editAlbum(album: Album): void {
+    // TODO: Implementar modal de edição de álbum
+    // Por enquanto, mostra alerta com informações
+    console.log('Editar álbum:', album);
+    alert(`Funcionalidade de edição será implementada em breve para o álbum "${album.title}"`);
   }
 }
