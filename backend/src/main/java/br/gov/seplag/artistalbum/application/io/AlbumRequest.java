@@ -5,12 +5,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @Builder
@@ -51,8 +52,11 @@ public class AlbumRequest {
     @JsonProperty("totalDurationSeconds")
     private Integer totalDurationSeconds;
 
-    @NotNull(message = "Artist ID is required")
-    @Schema(description = "Artist ID", example = "1", required = true)
+    @Schema(description = "Artist ID (deprecated, use artistIds)", example = "1")
     @JsonProperty("artistId")
     private Long artistId;
+
+    @Schema(description = "List of Artist IDs", example = "[1, 2]")
+    @JsonProperty("artistIds")
+    private List<Long> artistIds;
 }

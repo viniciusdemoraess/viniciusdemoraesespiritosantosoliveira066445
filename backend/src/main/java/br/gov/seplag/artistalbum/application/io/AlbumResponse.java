@@ -46,12 +46,16 @@ public class AlbumResponse {
     private Integer totalDurationSeconds;
 
     @JsonProperty("artistId")
-    @Schema(description = "Artist ID", example = "1")
+    @Schema(description = "Artist ID (deprecated, use artists)", example = "1")
     private Long artistId;
 
     @JsonProperty("artistName")
-    @Schema(description = "Artist name", example = "Serj Tankian")
+    @Schema(description = "Artist name (deprecated, use artists)", example = "Serj Tankian")
     private String artistName;
+
+    @JsonProperty("artists")
+    @Schema(description = "List of artists")
+    private List<ArtistSummary> artists;
 
     @JsonProperty("covers")
     @Schema(description = "Album covers")
