@@ -25,15 +25,22 @@ public class WebSocketNotificationService {
 
     public void notifyNewAlbum(Album album) {
         try {
+            // Pegar primeiro artista ou usar valores padrão
+            Long firstArtistId = !album.getArtists().isEmpty() ? album.getArtists().get(0).getId() : null;
+            String artistNames = album.getArtistNames();
+            if (artistNames == null || artistNames.isEmpty()) {
+                artistNames = "Unknown Artist";
+            }
+
             Map<String, Object> notification = new HashMap<>();
             notification.put("type", "NEW_ALBUM");
             notification.put("albumId", album.getId());
             notification.put("albumTitle", album.getTitle());
-            notification.put("artistId", album.getArtist().getId());
-            notification.put("artistName", album.getArtist().getName());
+            notification.put("artistId", firstArtistId);
+            notification.put("artistNames", artistNames);
             notification.put("timestamp", LocalDateTime.now());
             notification.put("message", String.format("New album '%s' by %s has been added!", 
-                    album.getTitle(), album.getArtist().getName()));
+                    album.getTitle(), artistNames));
 
             messagingTemplate.convertAndSend("/topic/albums", notification);
             log.info("WebSocket notification sent for new album: {}", album.getTitle());

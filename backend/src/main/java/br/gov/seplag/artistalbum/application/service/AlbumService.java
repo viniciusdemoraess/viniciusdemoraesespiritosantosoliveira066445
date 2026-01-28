@@ -71,10 +71,29 @@ public class AlbumService {
     public AlbumResponse createAlbum(AlbumRequest request) {
         log.info("Creating album: {}", request.getTitle());
 
-        Artist artist = artistRepository.findById(request.getArtistId())
-                .orElseThrow(() -> new ResourceNotFoundException("Artist", "id", request.getArtistId()));
+        // Suporta tanto artistId (legacy) quanto artistIds (novo)
+        List<Long> artistIds = new ArrayList<>();
+        if (request.getArtistIds() != null && !request.getArtistIds().isEmpty()) {
+            artistIds.addAll(request.getArtistIds());
+        } else if (request.getArtistId() != null) {
+            artistIds.add(request.getArtistId());
+        }
 
-        if (albumRepository.existsByTitleAndArtistId(request.getTitle(), request.getArtistId())) {
+        if (artistIds.isEmpty()) {
+            throw new IllegalArgumentException("At least one artist must be provided");
+        }
+
+        // Buscar todos os artistas
+        List<Artist> artists = new ArrayList<>();
+        for (Long artistId : artistIds) {
+            Artist artist = artistRepository.findById(artistId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Artist", "id", artistId));
+            artists.add(artist);
+        }
+
+        // Verificar duplicação (mantendo compatibilidade com código antigo)
+        if (request.getArtistId() != null && 
+            albumRepository.existsByTitleAndArtistId(request.getTitle(), request.getArtistId())) {
             throw new DuplicateResourceException("Album", "title", request.getTitle());
         }
 
@@ -85,8 +104,12 @@ public class AlbumService {
                 .recordLabel(request.getRecordLabel())
                 .totalTracks(request.getTotalTracks())
                 .totalDurationSeconds(request.getTotalDurationSeconds())
-                .artist(artist)
                 .build();
+
+        // Adicionar todos os artistas
+        for (Artist artist : artists) {
+            album.addArtist(artist);
+        }
 
         Album savedAlbum = albumRepository.save(album);
         log.info("Album created successfully with ID: {}", savedAlbum.getId());
@@ -104,20 +127,34 @@ public class AlbumService {
         Album album = albumRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Album", "id", id));
 
-        Artist artist = artistRepository.findById(request.getArtistId())
-                .orElseThrow(() -> new ResourceNotFoundException("Artist", "id", request.getArtistId()));
-
-        if (albumRepository.existsByTitleAndArtistIdAndIdNot(request.getTitle(), request.getArtistId(), id)) {
-            throw new DuplicateResourceException("Album", "title", request.getTitle());
+        // Suporta tanto artistId (legacy) quanto artistIds (novo)
+        List<Long> artistIds = new ArrayList<>();
+        if (request.getArtistIds() != null && !request.getArtistIds().isEmpty()) {
+            artistIds.addAll(request.getArtistIds());
+        } else if (request.getArtistId() != null) {
+            artistIds.add(request.getArtistId());
         }
 
+        // Atualizar campos básicos
         album.setTitle(request.getTitle());
         album.setReleaseYear(request.getReleaseYear());
         album.setGenre(request.getGenre());
         album.setRecordLabel(request.getRecordLabel());
         album.setTotalTracks(request.getTotalTracks());
         album.setTotalDurationSeconds(request.getTotalDurationSeconds());
-        album.setArtist(artist);
+
+        // Atualizar artistas se fornecidos
+        if (!artistIds.isEmpty()) {
+            // Remover artistas antigos
+            new ArrayList<>(album.getArtists()).forEach(album::removeArtist);
+
+            // Adicionar novos artistas
+            for (Long artistId : artistIds) {
+                Artist artist = artistRepository.findById(artistId)
+                        .orElseThrow(() -> new ResourceNotFoundException("Artist", "id", artistId));
+                album.addArtist(artist);
+            }
+        }
 
         Album updatedAlbum = albumRepository.save(album);
         log.info("Album updated successfully: {}", id);
@@ -197,6 +234,21 @@ public class AlbumService {
                 .collect(Collectors.toList())
                 : new ArrayList<>();
 
+        List<br.gov.seplag.artistalbum.application.io.ArtistSummary> artistSummaries = album.getArtists() != null
+                ? album.getArtists().stream()
+                .map(artist -> br.gov.seplag.artistalbum.application.io.ArtistSummary.builder()
+                        .id(artist.getId())
+                        .name(artist.getName())
+                        .artistType(artist.getArtistType())
+                        .country(artist.getCountry())
+                        .build())
+                .collect(Collectors.toList())
+                : new ArrayList<>();
+
+        // Compatibilidade com código antigo - pegar primeiro artista se existir
+        Long firstArtistId = !album.getArtists().isEmpty() ? album.getArtists().get(0).getId() : null;
+        String firstArtistName = !album.getArtists().isEmpty() ? album.getArtists().get(0).getName() : null;
+
         return AlbumResponse.builder()
                 .id(album.getId())
                 .title(album.getTitle())
@@ -205,8 +257,9 @@ public class AlbumService {
                 .recordLabel(album.getRecordLabel())
                 .totalTracks(album.getTotalTracks())
                 .totalDurationSeconds(album.getTotalDurationSeconds())
-                .artistId(album.getArtist().getId())
-                .artistName(album.getArtist().getName())
+                .artistId(firstArtistId)
+                .artistName(firstArtistName)
+                .artists(artistSummaries)
                 .covers(coverResponses)
                 .createdAt(album.getCreatedAt())
                 .updatedAt(album.getUpdatedAt())

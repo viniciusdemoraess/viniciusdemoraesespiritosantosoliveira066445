@@ -38,9 +38,14 @@ public class Album {
     @Column(name = "total_duration_seconds")
     private Integer totalDurationSeconds;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "artist_id", nullable = false)
-    private Artist artist;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "artist_album",
+        joinColumns = @JoinColumn(name = "album_id"),
+        inverseJoinColumns = @JoinColumn(name = "artist_id")
+    )
+    @Builder.Default
+    private List<Artist> artists = new ArrayList<>();
 
     @OneToMany(mappedBy = "album", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
@@ -77,5 +82,35 @@ public class Album {
     public void removeCover(AlbumCover cover) {
         covers.remove(cover);
         cover.setAlbum(null);
+    }
+
+    /**
+     * Business method to add artist
+     */
+    public void addArtist(Artist artist) {
+        if (!artists.contains(artist)) {
+            artists.add(artist);
+            artist.getAlbums().add(this);
+        }
+    }
+
+    /**
+     * Business method to remove artist
+     */
+    public void removeArtist(Artist artist) {
+        if (artists.contains(artist)) {
+            artists.remove(artist);
+            artist.getAlbums().remove(this);
+        }
+    }
+
+    /**
+     * Business method to get artist names
+     */
+    public String getArtistNames() {
+        return artists.stream()
+            .map(Artist::getName)
+            .reduce((a, b) -> a + ", " + b)
+            .orElse("");
     }
 }

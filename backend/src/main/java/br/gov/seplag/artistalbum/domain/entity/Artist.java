@@ -32,7 +32,7 @@ public class Artist {
     @Column(columnDefinition = "TEXT")
     private String biography;
 
-    @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "artists", fetch = FetchType.LAZY)
     @Builder.Default
     private List<Album> albums = new ArrayList<>();
 
@@ -57,16 +57,20 @@ public class Artist {
      * Business method to add album
      */
     public void addAlbum(Album album) {
-        albums.add(album);
-        album.setArtist(this);
+        if (!albums.contains(album)) {
+            albums.add(album);
+            album.getArtists().add(this);
+        }
     }
 
     /**
      * Business method to remove album
      */
     public void removeAlbum(Album album) {
-        albums.remove(album);
-        album.setArtist(null);
+        if (albums.contains(album)) {
+            albums.remove(album);
+            album.getArtists().remove(this);
+        }
     }
 
     /**
