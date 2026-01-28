@@ -51,8 +51,8 @@ class WebSocketNotificationServiceTest {
                 .id(1L)
                 .title("Toxicity")
                 .releaseYear(2001)
-                .artist(testArtist)
                 .build();
+        testAlbum.addArtist(testArtist);
     }
 
     @Test
@@ -128,15 +128,16 @@ class WebSocketNotificationServiceTest {
     @DisplayName("Should create notification with album and artist details")
     void shouldCreateNotificationWithDetails() {
         // Given
+        Artist soadArtist = Artist.builder()
+                .id(10L)
+                .name("SOAD")
+                .build();
         Album album = Album.builder()
                 .id(99L)
                 .title("Mezmerize")
                 .releaseYear(2005)
-                .artist(Artist.builder()
-                        .id(10L)
-                        .name("SOAD")
-                        .build())
                 .build();
+        album.addArtist(soadArtist);
 
         doNothing().when(messagingTemplate).convertAndSend(anyString(), any(Map.class));
 

@@ -25,8 +25,8 @@ class AlbumTest {
                 .id(1L)
                 .title("Toxicity")
                 .releaseYear(2001)
-                .artist(artist)
                 .build();
+        album.addArtist(artist);
     }
 
     @Test
@@ -35,12 +35,12 @@ class AlbumTest {
         Album newAlbum = Album.builder()
                 .title("Mezmerize")
                 .releaseYear(2005)
-                .artist(artist)
                 .build();
+        newAlbum.addArtist(artist);
 
         assertThat(newAlbum.getTitle()).isEqualTo("Mezmerize");
         assertThat(newAlbum.getReleaseYear()).isEqualTo(2005);
-        assertThat(newAlbum.getArtist()).isEqualTo(artist);
+        assertThat(newAlbum.getArtists()).contains(artist);
     }
 
     @Test
@@ -143,15 +143,15 @@ class AlbumTest {
                 .id(2L)
                 .title("Hypnotize")
                 .releaseYear(2005)
-                .artist(artist)
                 .covers(null)
                 .createdAt(now)
                 .updatedAt(now)
                 .build();
+        newAlbum.addArtist(artist);
 
         assertThat(newAlbum.getId()).isEqualTo(2L);
         assertThat(newAlbum.getTitle()).isEqualTo("Hypnotize");
         assertThat(newAlbum.getReleaseYear()).isEqualTo(2005);
-        assertThat(newAlbum.getArtist()).isEqualTo(artist);
+        assertThat(newAlbum.getArtists()).contains(artist);
     }
 }

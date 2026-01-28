@@ -77,11 +77,11 @@ class AlbumServiceTest {
                 .id(1L)
                 .title("Toxicity")
                 .releaseYear(2001)
-                .artist(testArtist)
                 .covers(new ArrayList<>())
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
+        testAlbum.addArtist(testArtist);
 
         albumRequest = AlbumRequest.builder()
                 .title("Toxicity")

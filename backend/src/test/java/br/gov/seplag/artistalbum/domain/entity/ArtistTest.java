@@ -57,7 +57,7 @@ class ArtistTest {
 
         assertThat(artist.getAlbums()).hasSize(1);
         assertThat(artist.getAlbums()).contains(album);
-        assertThat(album.getArtist()).isEqualTo(artist);
+        assertThat(album.getArtists()).contains(artist);
     }
 
     @Test
@@ -73,7 +73,7 @@ class ArtistTest {
 
         artist.removeAlbum(album);
         assertThat(artist.getAlbums()).isEmpty();
-        assertThat(album.getArtist()).isNull();
+        assertThat(album.getArtists()).isEmpty();
     }
 
     @Test
