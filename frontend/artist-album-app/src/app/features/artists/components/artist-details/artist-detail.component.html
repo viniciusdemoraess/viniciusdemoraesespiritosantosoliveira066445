@@ -1,9 +1,9 @@
-<app-header title="Detalhes do Artista"></app-header>
+<app-header title="Music Manager"></app-header>
 
 <div class="min-h-screen bg-gradient-to-br from-primary-light to-primary-dark">
   <div class="container mx-auto px-4 py-8">
     <!-- Back Button -->
-    <button 
+    <button
       (click)="goBack()"
       class="mb-6 flex items-center gap-2 px-4 py-2.5 bg-spotify-gray-medium hover:bg-spotify-gray-light text-spotify-white rounded-lg transition-all font-bold shadow-spotify border border-spotify-gray-light"
     >
@@ -37,7 +37,7 @@
             <div class="w-24 h-24 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
               <span class="text-white text-4xl font-bold">{{ artist.name.charAt(0).toUpperCase() }}</span>
             </div>
-            
+
             <!-- Artist Info -->
             <div>
               <h1 class="text-4xl font-bold text-spotify-white mb-2">{{ artist.name }}</h1>
@@ -56,7 +56,7 @@
           </div>
 
           <!-- Edit Button -->
-          <button 
+          <button
             (click)="editArtist()"
             class="btn-primary flex items-center gap-2"
           >
@@ -101,7 +101,7 @@
 
         <!-- Albums List -->
         <div *ngIf="albums.length > 0" class="space-y-3">
-          <div 
+          <div
             *ngFor="let album of albums; let i = index"
             class="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition"
           >
@@ -137,11 +137,11 @@
               </div>
 
               <!-- Chevron Icon -->
-              <svg 
+              <svg
                 class="h-6 w-6 text-gray-400 transition-transform duration-200"
                 [class.rotate-180]="isAlbumExpanded(album.id)"
-                fill="none" 
-                stroke="currentColor" 
+                fill="none"
+                stroke="currentColor"
                 viewBox="0 0 24 24"
               >
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -149,7 +149,7 @@
             </button>
 
             <!-- Album Details (Expandable) -->
-            <div 
+            <div
               *ngIf="isAlbumExpanded(album.id)"
               class="px-6 pb-6 pt-2 bg-spotify-black border-t border-gray-200 animate-fadeIn"
             >
@@ -157,7 +157,7 @@
                 <!-- Album Information -->
                 <div class="space-y-3">
                   <h4 class="font-semibold text-spotify-white mb-3">Informações</h4>
-                  
+
                   <div *ngIf="album.recordLabel" class="flex items-start">
                     <span class="text-sm text-spotify-text-muted min-w-[120px]">Gravadora:</span>
                     <span class="text-sm text-spotify-white font-medium">{{ album.recordLabel }}</span>
@@ -184,12 +184,12 @@
                 <!-- Album Covers Carousel -->
                 <div>
                   <h4 class="font-semibold text-spotify-white mb-3">
-                    Capas 
+                    Capas
                     <span *ngIf="album.covers && album.covers.length > 0" class="text-sm font-normal text-spotify-text-muted">
                       ({{ getCurrentCoverIndex(album.id) + 1 }} de {{ album.covers.length }})
                     </span>
                   </h4>
-                  
+
                   <!-- No Covers -->
                   <div *ngIf="!album.covers || album.covers.length === 0" class="flex items-center justify-center h-64 bg-gray-200 rounded-lg">
                     <div class="text-center">
@@ -202,15 +202,15 @@
 
                   <!-- Carousel -->
                   <div *ngIf="album.covers && album.covers.length > 0" class="relative">
-                    <img 
-                      [src]="getCurrentCover(album)" 
+                    <img
+                      [src]="getCurrentCover(album)"
                       [alt]="album.title"
                       class="w-full h-64 object-cover rounded-lg shadow-md"
                     />
 
                     <!-- Carousel Controls (only if more than 1 cover) -->
                     <div *ngIf="album.covers.length > 1" class="absolute inset-0 flex items-center justify-between px-2">
-                      <button 
+                      <button
                         (click)="previousCover(album, $event)"
                         class="bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition"
                       >
@@ -218,7 +218,7 @@
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                         </svg>
                       </button>
-                      <button 
+                      <button
                         (click)="nextCover(album, $event)"
                         class="bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition"
                       >

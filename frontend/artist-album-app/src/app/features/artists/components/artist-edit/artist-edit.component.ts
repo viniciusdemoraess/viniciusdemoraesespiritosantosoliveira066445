@@ -21,7 +21,7 @@ export class ArtistEditComponent implements OnInit, OnDestroy {
   albums: Album[] = [];
   loading = false;
   saving = false;
-  
+
   // Artist form fields
   artistName = '';
   artistType = '';
@@ -168,7 +168,7 @@ export class ArtistEditComponent implements OnInit, OnDestroy {
   nextCover(album: Album, event: Event): void {
     event.stopPropagation();
     if (!album.covers || album.covers.length <= 1) return;
-    
+
     const currentIndex = this.getCurrentCoverIndex(album.id);
     const nextIndex = (currentIndex + 1) % album.covers.length;
     this.currentCoverIndexMap.set(album.id, nextIndex);
@@ -177,7 +177,7 @@ export class ArtistEditComponent implements OnInit, OnDestroy {
   previousCover(album: Album, event: Event): void {
     event.stopPropagation();
     if (!album.covers || album.covers.length <= 1) return;
-    
+
     const currentIndex = this.getCurrentCoverIndex(album.id);
     const previousIndex = currentIndex === 0 ? album.covers.length - 1 : currentIndex - 1;
     this.currentCoverIndexMap.set(album.id, previousIndex);
@@ -233,7 +233,7 @@ export class ArtistEditComponent implements OnInit, OnDestroy {
         invalidFiles++;
         return;
       }
-      
+
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         invalidFiles++;
@@ -241,12 +241,12 @@ export class ArtistEditComponent implements OnInit, OnDestroy {
       }
 
       validFiles.push(file);
-      
+
       // Create preview
       const reader = new FileReader();
       reader.onload = (e: any) => {
         previews.push(e.target.result);
-        
+
         // Update arrays when all files are read
         if (previews.length === validFiles.length) {
           if (isEditMode) {
@@ -289,6 +289,10 @@ export class ArtistEditComponent implements OnInit, OnDestroy {
 
   isNewAlbumArtistSelected(artistId: number): boolean {
     return this.selectedNewAlbumArtistIds.has(artistId);
+  }
+
+  getSelectedNewAlbumArtists(): Artist[] {
+    return this.allArtists.filter(artist => this.selectedNewAlbumArtistIds.has(artist.id));
   }
 
   createAlbum(): void {

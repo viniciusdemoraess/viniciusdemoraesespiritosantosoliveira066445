@@ -1,9 +1,9 @@
-<app-header title="Editar Artista"></app-header>
+<app-header title="Music Manager"></app-header>
 
 <div class="min-h-screen bg-gradient-to-br from-spotify-black via-spotify-gray-dark to-spotify-black">
   <div class="container mx-auto px-4 py-8">
     <!-- Back Button -->
-    <button 
+    <button
       (click)="goBack()"
       class="mb-6 flex items-center gap-2 px-4 py-2.5 bg-spotify-gray-medium hover:bg-spotify-gray-light text-spotify-white rounded-lg transition-all font-bold shadow-spotify border border-spotify-gray-light"
     >
@@ -151,7 +151,7 @@
       </div>
 
       <!-- Albums Section -->
-      <div class="card p-8 bg-spotify-gray-medium border-2 border-spotify-gray-light rounded-xl shadow-spotify">
+      <div class="card p-8 bg-spotify-gray-medium border-2 border-spotify-gray-light rounded-xl shadow-spotify !overflow-visible">
         <div class="flex items-center justify-between mb-6 pb-6 border-b-2 border-spotify-gray-light">
           <div class="flex items-center gap-4">
             <div class="w-12 h-12 bg-spotify-green/20 rounded-full flex items-center justify-center border border-spotify-green/30">
@@ -198,7 +198,7 @@
               </svg>
             </button>
           </div>
-          
+
           <div class="space-y-6">
             <!-- Upload de Capas (Múltiplas) -->
             <div>
@@ -206,7 +206,7 @@
                 Capas do Álbum
                 <span class="text-spotify-text-muted text-xs ml-2">({{ newAlbumCoverPreviews.length }} selecionada{{ newAlbumCoverPreviews.length !== 1 ? 's' : '' }})</span>
               </label>
-              
+
               <!-- Upload Area -->
               <div class="border-2 border-dashed border-spotify-gray-light rounded-xl p-8 text-center hover:border-spotify-green hover:bg-spotify-gray-dark/50 transition-all cursor-pointer group"
                    (click)="coverFileInput.click()">
@@ -338,7 +338,24 @@
                 Artistas *
                 <span class="text-spotify-text-muted text-xs ml-2">({{ selectedNewAlbumArtistIds.size }} selecionado{{ selectedNewAlbumArtistIds.size !== 1 ? 's' : '' }})</span>
               </label>
-              
+
+              <!-- Selected Artists Chips -->
+              <div *ngIf="selectedNewAlbumArtistIds.size > 0" class="flex flex-wrap gap-2 mb-3">
+                <div *ngFor="let artist of getSelectedNewAlbumArtists()"
+                     class="inline-flex items-center gap-2 px-3 py-1.5 bg-spotify-green/20 border border-spotify-green/30 rounded-full text-sm text-spotify-white">
+                  <span>{{ artist.name }}</span>
+                  <button
+                    type="button"
+                    (click)="toggleNewAlbumArtistSelection(artist.id)"
+                    class="hover:bg-spotify-green/30 rounded-full p-0.5 transition"
+                  >
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
               <!-- Dropdown Multi-Select -->
               <div class="relative">
                 <button
@@ -354,32 +371,33 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                   </svg>
                 </button>
-                
+
                 <!-- Dropdown Menu -->
-                <div 
-                  *ngIf="showNewAlbumArtistDropdown" 
-                  class="absolute z-[9999] w-full mt-2 bg-spotify-gray-dark border border-spotify-gray-light rounded-lg shadow-2xl max-h-96 overflow-y-auto"
+                <div
+                  *ngIf="showNewAlbumArtistDropdown"
+                  class="absolute z-50 w-full mt-2 bg-spotify-gray-dark border border-spotify-gray-light rounded-lg shadow-2xl max-h-60 overflow-y-auto"
                 >
                   <div class="p-2 space-y-1">
-                    <div 
-                      *ngFor="let artist of allArtists" 
+                    <button
+                      *ngFor="let artist of allArtists"
+                      type="button"
                       (click)="toggleNewAlbumArtistSelection(artist.id)"
-                      class="flex items-center px-3 py-2 rounded-lg hover:bg-spotify-gray-medium cursor-pointer transition group"
+                      class="w-full px-3 py-2 text-left hover:bg-spotify-gray-medium rounded-lg transition flex items-center justify-between"
                     >
-                      <div class="flex items-center justify-center w-5 h-5 mr-3 border-2 rounded"
-                           [class.border-spotify-green]="isNewAlbumArtistSelected(artist.id)"
-                           [class.bg-spotify-green]="isNewAlbumArtistSelected(artist.id)"
-                           [class.border-spotify-gray-light]="!isNewAlbumArtistSelected(artist.id)"
-                      >
-                        <svg *ngIf="isNewAlbumArtistSelected(artist.id)" class="w-3 h-3 text-spotify-black" fill="currentColor" viewBox="0 0 20 20">
-                          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                        </svg>
-                      </div>
-                      <span class="text-sm text-spotify-white group-hover:text-spotify-green transition">
+                      <span class="text-spotify-white">
                         {{ artist.name }}
                         <span *ngIf="artist.id === artistId" class="ml-2 text-xs text-spotify-green">(atual)</span>
                       </span>
-                    </div>
+                      <svg
+                        *ngIf="isNewAlbumArtistSelected(artist.id)"
+                        class="h-5 w-5 text-spotify-green flex-shrink-0"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                      </svg>
+                    </button>
                     <div *ngIf="allArtists.length === 0" class="text-sm text-spotify-text-muted text-center py-4">
                       Nenhum artista disponível
                     </div>
@@ -436,7 +454,7 @@
 
         <!-- Albums List -->
         <div *ngIf="albums.length > 0" class="space-y-3">
-          <div 
+          <div
             *ngFor="let album of albums; let i = index"
             class="border-2 border-spotify-gray-light rounded-xl overflow-hidden hover:border-spotify-green/30 transition-all bg-spotify-gray-dark"
           >
@@ -481,11 +499,11 @@
               </div>
 
               <!-- Chevron Icon -->
-              <svg 
+              <svg
                 class="h-6 w-6 text-spotify-gray-lighter transition-transform duration-200"
                 [class.rotate-180]="isAlbumExpanded(album.id)"
-                fill="none" 
-                stroke="currentColor" 
+                fill="none"
+                stroke="currentColor"
                 viewBox="0 0 24 24"
               >
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -493,7 +511,7 @@
             </button>
 
             <!-- Album Details (Expandable) -->
-            <div 
+            <div
               *ngIf="isAlbumExpanded(album.id)"
               class="px-6 pb-6 pt-2 bg-spotify-gray-medium border-t-2 border-spotify-gray-light animate-fadeIn"
             >
@@ -514,7 +532,7 @@
                     Adicionar Novas Capas
                     <span class="text-spotify-text-muted text-xs ml-2">({{ editAlbumCoverPreviews.length }} nova{{ editAlbumCoverPreviews.length !== 1 ? 's' : '' }})</span>
                   </label>
-                  
+
                   <!-- Upload Area -->
                   <div class="border-2 border-dashed border-spotify-gray-light rounded-xl p-6 text-center hover:border-spotify-green hover:bg-spotify-gray-dark/50 transition-all cursor-pointer group"
                        (click)="editCoverFileInput.click()">
@@ -699,9 +717,9 @@
                         <p class="text-sm text-spotify-text-muted font-medium">Sem capa</p>
                       </div>
                     </div>
-                    <img 
+                    <img
                       *ngIf="getMainCover(album)"
-                      [src]="getMainCover(album)" 
+                      [src]="getMainCover(album)"
                       [alt]="album.title"
                       class="w-full h-64 object-cover rounded-xl shadow-spotify border border-spotify-gray-light"
                     />
@@ -753,17 +771,17 @@
                           ({{ getCurrentCoverIndex(album.id) + 1 }} de {{ album.covers.length }})
                         </span>
                       </h4>
-                      
+
                       <div class="relative">
-                        <img 
-                          [src]="getCurrentCover(album)" 
+                        <img
+                          [src]="getCurrentCover(album)"
                           [alt]="album.title"
                           class="w-full h-48 object-cover rounded-lg shadow-spotify border border-spotify-gray-light"
                         />
 
                         <!-- Carousel Controls -->
                         <div class="absolute inset-0 flex items-center justify-between px-2">
-                          <button 
+                          <button
                             (click)="previousCover(album, $event)"
                             class="bg-black/70 hover:bg-spotify-green/90 text-white rounded-full p-2 transition border border-white/20"
                           >
@@ -771,7 +789,7 @@
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                             </svg>
                           </button>
-                          <button 
+                          <button
                             (click)="nextCover(album, $event)"
                             class="bg-black/70 hover:bg-spotify-green/90 text-white rounded-full p-2 transition border border-white/20"
                           >

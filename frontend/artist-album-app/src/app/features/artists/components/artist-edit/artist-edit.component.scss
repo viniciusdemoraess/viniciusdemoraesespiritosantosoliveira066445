@@ -1,5 +1,10 @@
 // Artist Edit Component Styles
 
+// Override card overflow to allow dropdown to show
+.card {
+  overflow: visible !important;
+}
+
 .fade-in {
   animation: fadeIn 0.3s ease-in;
 }
