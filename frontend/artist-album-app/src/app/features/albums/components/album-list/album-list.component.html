@@ -1,6 +1,6 @@
 <div class="min-h-screen bg-spotify-black">
   <!-- Reusable Header Component -->
-  <app-header title="Music Manager" [showNotifications]="true"></app-header>
+  <app-header title="Acervo Musical" [showNotifications]="true"></app-header>
 
   <!-- Main Content -->
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -64,42 +64,48 @@
 
         <!-- Sort Controls -->
         <div class="flex flex-wrap items-center gap-3 text-sm">
-          <span class="text-gray-600 font-medium">Ordenar por:</span>
+          <span class="text-spotify-white font-bold">Ordenar por:</span>
           <div class="flex gap-2">
             <button
               (click)="setSortBy('title')"
-              [class.bg-primary]="sortBy === 'title'"
-              [class.text-white]="sortBy === 'title'"
-              [class.bg-gray-100]="sortBy !== 'title'"
-              [class.text-spotify-gray-lighter]="sortBy !== 'title'"
-              class="px-4 py-2 hover:bg-gray-200 rounded-lg transition font-medium"
+              [class.bg-spotify-green]="sortBy === 'title'"
+              [class.text-spotify-black]="sortBy === 'title'"
+              [class.bg-spotify-gray-medium]="sortBy !== 'title'"
+              [class.text-spotify-white]="sortBy !== 'title'"
+              [class.border-spotify-green]="sortBy === 'title'"
+              [class.border-spotify-gray-light]="sortBy !== 'title'"
+              class="px-4 py-2 hover:bg-spotify-gray-light rounded-lg transition-all font-bold border shadow-spotify"
             >
               Título
             </button>
             <button
               (click)="setSortBy('year')"
-              [class.bg-primary]="sortBy === 'year'"
-              [class.text-white]="sortBy === 'year'"
-              [class.bg-gray-100]="sortBy !== 'year'"
-              [class.text-spotify-gray-lighter]="sortBy !== 'year'"
-              class="px-4 py-2 hover:bg-gray-200 rounded-lg transition font-medium"
+              [class.bg-spotify-green]="sortBy === 'year'"
+              [class.text-spotify-black]="sortBy === 'year'"
+              [class.bg-spotify-gray-medium]="sortBy !== 'year'"
+              [class.text-spotify-white]="sortBy !== 'year'"
+              [class.border-spotify-green]="sortBy === 'year'"
+              [class.border-spotify-gray-light]="sortBy !== 'year'"
+              class="px-4 py-2 hover:bg-spotify-gray-light rounded-lg transition-all font-bold border shadow-spotify"
             >
               Ano
             </button>
             <button
               (click)="setSortBy('artist')"
-              [class.bg-primary]="sortBy === 'artist'"
-              [class.text-white]="sortBy === 'artist'"
-              [class.bg-gray-100]="sortBy !== 'artist'"
-              [class.text-spotify-gray-lighter]="sortBy !== 'artist'"
-              class="px-4 py-2 hover:bg-gray-200 rounded-lg transition font-medium"
+              [class.bg-spotify-green]="sortBy === 'artist'"
+              [class.text-spotify-black]="sortBy === 'artist'"
+              [class.bg-spotify-gray-medium]="sortBy !== 'artist'"
+              [class.text-spotify-white]="sortBy !== 'artist'"
+              [class.border-spotify-green]="sortBy === 'artist'"
+              [class.border-spotify-gray-light]="sortBy !== 'artist'"
+              class="px-4 py-2 hover:bg-spotify-gray-light rounded-lg transition-all font-bold border shadow-spotify"
             >
               Artista
             </button>
           </div>
           <button
             (click)="toggleSortDirection()"
-            class="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-spotify-gray-lighter rounded-lg transition font-medium"
+            class="flex items-center gap-2 px-4 py-2 bg-spotify-gray-medium hover:bg-spotify-gray-light text-spotify-white rounded-lg transition-all font-bold border border-spotify-gray-light shadow-spotify"
           >
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path *ngIf="sortDirection === 'asc'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path>
