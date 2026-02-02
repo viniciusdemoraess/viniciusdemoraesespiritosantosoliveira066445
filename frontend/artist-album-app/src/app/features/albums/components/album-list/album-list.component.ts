@@ -138,6 +138,13 @@ export class AlbumListComponent implements OnInit, OnDestroy {
   onSearch(): void {
     // Reset to first page on search
     this.currentPage = 0;
+
+    // If search is empty, reload all data from backend
+    if (this.searchTerm.trim() === '') {
+      this.loadData();
+      return;
+    }
+
     this.allAlbums = this.filterAlbums(this.allAlbums);
     this.totalItems = this.allAlbums.length;
     this.applyPagination();

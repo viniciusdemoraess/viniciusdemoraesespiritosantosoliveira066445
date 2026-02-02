@@ -116,6 +116,13 @@ export class ArtistListComponent implements OnInit, OnDestroy {
   onSearch(): void {
     // Reset to first page on search
     this.currentPage = 0;
+
+    // If search is empty, reload all data from backend
+    if (this.searchTerm.trim() === '') {
+      this.loadArtists();
+      return;
+    }
+
     this.allArtists = this.filterAndSortArtists(this.allArtists);
     this.totalItems = this.allArtists.length;
     this.applyPagination();
@@ -232,7 +239,7 @@ export class ArtistListComponent implements OnInit, OnDestroy {
   viewAlbums(artistId: number): void {
     this.router.navigate(['/albums'], { queryParams: { artistId } });
   }
-  
+
   viewArtistDetails(artistId: number): void {
     this.router.navigate(['/artists', artistId]);
   }
