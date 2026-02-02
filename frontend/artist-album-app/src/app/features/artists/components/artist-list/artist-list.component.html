@@ -1,6 +1,6 @@
 <div class="min-h-screen bg-spotify-black">
   <!-- Reusable Header Component -->
-  <app-header title="Music Manager" [showNotifications]="true"></app-header>
+  <app-header title="Acervo Musical" [showNotifications]="true"></app-header>
 
   <!-- Main Content -->
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -64,10 +64,10 @@
 
         <!-- Sort Controls -->
         <div class="flex items-center gap-3 text-sm">
-          <span class="text-gray-600 font-medium">Ordenar por nome:</span>
+          <span class="text-spotify-white font-bold">Ordenar por nome:</span>
           <button
             (click)="toggleSortDirection()"
-            class="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-spotify-gray-lighter rounded-lg transition font-medium"
+            class="flex items-center gap-2 px-4 py-2 bg-spotify-gray-medium hover:bg-spotify-gray-light text-spotify-white rounded-lg transition-all font-bold border border-spotify-gray-light shadow-spotify"
           >
             <span>{{ sortDirection === 'asc' ? 'A → Z' : 'Z → A' }}</span>
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -109,7 +109,7 @@
               <h3 class="text-xl font-bold text-spotify-white mb-2 group-hover:text-spotify-green transition">
                 {{ artist.name }}
               </h3>
-              
+
               <!-- Informações do artista -->
               <div class="space-y-1 mt-3">
                 <div *ngIf="artist.artistType" class="flex items-center text-sm text-spotify-gray-lighter">
@@ -214,7 +214,7 @@
     <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" (click)="closeAddModal()"></div>
     <div class="card max-w-2xl w-full p-8 fade-in relative z-10 max-h-[90vh] overflow-y-auto">
       <h3 class="text-2xl font-bold text-spotify-white mb-6">Novo Artista</h3>
-      
+
       <div class="space-y-4">
         <!-- Nome do Artista -->
         <div>
@@ -279,8 +279,8 @@
         <button (click)="closeAddModal()" class="btn-secondary">
           Cancelar
         </button>
-        <button 
-          (click)="createArtist()" 
+        <button
+          (click)="createArtist()"
           [disabled]="!newArtistName || newArtistName.trim().length < 3"
           [class.opacity-50]="!newArtistName || newArtistName.trim().length < 3"
           [class.cursor-not-allowed]="!newArtistName || newArtistName.trim().length < 3"

@@ -12,7 +12,7 @@ import { NotificationBellComponent } from '@shared/components/notification-bell/
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent {
-  @Input() title: string = 'Music Manager';
+  @Input() title: string = 'Acervo Musical';
   @Input() showNotifications: boolean = true;
 
   constructor(
