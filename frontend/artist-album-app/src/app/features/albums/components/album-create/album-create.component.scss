@@ -1,1 +1,5 @@
 // Album Create Component Styles
+// Override card overflow to allow dropdown to show
+.card {
+  overflow: visible !important;
+}
