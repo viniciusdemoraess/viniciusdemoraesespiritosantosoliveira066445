@@ -58,6 +58,38 @@ export class AlbumFacadeService {
   }
 
   /**
+   * Load albums for a specific artist
+   */
+  loadAlbumsByArtist(artistId: number): Observable<Album[]> {
+    this.loadingSubject.next(true);
+    this.errorSubject.next(null);
+
+    return new Observable(observer => {
+      this.albumService.getAllAlbums(0, 1000, 'title', 'asc', artistId).subscribe({
+        next: (response: Page<Album>) => {
+          const artistAlbums = response.content;
+          
+          // Update state: remove old albums that have this artist and add new ones
+          const current = this.albumsSubject.value;
+          const albumIdsToRemove = new Set(artistAlbums.map(a => a.id));
+          const filteredCurrent = current.filter(a => !albumIdsToRemove.has(a.id));
+          this.albumsSubject.next([...filteredCurrent, ...artistAlbums]);
+          
+          this.loadingSubject.next(false);
+          observer.next(artistAlbums);
+          observer.complete();
+        },
+        error: (error) => {
+          this.errorSubject.next('Erro ao carregar álbuns do artista');
+          this.loadingSubject.next(false);
+          console.error('Error loading artist albums:', error);
+          observer.error(error);
+        }
+      });
+    });
+  }
+
+  /**
    * Create a new album and update the state
    */
   createAlbum(album: { 
