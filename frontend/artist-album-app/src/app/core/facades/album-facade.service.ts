@@ -57,6 +57,38 @@ export class AlbumFacadeService {
     });
   }
 
+
+  loadAlbumById(id: number): Observable<Album> {
+    this.loadingSubject.next(true);
+    this.errorSubject.next(null);
+
+    return new Observable(observer => {
+      this.albumService.getAlbumById(id).subscribe({
+        next: (album: Album) => {
+          // Update state: add or update this album
+          const current = this.albumsSubject.value;
+          const index = current.findIndex(a => a.id === id);
+          if (index !== -1) {
+            current[index] = album;
+            this.albumsSubject.next([...current]);
+          } else {
+            this.albumsSubject.next([...current, album]);
+          }
+          
+          this.loadingSubject.next(false);
+          observer.next(album);
+          observer.complete();
+        },
+        error: (error) => {
+          this.errorSubject.next('Erro ao carregar álbum');
+          this.loadingSubject.next(false);
+          observer.error(error);
+          console.error('Error loading album by ID:', error);
+        }
+      });
+    });
+  }
+
   /**
    * Load albums for a specific artist
    */
@@ -121,20 +153,47 @@ export class AlbumFacadeService {
   /**
    * Update an existing album
    */
-  updateAlbum(id: number, album: Partial<Album>): Observable<Album> {
+  updateAlbum(id: number, album: Partial<Album> & { artistIds?: number[] }): Observable<Album> {
+    this.loadingSubject.next(true);
+    this.errorSubject.next(null);
+
+    // Prepare update payload with artistIds if present
+    const updatePayload: any = {
+      title: album.title,
+      releaseYear: album.releaseYear,
+      genre: album.genre,
+      recordLabel: album.recordLabel,
+      totalTracks: album.totalTracks,
+      totalDurationSeconds: album.totalDurationSeconds
+    };
+
+    // Add artistIds if present (for N:N relationship)
+    if (album.artistIds && album.artistIds.length > 0) {
+      updatePayload.artistIds = album.artistIds;
+    }
+
     return new Observable(observer => {
-      // Note: Implement updateAlbum in AlbumService if needed
-      const current = this.albumsSubject.value;
-      const index = current.findIndex(a => a.id === id);
-      if (index !== -1) {
-        const updated = { ...current[index], ...album };
-        current[index] = updated;
-        this.albumsSubject.next([...current]);
-        observer.next(updated);
-        observer.complete();
-      } else {
-        observer.error(new Error('Album not found'));
-      }
+      this.albumService.updateAlbum(id, updatePayload).subscribe({
+        next: (updatedAlbum: Album) => {
+          // Update local state
+          const current = this.albumsSubject.value;
+          const index = current.findIndex(a => a.id === id);
+          if (index !== -1) {
+            current[index] = updatedAlbum;
+            this.albumsSubject.next([...current]);
+          }
+          
+          this.loadingSubject.next(false);
+          observer.next(updatedAlbum);
+          observer.complete();
+        },
+        error: (error) => {
+          this.errorSubject.next('Erro ao atualizar álbum');
+          this.loadingSubject.next(false);
+          observer.error(error);
+          console.error('Error updating album:', error);
+        }
+      });
     });
   }
 

@@ -43,6 +43,12 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'albums/:id/edit',
+    loadComponent: () => import('./features/albums/components/album-edit/album-edit.component')
+      .then(m => m.AlbumEditComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: '**',
     redirectTo: '/auth/login'
   }

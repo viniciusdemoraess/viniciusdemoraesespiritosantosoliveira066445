@@ -311,8 +311,12 @@ export class AlbumListComponent implements OnInit, OnDestroy {
     this.newAlbumCoverFiles.splice(index, 1);
   }
 
+  editAlbum(album: Album): void {
+    this.router.navigate(['/albums', album.id, 'edit']);
+  }
+
   deleteAlbum(album: Album): void {
-    if (!confirm(`Deseja deletar o álbum "${album.title}"?`)) return;
+    if (!confirm(`Tem certeza que deseja deletar o álbum "${album.title}"?`)) return;
 
     this.albumFacade.deleteAlbum(album.id).subscribe({
       next: () => {},
