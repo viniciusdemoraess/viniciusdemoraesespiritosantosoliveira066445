@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, map } from 'rxjs';
 import { ArtistService } from '../services/artist.service';
 import { Artist, Page } from '../models';
+import { ToastService } from '@core/services/toast.service';
 
 /**
  * Artist Facade Service
@@ -31,7 +32,10 @@ export class ArtistFacadeService {
     map(artists => artists.filter(a => a.albumCount === 0).length)
   );
 
-  constructor(private artistService: ArtistService) {}
+  constructor(
+    private artistService: ArtistService,
+    private toastService: ToastService
+  ) {}
 
   /**
    * Load all artists with pagination
@@ -46,8 +50,10 @@ export class ArtistFacadeService {
         this.loadingSubject.next(false);
       },
       error: (error) => {
-        this.errorSubject.next('Erro ao carregar artistas');
+        const errorMsg = 'Erro ao carregar artistas';
+        this.errorSubject.next(errorMsg);
         this.loadingSubject.next(false);
+        this.toastService.error(errorMsg);
         console.error('Error loading artists:', error);
       }
     });
@@ -77,8 +83,10 @@ export class ArtistFacadeService {
           observer.complete();
         },
         error: (error) => {
-          this.errorSubject.next('Erro ao carregar artista');
+          const errorMsg = 'Erro ao carregar artista';
+          this.errorSubject.next(errorMsg);
           this.loadingSubject.next(false);
+          this.toastService.error(errorMsg);
           console.error('Error loading artist:', error);
           observer.error(error);
         }
@@ -91,8 +99,8 @@ export class ArtistFacadeService {
    */
   createArtist(artistData: Partial<Artist> | string): Observable<Artist> {
     // Suporta tanto o formato antigo (string) quanto o novo (objeto)
-    const data = typeof artistData === 'string' 
-      ? { name: artistData } 
+    const data = typeof artistData === 'string'
+      ? { name: artistData }
       : artistData;
 
     return new Observable(observer => {
@@ -100,11 +108,14 @@ export class ArtistFacadeService {
         next: (artist) => {
           const current = this.artistsSubject.value;
           this.artistsSubject.next([...current, artist]);
+          this.toastService.success('Artista criado com sucesso!');
           observer.next(artist);
           observer.complete();
         },
         error: (error) => {
-          this.errorSubject.next('Erro ao criar artista');
+          const errorMsg = this.extractErrorMessage(error, 'Erro ao criar artista');
+          this.errorSubject.next(errorMsg);
+          this.toastService.error(errorMsg);
           observer.error(error);
         }
       });
@@ -116,8 +127,8 @@ export class ArtistFacadeService {
    */
   updateArtist(id: number, artistData: Partial<Artist> | string): Observable<Artist> {
     // Suporta tanto o formato antigo (string) quanto o novo (objeto)
-    const data = typeof artistData === 'string' 
-      ? { name: artistData } 
+    const data = typeof artistData === 'string'
+      ? { name: artistData }
       : artistData;
 
     return new Observable(observer => {
@@ -129,11 +140,14 @@ export class ArtistFacadeService {
             current[index] = updatedArtist;
             this.artistsSubject.next([...current]);
           }
+          this.toastService.success('Artista atualizado com sucesso!');
           observer.next(updatedArtist);
           observer.complete();
         },
         error: (error) => {
-          this.errorSubject.next('Erro ao atualizar artista');
+          const errorMsg = this.extractErrorMessage(error, 'Erro ao atualizar artista');
+          this.errorSubject.next(errorMsg);
+          this.toastService.error(errorMsg);
           observer.error(error);
         }
       });
@@ -149,11 +163,14 @@ export class ArtistFacadeService {
         next: () => {
           const current = this.artistsSubject.value;
           this.artistsSubject.next(current.filter(a => a.id !== id));
+          this.toastService.success('Artista deletado com sucesso!');
           observer.next();
           observer.complete();
         },
         error: (error) => {
-          this.errorSubject.next('Erro ao deletar artista');
+          const errorMsg = this.extractErrorMessage(error, 'Erro ao deletar artista');
+          this.errorSubject.next(errorMsg);
+          this.toastService.error(errorMsg);
           observer.error(error);
         }
       });
@@ -174,5 +191,26 @@ export class ArtistFacadeService {
     this.artistsSubject.next([]);
     this.loadingSubject.next(false);
     this.errorSubject.next(null);
+  }
+
+  /**
+   * Extract detailed error message from backend response
+   */
+  private extractErrorMessage(error: any, defaultMessage: string): string {
+    if (error?.error?.errors) {
+      // Handle validation errors from backend
+      const errors = error.error.errors;
+      const errorMessages = Object.entries(errors)
+        .map(([field, message]) => `${field}: ${message}`)
+        .join(', ');
+      return errorMessages || defaultMessage;
+    }
+    if (error?.error?.error) {
+      return error.error.error;
+    }
+    if (error?.message) {
+      return error.message;
+    }
+    return defaultMessage;
   }
 }

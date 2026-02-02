@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, map } from 'rxjs';
 import { AlbumService } from '@core/services/album.service';
 import { Album, Page } from '@core/models';
+import { ToastService } from '@core/services/toast.service';
 
 /**
  * Album Facade Service
@@ -35,7 +36,10 @@ export class AlbumFacadeService {
     map(albums => albums.filter(a => a.covers.length === 0).length)
   );
 
-  constructor(private albumService: AlbumService) {}
+  constructor(
+    private albumService: AlbumService,
+    private toastService: ToastService
+  ) {}
 
   /**
    * Load all albums with pagination
@@ -50,8 +54,10 @@ export class AlbumFacadeService {
         this.loadingSubject.next(false);
       },
       error: (error) => {
-        this.errorSubject.next('Erro ao carregar álbuns');
+        const errorMsg = 'Erro ao carregar álbuns';
+        this.errorSubject.next(errorMsg);
         this.loadingSubject.next(false);
+        this.toastService.error(errorMsg);
         console.error('Error loading albums:', error);
       }
     });
@@ -74,14 +80,16 @@ export class AlbumFacadeService {
           } else {
             this.albumsSubject.next([...current, album]);
           }
-          
+
           this.loadingSubject.next(false);
           observer.next(album);
           observer.complete();
         },
         error: (error) => {
-          this.errorSubject.next('Erro ao carregar álbum');
+          const errorMsg = 'Erro ao carregar álbum';
+          this.errorSubject.next(errorMsg);
           this.loadingSubject.next(false);
+          this.toastService.error(errorMsg);
           observer.error(error);
           console.error('Error loading album by ID:', error);
         }
@@ -100,20 +108,22 @@ export class AlbumFacadeService {
       this.albumService.getAllAlbums(0, 1000, 'title', 'asc', artistId).subscribe({
         next: (response: Page<Album>) => {
           const artistAlbums = response.content;
-          
+
           // Update state: remove old albums that have this artist and add new ones
           const current = this.albumsSubject.value;
           const albumIdsToRemove = new Set(artistAlbums.map(a => a.id));
           const filteredCurrent = current.filter(a => !albumIdsToRemove.has(a.id));
           this.albumsSubject.next([...filteredCurrent, ...artistAlbums]);
-          
+
           this.loadingSubject.next(false);
           observer.next(artistAlbums);
           observer.complete();
         },
         error: (error) => {
-          this.errorSubject.next('Erro ao carregar álbuns do artista');
+          const errorMsg = 'Erro ao carregar álbuns do artista';
+          this.errorSubject.next(errorMsg);
           this.loadingSubject.next(false);
+          this.toastService.error(errorMsg);
           console.error('Error loading artist albums:', error);
           observer.error(error);
         }
@@ -124,9 +134,9 @@ export class AlbumFacadeService {
   /**
    * Create a new album and update the state
    */
-  createAlbum(album: { 
-    title: string; 
-    releaseYear: number; 
+  createAlbum(album: {
+    title: string;
+    releaseYear: number;
     genre?: string;
     recordLabel?: string;
     totalTracks?: number;
@@ -143,7 +153,9 @@ export class AlbumFacadeService {
           observer.complete();
         },
         error: (error) => {
-          this.errorSubject.next('Erro ao criar álbum');
+          const errorMsg = this.extractErrorMessage(error, 'Erro ao criar álbum');
+          this.errorSubject.next(errorMsg);
+          this.toastService.error(errorMsg);
           observer.error(error);
         }
       });
@@ -182,14 +194,17 @@ export class AlbumFacadeService {
             current[index] = updatedAlbum;
             this.albumsSubject.next([...current]);
           }
-          
+
           this.loadingSubject.next(false);
+          this.toastService.success('Álbum atualizado com sucesso!');
           observer.next(updatedAlbum);
           observer.complete();
         },
         error: (error) => {
-          this.errorSubject.next('Erro ao atualizar álbum');
+          const errorMsg = this.extractErrorMessage(error, 'Erro ao atualizar álbum');
+          this.errorSubject.next(errorMsg);
           this.loadingSubject.next(false);
+          this.toastService.error(errorMsg);
           observer.error(error);
           console.error('Error updating album:', error);
         }
@@ -206,11 +221,14 @@ export class AlbumFacadeService {
         next: () => {
           const current = this.albumsSubject.value;
           this.albumsSubject.next(current.filter(a => a.id !== id));
+          this.toastService.success('Álbum deletado com sucesso!');
           observer.next();
           observer.complete();
         },
         error: (error) => {
-          this.errorSubject.next('Erro ao deletar álbum');
+          const errorMsg = this.extractErrorMessage(error, 'Erro ao deletar álbum');
+          this.errorSubject.next(errorMsg);
+          this.toastService.error(errorMsg);
           observer.error(error);
         }
       });
@@ -256,5 +274,26 @@ export class AlbumFacadeService {
     this.albumsSubject.next([]);
     this.loadingSubject.next(false);
     this.errorSubject.next(null);
+  }
+
+  /**
+   * Extract detailed error message from backend response
+   */
+  private extractErrorMessage(error: any, defaultMessage: string): string {
+    if (error?.error?.errors) {
+      // Handle validation errors from backend
+      const errors = error.error.errors;
+      const errorMessages = Object.entries(errors)
+        .map(([field, message]) => `${field}: ${message}`)
+        .join(', ');
+      return errorMessages || defaultMessage;
+    }
+    if (error?.error?.error) {
+      return error.error.error;
+    }
+    if (error?.message) {
+      return error.message;
+    }
+    return defaultMessage;
   }
 }
