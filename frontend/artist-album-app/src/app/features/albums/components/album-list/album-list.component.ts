@@ -3,10 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { AlbumFacadeService } from '@core/facades/album-facade.service';
-import { ArtistFacadeService } from '@core/facades/artist-facade.service';
 import { HeaderComponent } from '@shared/components/header/header.component';
 import { PaginationComponent } from '@shared/components/pagination/pagination.component';
-import { Album, Artist } from '@core/models';
+import { Album } from '@core/models';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -20,7 +19,6 @@ export class AlbumListComponent implements OnInit, OnDestroy {
   Math = Math;
   allAlbums: Album[] = [];
   albums: Album[] = [];
-  artists: Artist[] = [];
   loading = false;
   searchTerm = '';
   filterArtistId?: number;
@@ -34,30 +32,10 @@ export class AlbumListComponent implements OnInit, OnDestroy {
   sortBy = 'title';
   sortDirection: 'asc' | 'desc' = 'asc';
 
-  showAddModal = false;
-  showArtistDropdown = false;
-
-  newAlbum = {
-    title: '',
-    releaseYear: new Date().getFullYear(),
-    genre: '',
-    recordLabel: '',
-    totalTracks: undefined as number | undefined,
-    totalDurationSeconds: undefined as number | undefined,
-    artistIds: [] as number[]
-  };
-
-  // Track selected artists for multi-select
-  selectedArtistIds: Set<number> = new Set();
-
-  // Cover files and previews for new album
-  newAlbumCoverFiles: File[] = [];
-  newAlbumCoverPreviews: string[] = [];
   private subscriptions: Subscription[] = [];
 
   constructor(
     private albumFacade: AlbumFacadeService,
-    private artistFacade: ArtistFacadeService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
@@ -84,15 +62,11 @@ export class AlbumListComponent implements OnInit, OnDestroy {
       this.applyPagination();
     });
 
-    const artistsSub = this.artistFacade.artists$.subscribe((artists: Artist[]) => {
-      this.artists = artists;
-    });
-
     const loadingSub = this.albumFacade.loading$.subscribe((loading: boolean) => {
       this.loading = loading;
     });
 
-    this.subscriptions.push(albumsSub, artistsSub, loadingSub);
+    this.subscriptions.push(albumsSub, loadingSub);
   }
 
   private applyPagination(): void {
@@ -159,7 +133,6 @@ export class AlbumListComponent implements OnInit, OnDestroy {
 
   loadData(): void {
     this.albumFacade.loadAlbums();
-    this.artistFacade.loadArtists();
   }
 
   onSearch(): void {
@@ -223,93 +196,10 @@ export class AlbumListComponent implements OnInit, OnDestroy {
   }
 
   openAddModal(): void {
-    this.newAlbum = {
-      title: '',
-      releaseYear: new Date().getFullYear(),
-      genre: '',
-      recordLabel: '',
-      totalTracks: undefined,
-      totalDurationSeconds: undefined,
-      artistIds: []
-    };
-    this.selectedArtistIds.clear();
-    this.showArtistDropdown = false;
-    this.showAddModal = true;
+    this.router.navigate(['/albums/create']);
   }
 
-  closeAddModal(): void {
-    this.showAddModal = false;
-    this.showArtistDropdown = false;
-    this.newAlbumCoverFiles = [];
-    this.newAlbumCoverPreviews = [];
-  }
 
-  toggleArtistSelection(artistId: number): void {
-    if (this.selectedArtistIds.has(artistId)) {
-      this.selectedArtistIds.delete(artistId);
-    } else {
-      this.selectedArtistIds.add(artistId);
-    }
-  }
-
-  isArtistSelected(artistId: number): boolean {
-    return this.selectedArtistIds.has(artistId);
-  }
-
-  createAlbum(): void {
-    if (!this.newAlbum.title || this.newAlbum.title.trim().length < 3 || this.selectedArtistIds.size === 0) return;
-
-    // Convert Set to Array
-    this.newAlbum.artistIds = Array.from(this.selectedArtistIds);
-
-    this.albumFacade.createAlbum(this.newAlbum).subscribe({
-      next: (createdAlbum) => {
-        // If covers were selected, upload them
-        if (this.newAlbumCoverFiles.length > 0) {
-          this.albumFacade.uploadCovers(createdAlbum.id, this.newAlbumCoverFiles).subscribe({
-            next: () => {
-              this.closeAddModal();
-              this.loadData();
-            },
-            error: (error: any) => {
-              console.error('Error uploading covers:', error);
-              // Album was created, just close modal
-              this.closeAddModal();
-              this.loadData();
-            }
-          });
-        } else {
-          this.closeAddModal();
-          this.loadData();
-        }
-      },
-      error: (error) => {
-        console.error('Error creating album:', error);
-      }
-    });
-  }
-
-  onCoverFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files) {
-      const filesArray = Array.from(input.files);
-      this.newAlbumCoverFiles.push(...filesArray);
-
-      // Create previews
-      filesArray.forEach(file => {
-        const reader = new FileReader();
-        reader.onload = (e: any) => {
-          this.newAlbumCoverPreviews.push(e.target.result);
-        };
-        reader.readAsDataURL(file);
-      });
-    }
-  }
-
-  removeCoverPreview(index: number): void {
-    this.newAlbumCoverPreviews.splice(index, 1);
-    this.newAlbumCoverFiles.splice(index, 1);
-  }
 
   editAlbum(album: Album): void {
     this.router.navigate(['/albums', album.id, 'edit']);
