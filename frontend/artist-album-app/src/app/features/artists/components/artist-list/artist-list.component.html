@@ -223,14 +223,25 @@
           </label>
           <input
             [(ngModel)]="newArtistName"
+            #artistNameInput="ngModel"
             (keyup.enter)="createArtist()"
             type="text"
-            placeholder="Ex: Serj Tankian"
+            required
             minlength="3"
+            maxlength="200"
+            placeholder="Ex: Serj Tankian"
+            [class.border-red-500]="artistNameInput.invalid && artistNameInput.touched"
             class="w-full px-4 py-3 bg-spotify-gray-dark border border-spotify-gray-light text-spotify-white rounded-lg focus:outline-none focus:border-spotify-green hover:border-spotify-gray-lighter transition-all placeholder:text-spotify-text-muted"
             autofocus
           />
-          <p class="text-xs text-spotify-text-muted mt-1">Mínimo 3 caracteres</p>
+          <p *ngIf="artistNameInput.invalid && artistNameInput.touched" class="text-xs text-red-500 mt-1 flex items-center gap-1">
+            <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+            </svg>
+            <span *ngIf="artistNameInput.errors?.['required']">O nome é obrigatório</span>
+            <span *ngIf="artistNameInput.errors?.['minlength']">O nome deve ter no mínimo 3 caracteres</span>
+          </p>
+          <p *ngIf="artistNameInput.valid || !artistNameInput.touched" class="text-xs text-spotify-text-muted mt-1">Mínimo 3 caracteres, máximo 200</p>
         </div>
 
         <!-- Tipo do Artista -->

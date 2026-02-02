@@ -56,16 +56,27 @@
             </label>
             <input
               [(ngModel)]="artistName"
+              #nameInput="ngModel"
               type="text"
-              placeholder="Ex: System of a Down, Metallica..."
+              required
               minlength="3"
+              maxlength="200"
+              placeholder="Ex: System of a Down, Metallica..."
+              [class.border-red-500]="nameInput.invalid && nameInput.touched"
               class="w-full px-4 py-3 bg-spotify-gray-dark border border-spotify-gray-light text-spotify-white rounded-lg focus:outline-none focus:border-spotify-green hover:border-spotify-gray-lighter transition-all placeholder-spotify-text-muted"
             />
-            <p class="text-xs text-spotify-text-muted mt-1.5 flex items-center gap-1">
+            <p *ngIf="nameInput.invalid && nameInput.touched" class="text-xs text-red-500 mt-1 flex items-center gap-1">
+              <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+              </svg>
+              <span *ngIf="nameInput.errors?.['required']">O nome é obrigatório</span>
+              <span *ngIf="nameInput.errors?.['minlength']">O nome deve ter no mínimo 3 caracteres</span>
+            </p>
+            <p *ngIf="nameInput.valid || !nameInput.touched" class="text-xs text-spotify-text-muted mt-1.5 flex items-center gap-1">
               <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
-              Mínimo 3 caracteres
+              Mínimo 3 caracteres, máximo 200
             </p>
           </div>
 
@@ -259,12 +270,23 @@
                 </label>
                 <input
                   [(ngModel)]="newAlbumTitle"
+                  #newAlbumTitleInput="ngModel"
                   type="text"
-                  placeholder="Ex: Toxicity, The Dark Side of the Moon..."
+                  required
                   minlength="3"
+                  maxlength="200"
+                  placeholder="Ex: Toxicity, The Dark Side of the Moon..."
+                  [class.border-red-500]="newAlbumTitleInput.invalid && newAlbumTitleInput.touched"
                   class="w-full px-4 py-3 bg-spotify-gray-dark border border-spotify-gray-light text-spotify-white rounded-lg focus:outline-none focus:border-spotify-green hover:border-spotify-gray-lighter transition-all placeholder-spotify-text-muted"
                 />
-                <p class="text-xs text-spotify-text-muted mt-1">Mínimo 3 caracteres</p>
+                <p *ngIf="newAlbumTitleInput.invalid && newAlbumTitleInput.touched" class="text-xs text-red-500 mt-1 flex items-center gap-1">
+                  <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                  </svg>
+                  <span *ngIf="newAlbumTitleInput.errors?.['required']">O título é obrigatório</span>
+                  <span *ngIf="newAlbumTitleInput.errors?.['minlength']">O título deve ter no mínimo 3 caracteres</span>
+                </p>
+                <p *ngIf="newAlbumTitleInput.valid || !newAlbumTitleInput.touched" class="text-xs text-spotify-text-muted mt-1">Mínimo 3 caracteres, máximo 200</p>
               </div>
 
               <!-- Ano de Lançamento -->
@@ -272,12 +294,22 @@
                 <label class="block text-sm font-bold text-spotify-white mb-2">Ano de Lançamento</label>
                 <input
                   [(ngModel)]="newAlbumYear"
+                  #newAlbumYearInput="ngModel"
                   type="number"
                   min="1900"
                   max="2100"
                   placeholder="2024"
+                  (keydown)="preventNonNumeric($event)"
+                  [class.border-red-500]="newAlbumYearInput.invalid && newAlbumYearInput.touched"
                   class="w-full px-4 py-3 bg-spotify-gray-dark border border-spotify-gray-light text-spotify-white rounded-lg focus:outline-none focus:border-spotify-green hover:border-spotify-gray-lighter transition-all"
                 />
+                <p *ngIf="newAlbumYearInput.invalid && newAlbumYearInput.touched" class="text-xs text-red-500 mt-1 flex items-center gap-1">
+                  <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                  </svg>
+                  <span>O ano deve estar entre 1900 e 2100</span>
+                </p>
+                <p *ngIf="newAlbumYearInput.valid || !newAlbumYearInput.touched" class="text-xs text-spotify-text-muted mt-1">Entre 1900 e 2100</p>
               </div>
 
               <!-- Gênero -->
@@ -312,6 +344,7 @@
                   type="number"
                   min="1"
                   placeholder="12"
+                  (keydown)="preventNonNumeric($event)"
                   class="w-full px-4 py-3 bg-spotify-gray-dark border border-spotify-gray-light text-spotify-white rounded-lg focus:outline-none focus:border-spotify-green hover:border-spotify-gray-lighter transition-all"
                 />
               </div>
@@ -327,6 +360,7 @@
                   type="number"
                   min="1"
                   placeholder="2400"
+                  (keydown)="preventNonNumeric($event)"
                   class="w-full px-4 py-3 bg-spotify-gray-dark border border-spotify-gray-light text-spotify-white rounded-lg focus:outline-none focus:border-spotify-green hover:border-spotify-gray-lighter transition-all"
                 />
               </div>
@@ -403,8 +437,18 @@
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
+              </div>              <p *ngIf="selectedNewAlbumArtistIds.size === 0" class="text-xs text-red-500 mt-1 flex items-center gap-1">
+                <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                </svg>
+                <span>Selecione pelo menos um artista</span>
+              </p>
+              <p *ngIf="selectedNewAlbumArtistIds.size > 0" class="text-xs text-green-500 mt-1 flex items-center gap-1">
+                <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <span>{{ selectedNewAlbumArtistIds.size }} artista{{ selectedNewAlbumArtistIds.size !== 1 ? 's' : '' }} selecionado{{ selectedNewAlbumArtistIds.size !== 1 ? 's' : '' }}</span>
+              </p>            </div>
 
             <!-- Buttons -->
             <div class="flex justify-end gap-3 pt-6 border-t border-spotify-gray-light">
@@ -584,12 +628,23 @@
                     </label>
                     <input
                       [(ngModel)]="editAlbumTitle"
+                      #editAlbumTitleInput="ngModel"
                       type="text"
-                      placeholder="Ex: Toxicity, The Dark Side of the Moon..."
+                      required
                       minlength="3"
-                      class="w-full px-4 py-3 bg-spotify-gray-dark border border-spotify-gray-light text-spotify-white rounded-lg focus:outline-none focus:border-spotify-green hover:border-spotify-gray-lighter transition-all placeholder-spotify-text-muted"
+                      maxlength="200"
                       placeholder="Nome do álbum (mínimo 3 caracteres)"
+                      [class.border-red-500]="editAlbumTitleInput.invalid && editAlbumTitleInput.touched"
+                      class="w-full px-4 py-3 bg-spotify-gray-dark border border-spotify-gray-light text-spotify-white rounded-lg focus:outline-none focus:border-spotify-green hover:border-spotify-gray-lighter transition-all placeholder-spotify-text-muted"
                       />
+                    <p *ngIf="editAlbumTitleInput.invalid && editAlbumTitleInput.touched" class="text-xs text-red-500 mt-1 flex items-center gap-1">
+                      <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                      </svg>
+                      <span *ngIf="editAlbumTitleInput.errors?.['required']">O título é obrigatório</span>
+                      <span *ngIf="editAlbumTitleInput.errors?.['minlength']">O título deve ter no mínimo 3 caracteres</span>
+                    </p>
+                    <p *ngIf="editAlbumTitleInput.valid || !editAlbumTitleInput.touched" class="text-xs text-spotify-text-muted mt-1">Mínimo 3 caracteres, máximo 200</p>
                   </div>
 
                   <!-- Ano -->
@@ -597,12 +652,22 @@
                     <label class="block text-sm font-bold text-spotify-white mb-2">Ano</label>
                     <input
                       [(ngModel)]="editAlbumYear"
+                      #editAlbumYearInput="ngModel"
                       type="number"
                       min="1900"
                       max="2100"
                       placeholder="2024"
+                      (keydown)="preventNonNumeric($event)"
+                      [class.border-red-500]="editAlbumYearInput.invalid && editAlbumYearInput.touched"
                       class="w-full px-4 py-3 bg-spotify-gray-dark border border-spotify-gray-light text-spotify-white rounded-lg focus:outline-none focus:border-spotify-green hover:border-spotify-gray-lighter transition-all"
                     />
+                    <p *ngIf="editAlbumYearInput.invalid && editAlbumYearInput.touched" class="text-xs text-red-500 mt-1 flex items-center gap-1">
+                      <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                      </svg>
+                      <span>O ano deve estar entre 1900 e 2100</span>
+                    </p>
+                    <p *ngIf="editAlbumYearInput.valid || !editAlbumYearInput.touched" class="text-xs text-spotify-text-muted mt-1">Entre 1900 e 2100</p>
                   </div>
 
                   <!-- Gênero -->
@@ -637,6 +702,7 @@
                       type="number"
                       min="1"
                       placeholder="12"
+                      (keydown)="preventNonNumeric($event)"
                       class="w-full px-4 py-3 bg-spotify-gray-dark border border-spotify-gray-light text-spotify-white rounded-lg focus:outline-none focus:border-spotify-green hover:border-spotify-gray-lighter transition-all"
                     />
                   </div>
@@ -649,6 +715,7 @@
                       type="number"
                       min="1"
                       placeholder="2400"
+                      (keydown)="preventNonNumeric($event)"
                       class="w-full px-4 py-3 bg-spotify-gray-dark border border-spotify-gray-light text-spotify-white rounded-lg focus:outline-none focus:border-spotify-green hover:border-spotify-gray-lighter transition-all"
                     />
                   </div>

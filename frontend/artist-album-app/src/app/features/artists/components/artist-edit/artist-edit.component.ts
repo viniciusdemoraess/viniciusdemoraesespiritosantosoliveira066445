@@ -431,4 +431,23 @@ export class ArtistEditComponent implements OnInit, OnDestroy {
   goBack(): void {
     this.router.navigate(['/artists', this.artistId]);
   }
+
+  preventNonNumeric(event: KeyboardEvent): void {
+    // Permite: backspace, delete, tab, escape, enter, home, end, arrows
+    const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'Home', 'End', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
+
+    if (allowedKeys.includes(event.key)) {
+      return;
+    }
+
+    // Bloqueia: e, E, +, -, . e outros caracteres não numéricos
+    if (event.key === 'e' || event.key === 'E' || event.key === '+' || event.key === '-' || event.key === '.' || event.key === ',') {
+      event.preventDefault();
+    }
+
+    // Permite apenas números de 0-9
+    if (!/^\d$/.test(event.key)) {
+      event.preventDefault();
+    }
+  }
 }
