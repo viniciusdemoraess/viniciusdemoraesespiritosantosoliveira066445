@@ -20,19 +20,19 @@ export const routes: Routes = [
   },
   {
     path: 'artists/:id/edit',
-    loadComponent: () => import('./features/artists/components/artist-edit.component')
+    loadComponent: () => import('./features/artists/components/artist-edit/artist-edit.component')
       .then(m => m.ArtistEditComponent),
     canActivate: [authGuard]
   },
   {
     path: 'artists/:id',
-    loadComponent: () => import('./features/artists/components/artist-detail.component')
+    loadComponent: () => import('./features/artists/components/artist-details/artist-detail.component')
       .then(m => m.ArtistDetailComponent),
     canActivate: [authGuard]
   },
   {
     path: 'artists',
-    loadComponent: () => import('./features/artists/components/artist-list.component')
+    loadComponent: () => import('./features/artists/components/artist-list/artist-list.component')
       .then(m => m.ArtistListComponent),
     canActivate: [authGuard]
   },

@@ -425,6 +425,6 @@ export class ArtistEditComponent implements OnInit, OnDestroy {
   }
 
   goBack(): void {
-    this.router.navigate(['/artists']);
+    this.router.navigate(['/artists', this.artistId]);
   }
 }
