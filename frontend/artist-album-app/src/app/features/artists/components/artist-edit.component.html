@@ -567,9 +567,11 @@
                     <input
                       [(ngModel)]="editAlbumTitle"
                       type="text"
+                      placeholder="Ex: Toxicity, The Dark Side of the Moon..."
                       minlength="3"
-                      class="w-full px-4 py-3 bg-spotify-gray-dark border border-spotify-gray-light text-spotify-white rounded-lg focus:outline-none focus:border-spotify-green hover:border-spotify-gray-lighter transition-all"
-                    />
+                      class="w-full px-4 py-3 bg-spotify-gray-dark border border-spotify-gray-light text-spotify-white rounded-lg focus:outline-none focus:border-spotify-green hover:border-spotify-gray-lighter transition-all placeholder-spotify-text-muted"
+                      placeholder="Nome do álbum (mínimo 3 caracteres)"
+                      />
                   </div>
 
                   <!-- Ano -->
@@ -580,6 +582,7 @@
                       type="number"
                       min="1900"
                       max="2100"
+                      placeholder="2024"
                       class="w-full px-4 py-3 bg-spotify-gray-dark border border-spotify-gray-light text-spotify-white rounded-lg focus:outline-none focus:border-spotify-green hover:border-spotify-gray-lighter transition-all"
                     />
                   </div>
@@ -590,8 +593,9 @@
                     <input
                       [(ngModel)]="editAlbumGenre"
                       type="text"
+                      placeholder="Rock, Pop, Jazz, Metal..."
                       maxlength="100"
-                      class="w-full px-4 py-3 bg-spotify-gray-dark border border-spotify-gray-light text-spotify-white rounded-lg focus:outline-none focus:border-spotify-green hover:border-spotify-gray-lighter transition-all"
+                      class="w-full px-4 py-3 bg-spotify-gray-dark border border-spotify-gray-light text-spotify-white rounded-lg focus:outline-none focus:border-spotify-green hover:border-spotify-gray-lighter transition-all placeholder-spotify-text-muted"
                     />
                   </div>
 
@@ -601,8 +605,9 @@
                     <input
                       [(ngModel)]="editAlbumRecordLabel"
                       type="text"
+                      placeholder="Universal Music, Sony Music, Warner..."
                       maxlength="200"
-                      class="w-full px-4 py-3 bg-spotify-gray-dark border border-spotify-gray-light text-spotify-white rounded-lg focus:outline-none focus:border-spotify-green hover:border-spotify-gray-lighter transition-all"
+                      class="w-full px-4 py-3 bg-spotify-gray-dark border border-spotify-gray-light text-spotify-white rounded-lg focus:outline-none focus:border-spotify-green hover:border-spotify-gray-lighter transition-all placeholder-spotify-text-muted"
                     />
                   </div>
 
@@ -613,6 +618,7 @@
                       [(ngModel)]="editAlbumTotalTracks"
                       type="number"
                       min="1"
+                      placeholder="12"
                       class="w-full px-4 py-3 bg-spotify-gray-dark border border-spotify-gray-light text-spotify-white rounded-lg focus:outline-none focus:border-spotify-green hover:border-spotify-gray-lighter transition-all"
                     />
                   </div>
@@ -624,6 +630,7 @@
                       [(ngModel)]="editAlbumTotalDuration"
                       type="number"
                       min="1"
+                      placeholder="2400"
                       class="w-full px-4 py-3 bg-spotify-gray-dark border border-spotify-gray-light text-spotify-white rounded-lg focus:outline-none focus:border-spotify-green hover:border-spotify-gray-lighter transition-all"
                     />
                   </div>

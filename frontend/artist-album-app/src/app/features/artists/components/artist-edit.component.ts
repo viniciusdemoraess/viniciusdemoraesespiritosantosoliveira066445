@@ -83,33 +83,45 @@ export class ArtistEditComponent implements OnInit, OnDestroy {
   private loadArtistData(): void {
     this.loading = true;
 
-    // Load artist
-    this.artistFacade.loadArtists();
-    const artistSub = this.artistFacade.artists$.subscribe(artists => {
-      this.allArtists = artists; // Store all artists for multi-select
-      this.artist = artists.find(a => a.id === this.artistId) || null;
-      if (this.artist) {
-        this.artistName = this.artist.name;
-        this.artistType = this.artist.artistType || '';
-        this.artistCountry = this.artist.country || '';
-        this.artistBiography = this.artist.biography || '';
+    // Load the specific artist
+    this.artistFacade.loadArtistById(this.artistId).subscribe({
+      next: (artist) => {
+        this.artist = artist;
+        this.artistName = artist.name;
+        this.artistType = artist.artistType || '';
+        this.artistCountry = artist.country || '';
+        this.artistBiography = artist.biography || '';
+      },
+      error: (error) => {
+        console.error('Error loading artist:', error);
+        this.loading = false;
       }
     });
-    this.subscriptions.push(artistSub);
 
-    // Load albums
-    this.albumFacade.loadAlbums();
-    const albumSub = this.albumFacade.albums$.subscribe(albums => {
-      this.albums = albums.filter(a => a.artistId === this.artistId);
-      // Initialize cover index for each album
-      this.albums.forEach(album => {
-        if (!this.currentCoverIndexMap.has(album.id)) {
-          this.currentCoverIndexMap.set(album.id, 0);
-        }
-      });
-      this.loading = false;
+    // Load all artists for multi-select (needed for adding albums with multiple artists)
+    this.artistFacade.loadArtists();
+    const artistsSub = this.artistFacade.artists$.subscribe(artists => {
+      this.allArtists = artists;
     });
-    this.subscriptions.push(albumSub);
+    this.subscriptions.push(artistsSub);
+
+    // Load only albums for this specific artist
+    this.albumFacade.loadAlbumsByArtist(this.artistId).subscribe({
+      next: (albums) => {
+        this.albums = albums;
+        // Initialize cover index for each album
+        this.albums.forEach(album => {
+          if (!this.currentCoverIndexMap.has(album.id)) {
+            this.currentCoverIndexMap.set(album.id, 0);
+          }
+        });
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading albums:', error);
+        this.loading = false;
+      }
+    });
   }
 
   saveArtist(): void {
@@ -295,10 +307,28 @@ export class ArtistEditComponent implements OnInit, OnDestroy {
     };
 
     this.albumFacade.createAlbum(newAlbum).subscribe({
-      next: () => {
-        this.showAddAlbumForm = false;
-        this.resetNewAlbumForm();
-        this.loadArtistData();
+      next: (createdAlbum) => {
+        // If covers were selected, upload them
+        if (this.newAlbumCoverFiles.length > 0) {
+          this.albumFacade.uploadCovers(createdAlbum.id, this.newAlbumCoverFiles).subscribe({
+            next: () => {
+              this.showAddAlbumForm = false;
+              this.resetNewAlbumForm();
+              this.loadArtistData();
+            },
+            error: (error: any) => {
+              console.error('Error uploading covers:', error);
+              // Album was created, just refresh
+              this.showAddAlbumForm = false;
+              this.resetNewAlbumForm();
+              this.loadArtistData();
+            }
+          });
+        } else {
+          this.showAddAlbumForm = false;
+          this.resetNewAlbumForm();
+          this.loadArtistData();
+        }
       },
       error: (error: any) => {
         console.error('Error creating album:', error);
@@ -338,8 +368,24 @@ export class ArtistEditComponent implements OnInit, OnDestroy {
 
     this.albumFacade.updateAlbum(album.id, updatedAlbum).subscribe({
       next: () => {
-        this.cancelEditAlbum();
-        this.loadArtistData();
+        // If new covers were selected, upload them
+        if (this.editAlbumCoverFiles.length > 0) {
+          this.albumFacade.uploadCovers(album.id, this.editAlbumCoverFiles).subscribe({
+            next: () => {
+              this.cancelEditAlbum();
+              this.loadArtistData();
+            },
+            error: (error: any) => {
+              console.error('Error uploading covers:', error);
+              // Album was updated, just refresh
+              this.cancelEditAlbum();
+              this.loadArtistData();
+            }
+          });
+        } else {
+          this.cancelEditAlbum();
+          this.loadArtistData();
+        }
       },
       error: (error: any) => {
         console.error('Error updating album:', error);

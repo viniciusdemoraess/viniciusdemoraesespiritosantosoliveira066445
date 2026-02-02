@@ -46,26 +46,34 @@ export class ArtistDetailComponent implements OnInit, OnDestroy {
   private loadArtistDetails(): void {
     this.loading = true;
 
-    // Load artist
-    this.artistFacade.loadArtists();
-    const artistSub = this.artistFacade.artists$.subscribe(artists => {
-      this.artist = artists.find(a => a.id === this.artistId) || null;
+    // Load only the specific artist
+    this.artistFacade.loadArtistById(this.artistId).subscribe({
+      next: (artist) => {
+        this.artist = artist;
+      },
+      error: (error) => {
+        console.error('Error loading artist:', error);
+        this.loading = false;
+      }
     });
-    this.subscriptions.push(artistSub);
 
-    // Load albums for this artist
-    this.albumFacade.loadAlbums();
-    const albumSub = this.albumFacade.albums$.subscribe(albums => {
-      this.albums = albums.filter(a => a.artistId === this.artistId);
-      // Initialize cover index for each album
-      this.albums.forEach(album => {
-        if (!this.currentCoverIndexMap.has(album.id)) {
-          this.currentCoverIndexMap.set(album.id, 0);
-        }
-      });
-      this.loading = false;
+    // Load only albums for this artist
+    this.albumFacade.loadAlbumsByArtist(this.artistId).subscribe({
+      next: (albums) => {
+        this.albums = albums;
+        // Initialize cover index for each album
+        this.albums.forEach(album => {
+          if (!this.currentCoverIndexMap.has(album.id)) {
+            this.currentCoverIndexMap.set(album.id, 0);
+          }
+        });
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading albums:', error);
+        this.loading = false;
+      }
     });
-    this.subscriptions.push(albumSub);
   }
 
   toggleAlbum(albumId: number): void {

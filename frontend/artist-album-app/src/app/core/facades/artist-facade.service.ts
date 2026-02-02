@@ -54,6 +54,39 @@ export class ArtistFacadeService {
   }
 
   /**
+   * Load a single artist by ID
+   */
+  loadArtistById(id: number): Observable<Artist> {
+    this.loadingSubject.next(true);
+    this.errorSubject.next(null);
+
+    return new Observable(observer => {
+      this.artistService.getArtistById(id).subscribe({
+        next: (artist) => {
+          // Update or add the artist in state
+          const current = this.artistsSubject.value;
+          const index = current.findIndex(a => a.id === id);
+          if (index !== -1) {
+            current[index] = artist;
+            this.artistsSubject.next([...current]);
+          } else {
+            this.artistsSubject.next([...current, artist]);
+          }
+          this.loadingSubject.next(false);
+          observer.next(artist);
+          observer.complete();
+        },
+        error: (error) => {
+          this.errorSubject.next('Erro ao carregar artista');
+          this.loadingSubject.next(false);
+          console.error('Error loading artist:', error);
+          observer.error(error);
+        }
+      });
+    });
+  }
+
+  /**
    * Create a new artist and update the state
    */
   createArtist(artistData: Partial<Artist> | string): Observable<Artist> {
