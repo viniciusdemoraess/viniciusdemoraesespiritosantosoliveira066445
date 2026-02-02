@@ -1,1 +1,6 @@
-// Empty SCSS file - styles are handled by Tailwind CSS
+// Album Edit Component Styles
+
+// Override card overflow to allow dropdown to show
+.card {
+  overflow: visible !important;
+}

@@ -114,6 +114,10 @@ export class AlbumEditComponent implements OnInit, OnDestroy {
     return this.selectedArtistIds.has(artistId);
   }
 
+  getSelectedArtists(): Artist[] {
+    return this.artists.filter(artist => this.selectedArtistIds.has(artist.id));
+  }
+
   onCoverFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files) {
