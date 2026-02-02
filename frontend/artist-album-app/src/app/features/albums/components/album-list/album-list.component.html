@@ -152,33 +152,14 @@
           <!-- Overlay with Actions -->
           <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-4">
             <button
-              (click)="editAlbum(album)"
-              class="flex-1 px-4 py-2 bg-spotify-green hover:bg-spotify-green-hover text-spotify-black rounded-lg transition font-bold text-sm flex items-center justify-center gap-2"
-              title="Editar Álbum"
-            >
-              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-              </svg>
-              Editar
-            </button>
-            <button
-              (click)="openUploadModal(album)"
-              class="flex-1 px-4 py-2 bg-white hover:bg-gray-100 text-spotify-gray-dark rounded-lg transition font-bold text-sm flex items-center justify-center gap-2"
-              title="Upload de Capas"
-            >
-              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-              </svg>
-              Capas
-            </button>
-            <button
               (click)="deleteAlbum(album)"
-              class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition font-bold"
+              class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition font-bold flex items-center gap-2"
               title="Deletar Álbum"
             >
               <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
               </svg>
+              Deletar
             </button>
           </div>
         </div>
@@ -228,6 +209,51 @@
       <div class="overflow-y-auto max-h-[calc(90vh-4rem)]">
         <h3 class="text-2xl font-bold text-spotify-white mb-6">Novo Álbum</h3>
       <div class="space-y-4">
+        <!-- Upload de Capas -->
+        <div>
+          <label class="block text-sm font-bold text-spotify-white mb-3">
+            Capas do Álbum
+            <span class="text-spotify-text-muted text-xs ml-2">({{ newAlbumCoverPreviews.length }} selecionada{{ newAlbumCoverPreviews.length !== 1 ? 's' : '' }})</span>
+          </label>
+          
+          <!-- Upload Area -->
+          <div class="border-2 border-dashed border-spotify-gray-light rounded-xl p-8 text-center hover:border-spotify-green hover:bg-spotify-gray-dark/50 transition-all cursor-pointer group"
+               (click)="coverFileInput.click()">
+            <svg class="h-16 w-16 mx-auto text-spotify-gray-lighter group-hover:text-spotify-green transition mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            <p class="text-spotify-white font-bold mb-2">Clique para selecionar capas</p>
+            <p class="text-sm text-spotify-gray-lighter">ou arraste e solte aqui (múltiplas imagens)</p>
+            <p class="text-xs text-spotify-text-muted mt-2">PNG, JPG até 10MB cada</p>
+          </div>
+
+          <!-- Grid de Previews -->
+          <div *ngIf="newAlbumCoverPreviews.length > 0" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-4">
+            <div *ngFor="let preview of newAlbumCoverPreviews; let i = index" class="relative group aspect-square">
+              <img [src]="preview" [alt]="'Preview ' + (i + 1)" class="w-full h-full object-cover rounded-lg border-2 border-spotify-gray-light">
+              <button
+                type="button"
+                (click)="removeCoverPreview(i)"
+                class="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                title="Remover"
+              >
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <input
+            #coverFileInput
+            type="file"
+            accept="image/*"
+            multiple
+            (change)="onCoverFileSelected($event)"
+            class="hidden"
+          />
+        </div>
+
         <div>
           <label class="block text-sm font-bold text-spotify-white mb-2">Título *</label>
           <input
@@ -365,46 +391,6 @@
           class="btn-primary"
         >
           Criar Álbum
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Upload Covers Modal -->
-<div *ngIf="showUploadModal" class="fixed z-50 inset-0 overflow-y-auto">
-  <div class="flex items-center justify-center min-h-screen px-4 py-8">
-    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" (click)="closeUploadModal()"></div>
-    <div class="card max-w-md w-full p-8 fade-in relative z-10">
-      <h3 class="text-2xl font-bold text-spotify-white mb-4">Upload de Capas</h3>
-      <p class="text-gray-600 mb-6">
-        Álbum: <strong class="text-spotify-white font-bold">{{ selectedAlbum?.title }}</strong>
-      </p>
-      <div class="mb-6">
-        <label class="block text-sm font-medium text-spotify-gray-lighter mb-2">
-          Selecione as imagens (max 10MB cada)
-        </label>
-        <input
-          type="file"
-          (change)="onFileSelect($event)"
-          multiple
-          accept="image/*"
-          class="w-full px-4 py-2.5 border border-spotify-gray-light rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-primary hover:file:bg-blue-100 file:cursor-pointer"
-        />
-        <p *ngIf="selectedFiles.length > 0" class="text-gray-600 text-sm mt-3">
-          ✓ {{ selectedFiles.length }} arquivo(s) selecionado(s)
-        </p>
-      </div>
-      <div class="flex justify-end space-x-3">
-        <button (click)="closeUploadModal()" class="btn-secondary">
-          Cancelar
-        </button>
-        <button
-          (click)="uploadCovers()"
-          [disabled]="selectedFiles.length === 0"
-          class="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Enviar Imagens
         </button>
       </div>
     </div>

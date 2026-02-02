@@ -35,9 +35,7 @@ export class AlbumListComponent implements OnInit, OnDestroy {
   sortDirection: 'asc' | 'desc' = 'asc';
 
   showAddModal = false;
-  showUploadModal = false;
   showArtistDropdown = false;
-  selectedAlbum: Album | null = null;
 
   newAlbum = {
     title: '',
@@ -52,7 +50,9 @@ export class AlbumListComponent implements OnInit, OnDestroy {
   // Track selected artists for multi-select
   selectedArtistIds: Set<number> = new Set();
 
-  selectedFiles: File[] = [];
+  // Cover files and previews for new album
+  newAlbumCoverFiles: File[] = [];
+  newAlbumCoverPreviews: string[] = [];
   private subscriptions: Subscription[] = [];
 
   constructor(
@@ -240,6 +240,8 @@ export class AlbumListComponent implements OnInit, OnDestroy {
   closeAddModal(): void {
     this.showAddModal = false;
     this.showArtistDropdown = false;
+    this.newAlbumCoverFiles = [];
+    this.newAlbumCoverPreviews = [];
   }
 
   toggleArtistSelection(artistId: number): void {
@@ -261,8 +263,25 @@ export class AlbumListComponent implements OnInit, OnDestroy {
     this.newAlbum.artistIds = Array.from(this.selectedArtistIds);
 
     this.albumFacade.createAlbum(this.newAlbum).subscribe({
-      next: () => {
-        this.closeAddModal();
+      next: (createdAlbum) => {
+        // If covers were selected, upload them
+        if (this.newAlbumCoverFiles.length > 0) {
+          this.albumFacade.uploadCovers(createdAlbum.id, this.newAlbumCoverFiles).subscribe({
+            next: () => {
+              this.closeAddModal();
+              this.loadData();
+            },
+            error: (error: any) => {
+              console.error('Error uploading covers:', error);
+              // Album was created, just close modal
+              this.closeAddModal();
+              this.loadData();
+            }
+          });
+        } else {
+          this.closeAddModal();
+          this.loadData();
+        }
       },
       error: (error) => {
         console.error('Error creating album:', error);
@@ -270,35 +289,26 @@ export class AlbumListComponent implements OnInit, OnDestroy {
     });
   }
 
-  openUploadModal(album: Album): void {
-    this.selectedAlbum = album;
-    this.selectedFiles = [];
-    this.showUploadModal = true;
+  onCoverFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files) {
+      const filesArray = Array.from(input.files);
+      this.newAlbumCoverFiles.push(...filesArray);
+
+      // Create previews
+      filesArray.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          this.newAlbumCoverPreviews.push(e.target.result);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
   }
 
-  closeUploadModal(): void {
-    this.showUploadModal = false;
-    this.selectedAlbum = null;
-    this.selectedFiles = [];
-  }
-
-  onFileSelect(event: any): void {
-    const files = event.target.files;
-    this.selectedFiles = Array.from(files);
-  }
-
-  uploadCovers(): void {
-    if (!this.selectedAlbum || this.selectedFiles.length === 0) return;
-
-    this.albumFacade.uploadCovers(this.selectedAlbum.id, this.selectedFiles).subscribe({
-      next: () => {
-        this.closeUploadModal();
-        this.loadData();
-      },
-      error: (error: any) => {
-        console.error('Error uploading covers:', error);
-      }
-    });
+  removeCoverPreview(index: number): void {
+    this.newAlbumCoverPreviews.splice(index, 1);
+    this.newAlbumCoverFiles.splice(index, 1);
   }
 
   deleteAlbum(album: Album): void {
@@ -312,10 +322,5 @@ export class AlbumListComponent implements OnInit, OnDestroy {
     });
   }
 
-  editAlbum(album: Album): void {
-    // TODO: Implementar modal de edição de álbum
-    // Por enquanto, mostra alerta com informações
-    console.log('Editar álbum:', album);
-    alert(`Funcionalidade de edição será implementada em breve para o álbum "${album.title}"`);
-  }
+
 }
