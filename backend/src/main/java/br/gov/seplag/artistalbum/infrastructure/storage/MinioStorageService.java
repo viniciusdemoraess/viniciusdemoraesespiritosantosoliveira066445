@@ -2,7 +2,6 @@ package br.gov.seplag.artistalbum.infrastructure.storage;
 
 import br.gov.seplag.artistalbum.domain.exception.StorageException;
 import io.minio.*;
-import io.minio.errors.*;
 import io.minio.http.Method;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -10,10 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -79,9 +75,6 @@ public class MinioStorageService {
         }
     }
 
-    /**
-     * Upload file to MinIO and return object key
-     */
     public String uploadFile(MultipartFile file, String folder) {
         try {
             String originalFilename = file.getOriginalFilename();
@@ -108,10 +101,6 @@ public class MinioStorageService {
         }
     }
 
-    /**
-     * Generate presigned URL (valid for 30 minutes)
-     * Replaces internal Docker hostname with external URL for browser access
-     */
     public String getPresignedUrl(String objectKey) {
         try {
             String presignedUrl = minioClient.getPresignedObjectUrl(
@@ -123,8 +112,6 @@ public class MinioStorageService {
                             .build()
             );
             
-            // Replace internal Docker hostname with external URL
-            // This allows browser to access MinIO from outside Docker network
             if (!minioUrl.equals(minioExternalUrl)) {
                 presignedUrl = presignedUrl.replace(minioUrl, minioExternalUrl);
                 log.info("Replaced '{}' with '{}' in presigned URL", minioUrl, minioExternalUrl);
@@ -138,9 +125,6 @@ public class MinioStorageService {
         }
     }
 
-    /**
-     * Delete file from MinIO
-     */
     public void deleteFile(String objectKey) {
         try {
             minioClient.removeObject(

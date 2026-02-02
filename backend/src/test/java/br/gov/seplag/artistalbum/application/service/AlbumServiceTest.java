@@ -3,7 +3,6 @@ package br.gov.seplag.artistalbum.application.service;
 import br.gov.seplag.artistalbum.application.io.AlbumRequest;
 import br.gov.seplag.artistalbum.application.io.AlbumResponse;
 import br.gov.seplag.artistalbum.domain.entity.Album;
-import br.gov.seplag.artistalbum.domain.entity.AlbumCover;
 import br.gov.seplag.artistalbum.domain.entity.Artist;
 import br.gov.seplag.artistalbum.domain.exception.DuplicateResourceException;
 import br.gov.seplag.artistalbum.domain.exception.InvalidFileException;

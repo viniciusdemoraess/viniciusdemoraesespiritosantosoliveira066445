@@ -42,7 +42,6 @@ class RegionalSyncServiceTest {
 
     @BeforeEach
     void setUp() {
-        // Set the external API URL using reflection
         ReflectionTestUtils.setField(regionalSyncService, "externalApiUrl", externalApiUrl);
         ReflectionTestUtils.setField(regionalSyncService, "restTemplate", restTemplate);
     }
@@ -50,7 +49,6 @@ class RegionalSyncServiceTest {
     @Test
     @DisplayName("Should insert new regional from external API")
     void shouldInsertNewRegionalFromExternalAPI() {
-        // Arrange
         RegionalDTO[] externalRegionais = {
                 createRegionalDTO(1, "Regional Norte"),
                 createRegionalDTO(2, "Regional Sul")
@@ -60,10 +58,8 @@ class RegionalSyncServiceTest {
                 .thenReturn(externalRegionais);
         when(regionalRepository.findAll()).thenReturn(new ArrayList<>());
 
-        // Act
         regionalSyncService.synchronize();
 
-        // Assert
         verify(regionalRepository, times(2)).save(any(Regional.class));
         verify(regionalRepository).save(argThat(regional ->
                 regional.getExternalId().equals(1) &&
@@ -80,7 +76,6 @@ class RegionalSyncServiceTest {
     @Test
     @DisplayName("Should inactivate regional removed from external API")
     void shouldInactivateRegionalRemovedFromExternalAPI() {
-        // Arrange
         RegionalDTO[] externalRegionais = {
                 createRegionalDTO(1, "Regional Norte")
         };
@@ -92,10 +87,8 @@ class RegionalSyncServiceTest {
                 .thenReturn(externalRegionais);
         when(regionalRepository.findAll()).thenReturn(Arrays.asList(localRegional1, localRegional2));
 
-        // Act
         regionalSyncService.synchronize();
 
-        // Assert
         assertThat(localRegional2.getAtivo()).isFalse();
         verify(regionalRepository).save(localRegional2);
     }
@@ -103,7 +96,6 @@ class RegionalSyncServiceTest {
     @Test
     @DisplayName("Should update regional when name changes")
     void shouldUpdateRegionalWhenNameChanges() {
-        // Arrange
         RegionalDTO[] externalRegionais = {
                 createRegionalDTO(1, "Regional Norte Atualizado")
         };
@@ -114,10 +106,8 @@ class RegionalSyncServiceTest {
                 .thenReturn(externalRegionais);
         when(regionalRepository.findAll()).thenReturn(Arrays.asList(localRegional));
 
-        // Act
         regionalSyncService.synchronize();
 
-        // Assert
         assertThat(localRegional.getAtivo()).isFalse();
         verify(regionalRepository, times(2)).save(any(Regional.class));
         verify(regionalRepository).save(localRegional); // inactivate old
@@ -125,13 +115,12 @@ class RegionalSyncServiceTest {
                 regional.getExternalId().equals(1) &&
                         regional.getNome().equals("Regional Norte Atualizado") &&
                         regional.getAtivo()
-        )); // create new
+        ));
     }
 
     @Test
     @DisplayName("Should reactivate inactive regional")
     void shouldReactivateInactiveRegional() {
-        // Arrange
         RegionalDTO[] externalRegionais = {
                 createRegionalDTO(1, "Regional Norte")
         };
@@ -142,10 +131,8 @@ class RegionalSyncServiceTest {
                 .thenReturn(externalRegionais);
         when(regionalRepository.findAll()).thenReturn(Arrays.asList(localRegional));
 
-        // Act
         regionalSyncService.synchronize();
 
-        // Assert
         assertThat(localRegional.getAtivo()).isTrue();
         verify(regionalRepository).save(localRegional);
     }
@@ -153,14 +140,11 @@ class RegionalSyncServiceTest {
     @Test
     @DisplayName("Should handle empty response from external API")
     void shouldHandleEmptyResponseFromExternalAPI() {
-        // Arrange
         when(restTemplate.getForObject(eq(externalApiUrl), eq(RegionalDTO[].class)))
                 .thenReturn(new RegionalDTO[0]);
 
-        // Act
         regionalSyncService.synchronize();
 
-        // Assert
         verify(regionalRepository, never()).save(any(Regional.class));
         verify(regionalRepository, never()).findAll();
     }
@@ -168,14 +152,11 @@ class RegionalSyncServiceTest {
     @Test
     @DisplayName("Should handle null response from external API")
     void shouldHandleNullResponseFromExternalAPI() {
-        // Arrange
         when(restTemplate.getForObject(eq(externalApiUrl), eq(RegionalDTO[].class)))
                 .thenReturn(null);
 
-        // Act
         regionalSyncService.synchronize();
 
-        // Assert
         verify(regionalRepository, never()).save(any(Regional.class));
         verify(regionalRepository, never()).findAll();
     }
@@ -183,11 +164,9 @@ class RegionalSyncServiceTest {
     @Test
     @DisplayName("Should throw SynchronizationException when external API fails")
     void shouldThrowSynchronizationExceptionWhenExternalAPIFails() {
-        // Arrange
         when(restTemplate.getForObject(anyString(), eq(RegionalDTO[].class)))
                 .thenThrow(new RestClientException("Connection failed"));
 
-        // Act & Assert
         assertThatThrownBy(() -> regionalSyncService.synchronize())
                 .isInstanceOf(SynchronizationException.class)
                 .hasMessageContaining("regionais");
@@ -196,7 +175,6 @@ class RegionalSyncServiceTest {
     @Test
     @DisplayName("Should get all active regionais")
     void shouldGetAllActiveRegionais() {
-        // Arrange
         List<Regional> activeRegionais = Arrays.asList(
                 createLocalRegional(1L, 1, "Regional Norte", true),
                 createLocalRegional(2L, 2, "Regional Sul", true)
@@ -204,10 +182,8 @@ class RegionalSyncServiceTest {
 
         when(regionalRepository.findByAtivoTrue()).thenReturn(activeRegionais);
 
-        // Act
         List<Regional> result = regionalSyncService.getAllActiveRegionais();
 
-        // Assert
         assertThat(result).hasSize(2);
         assertThat(result).allMatch(Regional::getAtivo);
         verify(regionalRepository).findByAtivoTrue();
@@ -216,7 +192,6 @@ class RegionalSyncServiceTest {
     @Test
     @DisplayName("Should get all regionais ordered by name")
     void shouldGetAllRegionaisOrderedByName() {
-        // Arrange
         List<Regional> allRegionais = Arrays.asList(
                 createLocalRegional(1L, 1, "Regional A", true),
                 createLocalRegional(2L, 2, "Regional B", false),
@@ -225,10 +200,8 @@ class RegionalSyncServiceTest {
 
         when(regionalRepository.findAllByOrderByNomeAsc()).thenReturn(allRegionais);
 
-        // Act
         List<Regional> result = regionalSyncService.getAllRegionais();
 
-        // Assert
         assertThat(result).hasSize(3);
         verify(regionalRepository).findAllByOrderByNomeAsc();
     }
@@ -236,7 +209,6 @@ class RegionalSyncServiceTest {
     @Test
     @DisplayName("Should call synchronize in scheduled sync")
     void shouldCallSynchronizeInScheduledSync() {
-        // Arrange
         RegionalDTO[] externalRegionais = {
                 createRegionalDTO(1, "Regional Norte")
         };
@@ -245,10 +217,8 @@ class RegionalSyncServiceTest {
                 .thenReturn(externalRegionais);
         when(regionalRepository.findAll()).thenReturn(new ArrayList<>());
 
-        // Act
         regionalSyncService.scheduledSync();
 
-        // Assert
         verify(restTemplate).getForObject(eq(externalApiUrl), eq(RegionalDTO[].class));
         verify(regionalRepository).save(any(Regional.class));
     }
@@ -256,7 +226,6 @@ class RegionalSyncServiceTest {
     @Test
     @DisplayName("Should ignore regional with null external ID when inactivating")
     void shouldIgnoreRegionalWithNullExternalIdWhenInactivating() {
-        // Arrange
         RegionalDTO[] externalRegionais = {
                 createRegionalDTO(1, "Regional Norte")
         };
@@ -273,10 +242,8 @@ class RegionalSyncServiceTest {
                 .thenReturn(externalRegionais);
         when(regionalRepository.findAll()).thenReturn(Arrays.asList(localRegional1, localRegional2));
 
-        // Act
         regionalSyncService.synchronize();
 
-        // Assert
         assertThat(localRegional2.getAtivo()).isTrue(); // Should remain active
         verify(regionalRepository, never()).save(localRegional2);
     }
@@ -284,7 +251,6 @@ class RegionalSyncServiceTest {
     @Test
     @DisplayName("Should not inactivate already inactive regional")
     void shouldNotInactivateAlreadyInactiveRegional() {
-        // Arrange
         RegionalDTO[] externalRegionais = {
                 createRegionalDTO(1, "Regional Norte")
         };
@@ -296,15 +262,12 @@ class RegionalSyncServiceTest {
                 .thenReturn(externalRegionais);
         when(regionalRepository.findAll()).thenReturn(Arrays.asList(localRegional1, localRegional2));
 
-        // Act
         regionalSyncService.synchronize();
 
-        // Assert
         assertThat(localRegional2.getAtivo()).isFalse();
         verify(regionalRepository, never()).save(localRegional2); // Should not save already inactive
     }
 
-    // Helper methods
     private RegionalDTO createRegionalDTO(Integer id, String nome) {
         RegionalDTO dto = new RegionalDTO();
         dto.setId(id);

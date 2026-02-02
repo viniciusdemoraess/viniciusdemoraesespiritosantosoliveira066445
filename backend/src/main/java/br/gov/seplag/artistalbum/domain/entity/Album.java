@@ -68,25 +68,17 @@ public class Album {
         updatedAt = LocalDateTime.now();
     }
 
-    /**
-     * Business method to add cover
-     */
+
     public void addCover(AlbumCover cover) {
         covers.add(cover);
         cover.setAlbum(this);
     }
 
-    /**
-     * Business method to remove cover
-     */
     public void removeCover(AlbumCover cover) {
         covers.remove(cover);
         cover.setAlbum(null);
     }
 
-    /**
-     * Business method to add artist
-     */
     public void addArtist(Artist artist) {
         if (!artists.contains(artist)) {
             artists.add(artist);
@@ -94,9 +86,6 @@ public class Album {
         }
     }
 
-    /**
-     * Business method to remove artist
-     */
     public void removeArtist(Artist artist) {
         if (artists.contains(artist)) {
             artists.remove(artist);
@@ -104,9 +93,6 @@ public class Album {
         }
     }
 
-    /**
-     * Business method to get artist names
-     */
     public String getArtistNames() {
         return artists.stream()
             .map(Artist::getName)

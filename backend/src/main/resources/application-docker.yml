@@ -13,7 +13,6 @@ spring:
       hibernate:
         format_sql: false
 
-# Logging optimized for container
 logging:
   level:
     root: INFO

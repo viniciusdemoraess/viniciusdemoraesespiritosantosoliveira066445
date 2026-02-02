@@ -22,10 +22,8 @@ class RateLimitServiceTest {
     @Test
     @DisplayName("Should allow requests within limit")
     void shouldAllowRequestsWithinLimit() {
-        // Arrange
         String key = "test-user";
 
-        // Act & Assert
         for (int i = 0; i < 10; i++) {
             boolean allowed = rateLimitService.tryConsume(key);
             assertThat(allowed).isTrue();
@@ -35,15 +33,12 @@ class RateLimitServiceTest {
     @Test
     @DisplayName("Should block requests exceeding limit")
     void shouldBlockRequestsExceedingLimit() {
-        // Arrange
         String key = "test-user";
 
-        // Act - Consume all 10 tokens
         for (int i = 0; i < 10; i++) {
             rateLimitService.tryConsume(key);
         }
 
-        // Assert - 11th request should be blocked
         boolean allowed = rateLimitService.tryConsume(key);
         assertThat(allowed).isFalse();
     }
@@ -51,27 +46,22 @@ class RateLimitServiceTest {
     @Test
     @DisplayName("Should return correct available tokens")
     void shouldReturnCorrectAvailableTokens() {
-        // Arrange
         String key = "test-user";
 
-        // Act
         rateLimitService.tryConsume(key);
         rateLimitService.tryConsume(key);
         rateLimitService.tryConsume(key);
         long availableTokens = rateLimitService.getAvailableTokens(key);
 
-        // Assert
         assertThat(availableTokens).isEqualTo(7);
     }
 
     @Test
     @DisplayName("Should create separate buckets for different users")
     void shouldCreateSeparateBucketsForDifferentUsers() {
-        // Arrange
         String user1 = "user1";
         String user2 = "user2";
 
-        // Act
         rateLimitService.tryConsume(user1);
         rateLimitService.tryConsume(user1);
         rateLimitService.tryConsume(user1);
@@ -79,7 +69,6 @@ class RateLimitServiceTest {
         long user1Tokens = rateLimitService.getAvailableTokens(user1);
         long user2Tokens = rateLimitService.getAvailableTokens(user2);
 
-        // Assert
         assertThat(user1Tokens).isEqualTo(7);
         assertThat(user2Tokens).isEqualTo(10);
     }
@@ -87,13 +76,9 @@ class RateLimitServiceTest {
     @Test
     @DisplayName("Should resolve bucket for key")
     void shouldResolveBucketForKey() {
-        // Arrange
         String key = "test-user";
-
-        // Act
         Bucket bucket = rateLimitService.resolveBucket(key);
 
-        // Assert
         assertThat(bucket).isNotNull();
         assertThat(bucket.getAvailableTokens()).isEqualTo(10);
     }

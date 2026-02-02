@@ -5,7 +5,6 @@ import br.gov.seplag.artistalbum.application.io.LoginRequest;
 import br.gov.seplag.artistalbum.domain.entity.User;
 import br.gov.seplag.artistalbum.domain.exception.AuthenticationFailedException;
 import br.gov.seplag.artistalbum.domain.exception.InvalidTokenException;
-import br.gov.seplag.artistalbum.domain.exception.ResourceNotFoundException;
 import br.gov.seplag.artistalbum.domain.repository.UserRepository;
 import br.gov.seplag.artistalbum.infrastructure.security.JwtTokenProvider;
 import org.junit.jupiter.api.BeforeEach;

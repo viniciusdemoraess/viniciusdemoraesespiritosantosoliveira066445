@@ -1,6 +1,5 @@
 package br.gov.seplag.artistalbum.infrastructure.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,14 +43,11 @@ class JwtAuthenticationEntryPointTest {
     @Test
     @DisplayName("Should return 401 with error details when authentication fails")
     void shouldReturn401WithErrorDetailsWhenAuthenticationFails() throws IOException, ServletException {
-        // Arrange
         AuthenticationException authException = new AuthenticationException("Invalid credentials") {};
         when(request.getServletPath()).thenReturn("/api/albums");
 
-        // Act
         jwtAuthenticationEntryPoint.commence(request, response, authException);
 
-        // Assert
         verify(response).setContentType(MediaType.APPLICATION_JSON_VALUE);
         verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         verify(response).getOutputStream();
@@ -61,14 +57,11 @@ class JwtAuthenticationEntryPointTest {
     @Test
     @DisplayName("Should include request path in error response")
     void shouldIncludeRequestPathInErrorResponse() throws IOException, ServletException {
-        // Arrange
         AuthenticationException authException = new AuthenticationException("Token expired") {};
         when(request.getServletPath()).thenReturn("/api/protected-resource");
 
-        // Act
         jwtAuthenticationEntryPoint.commence(request, response, authException);
 
-        // Assert
         verify(request).getServletPath();
         verify(response).getOutputStream();
     }
@@ -76,14 +69,11 @@ class JwtAuthenticationEntryPointTest {
     @Test
     @DisplayName("Should handle null authentication exception message")
     void shouldHandleNullAuthenticationExceptionMessage() throws IOException, ServletException {
-        // Arrange
         AuthenticationException authException = new AuthenticationException(null) {};
         when(request.getServletPath()).thenReturn("/api/test");
 
-        // Act
         jwtAuthenticationEntryPoint.commence(request, response, authException);
 
-        // Assert
         verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         verify(response).getOutputStream();
     }

@@ -1,8 +1,5 @@
 package br.gov.seplag.artistalbum.domain.exception;
 
-/**
- * Exception thrown when attempting to create a resource that already exists
- */
 public class DuplicateResourceException extends RuntimeException {
     
     private final String resourceName;

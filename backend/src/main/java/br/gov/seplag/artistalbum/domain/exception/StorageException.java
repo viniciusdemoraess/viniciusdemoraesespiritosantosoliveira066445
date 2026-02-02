@@ -1,8 +1,5 @@
 package br.gov.seplag.artistalbum.domain.exception;
 
-/**
- * Exception thrown when storage operations fail
- */
 public class StorageException extends RuntimeException {
     
     private final String operation;

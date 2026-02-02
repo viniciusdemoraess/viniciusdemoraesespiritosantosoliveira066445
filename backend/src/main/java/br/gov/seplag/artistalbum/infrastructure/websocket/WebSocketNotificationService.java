@@ -11,10 +11,6 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * WebSocket Notification Service
- * Sends real-time notifications to connected clients
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -25,7 +21,7 @@ public class WebSocketNotificationService {
 
     public void notifyNewAlbum(Album album) {
         try {
-            // Pegar primeiro artista ou usar valores padrão
+
             Long firstArtistId = !album.getArtists().isEmpty() ? album.getArtists().get(0).getId() : null;
             String artistNames = album.getArtistNames();
             if (artistNames == null || artistNames.isEmpty()) {

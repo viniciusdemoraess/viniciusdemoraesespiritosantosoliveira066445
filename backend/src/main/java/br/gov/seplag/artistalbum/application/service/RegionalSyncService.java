@@ -17,13 +17,14 @@ import java.util.stream.Collectors;
 
 /**
  * Regional Synchronization Service
- * Implements intelligent synchronization with O(n) complexity
- * 
- * Rules:
- * 1. New in external API → Insert locally
- * 2. Removed from external API → Inactivate locally
- * 3. Name changed → Inactivate old, create new
+ * Implementa sincronização inteligente com complexidade O(n)
+ *
+ * Regras:
+ * 1. Novo na API externa → Inserir localmente
+ * 2. Removido da API externa → Inativar localmente
+ * 3. Nome alterado → Inativar o antigo e criar um novo
  */
+
 @Slf4j
 @Service
 @RequiredArgsConstructor

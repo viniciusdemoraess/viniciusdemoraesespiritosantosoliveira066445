@@ -1,8 +1,5 @@
 package br.gov.seplag.artistalbum.domain.exception;
 
-/**
- * Exception thrown when synchronization operations fail
- */
 public class SynchronizationException extends RuntimeException {
     
     private final String resource;

@@ -1,8 +1,5 @@
 package br.gov.seplag.artistalbum.domain.exception;
 
-/**
- * Exception thrown when a requested resource is not found
- */
 public class ResourceNotFoundException extends RuntimeException {
     
     private final String resourceName;

@@ -17,10 +17,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Authentication Service
- * Handles login and token refresh
- */
+
 @Slf4j
 @Service
 @RequiredArgsConstructor

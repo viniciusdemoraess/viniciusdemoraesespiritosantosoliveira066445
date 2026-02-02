@@ -16,10 +16,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-/**
- * Filter for rate limiting - applied after authentication
- * Rate limits requests based on authenticated username
- */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -34,7 +30,6 @@ public class RateLimitFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
-        // Skip rate limiting for public endpoints
         String path = request.getRequestURI();
         if (isPublicEndpoint(path)) {
             filterChain.doFilter(request, response);
@@ -57,7 +52,6 @@ public class RateLimitFilter extends OncePerRequestFilter {
                 return;
             }
 
-            // Add rate limit headers
             long availableTokens = rateLimitService.getAvailableTokens(rateLimitKey);
             response.addHeader("X-RateLimit-Limit", "10");
             response.addHeader("X-RateLimit-Remaining", String.valueOf(availableTokens));

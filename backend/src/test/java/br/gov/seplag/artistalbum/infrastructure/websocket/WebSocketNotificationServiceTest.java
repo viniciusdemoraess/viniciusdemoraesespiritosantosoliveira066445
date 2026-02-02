@@ -58,13 +58,10 @@ class WebSocketNotificationServiceTest {
     @Test
     @DisplayName("Should send notification for new album successfully")
     void shouldSendNotificationForNewAlbum() {
-        // Given
         doNothing().when(messagingTemplate).convertAndSend(anyString(), any(Map.class));
 
-        // When
         webSocketNotificationService.notifyNewAlbum(testAlbum);
 
-        // Then
         verify(messagingTemplate).convertAndSend(eq("/topic/albums"), notificationCaptor.capture());
         
         Map<String, Object> notification = notificationCaptor.getValue();
@@ -81,11 +78,9 @@ class WebSocketNotificationServiceTest {
     @Test
     @DisplayName("Should handle exception when sending notification fails")
     void shouldHandleExceptionWhenSendingFails() {
-        // Given
         doThrow(new RuntimeException("WebSocket error"))
                 .when(messagingTemplate).convertAndSend(anyString(), any(Map.class));
 
-        // When & Then - Should not throw exception (error is logged)
         assertThatCode(() -> webSocketNotificationService.notifyNewAlbum(testAlbum))
                 .doesNotThrowAnyException();
         
@@ -95,26 +90,20 @@ class WebSocketNotificationServiceTest {
     @Test
     @DisplayName("Should send notification with correct topic destination")
     void shouldSendNotificationWithCorrectTopic() {
-        // Given
         doNothing().when(messagingTemplate).convertAndSend(anyString(), any(Map.class));
 
-        // When
         webSocketNotificationService.notifyNewAlbum(testAlbum);
 
-        // Then
         verify(messagingTemplate).convertAndSend(eq("/topic/albums"), any(Map.class));
     }
 
     @Test
     @DisplayName("Should include all required fields in notification")
     void shouldIncludeAllRequiredFields() {
-        // Given
         doNothing().when(messagingTemplate).convertAndSend(anyString(), any(Map.class));
 
-        // When
         webSocketNotificationService.notifyNewAlbum(testAlbum);
 
-        // Then
         verify(messagingTemplate).convertAndSend(eq("/topic/albums"), notificationCaptor.capture());
         
         Map<String, Object> notification = notificationCaptor.getValue();
@@ -127,7 +116,6 @@ class WebSocketNotificationServiceTest {
     @Test
     @DisplayName("Should create notification with album and artist details")
     void shouldCreateNotificationWithDetails() {
-        // Given
         Artist soadArtist = Artist.builder()
                 .id(10L)
                 .name("SOAD")
@@ -141,10 +129,8 @@ class WebSocketNotificationServiceTest {
 
         doNothing().when(messagingTemplate).convertAndSend(anyString(), any(Map.class));
 
-        // When
         webSocketNotificationService.notifyNewAlbum(album);
 
-        // Then
         verify(messagingTemplate).convertAndSend(eq("/topic/albums"), notificationCaptor.capture());
         
         Map<String, Object> notification = notificationCaptor.getValue();

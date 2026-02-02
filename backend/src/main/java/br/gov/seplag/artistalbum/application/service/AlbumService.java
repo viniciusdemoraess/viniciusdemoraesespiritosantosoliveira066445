@@ -26,10 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Album Service
- * Business logic for album management
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -83,7 +79,6 @@ public class AlbumService {
             throw new IllegalArgumentException("At least one artist must be provided");
         }
 
-        // Buscar todos os artistas
         List<Artist> artists = new ArrayList<>();
         for (Long artistId : artistIds) {
             Artist artist = artistRepository.findById(artistId)
@@ -91,7 +86,6 @@ public class AlbumService {
             artists.add(artist);
         }
 
-        // Verificar duplicação (mantendo compatibilidade com código antigo)
         if (request.getArtistId() != null && 
             albumRepository.existsByTitleAndArtistId(request.getTitle(), request.getArtistId())) {
             throw new DuplicateResourceException("Album", "title", request.getTitle());
@@ -106,7 +100,6 @@ public class AlbumService {
                 .totalDurationSeconds(request.getTotalDurationSeconds())
                 .build();
 
-        // Adicionar todos os artistas
         for (Artist artist : artists) {
             album.addArtist(artist);
         }
@@ -114,7 +107,6 @@ public class AlbumService {
         Album savedAlbum = albumRepository.save(album);
         log.info("Album created successfully with ID: {}", savedAlbum.getId());
 
-        // Send WebSocket notification
         webSocketNotificationService.notifyNewAlbum(savedAlbum);
 
         return toResponse(savedAlbum);
@@ -127,7 +119,6 @@ public class AlbumService {
         Album album = albumRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Album", "id", id));
 
-        // Suporta tanto artistId (legacy) quanto artistIds (novo)
         List<Long> artistIds = new ArrayList<>();
         if (request.getArtistIds() != null && !request.getArtistIds().isEmpty()) {
             artistIds.addAll(request.getArtistIds());
@@ -143,12 +134,9 @@ public class AlbumService {
         album.setTotalTracks(request.getTotalTracks());
         album.setTotalDurationSeconds(request.getTotalDurationSeconds());
 
-        // Atualizar artistas se fornecidos
         if (!artistIds.isEmpty()) {
-            // Remover artistas antigos
             new ArrayList<>(album.getArtists()).forEach(album::removeArtist);
 
-            // Adicionar novos artistas
             for (Long artistId : artistIds) {
                 Artist artist = artistRepository.findById(artistId)
                         .orElseThrow(() -> new ResourceNotFoundException("Artist", "id", artistId));
@@ -245,7 +233,6 @@ public class AlbumService {
                 .collect(Collectors.toList())
                 : new ArrayList<>();
 
-        // Compatibilidade com código antigo - pegar primeiro artista se existir
         Long firstArtistId = !album.getArtists().isEmpty() ? album.getArtists().get(0).getId() : null;
         String firstArtistName = !album.getArtists().isEmpty() ? album.getArtists().get(0).getName() : null;
 

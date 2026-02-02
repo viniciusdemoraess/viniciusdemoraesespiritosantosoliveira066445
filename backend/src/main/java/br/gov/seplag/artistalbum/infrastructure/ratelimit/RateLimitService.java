@@ -11,10 +11,7 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Rate limiting service using Token Bucket algorithm (Bucket4j)
- * Implements: Maximum 10 requests per minute per user
- */
+
 @Slf4j
 @Component
 public class RateLimitService {

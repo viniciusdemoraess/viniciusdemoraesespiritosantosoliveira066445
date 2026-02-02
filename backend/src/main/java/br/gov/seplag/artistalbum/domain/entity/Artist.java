@@ -53,9 +53,6 @@ public class Artist {
         updatedAt = LocalDateTime.now();
     }
 
-    /**
-     * Business method to add album
-     */
     public void addAlbum(Album album) {
         if (!albums.contains(album)) {
             albums.add(album);
@@ -63,9 +60,6 @@ public class Artist {
         }
     }
 
-    /**
-     * Business method to remove album
-     */
     public void removeAlbum(Album album) {
         if (albums.contains(album)) {
             albums.remove(album);
@@ -73,9 +67,6 @@ public class Artist {
         }
     }
 
-    /**
-     * Business method to get album count
-     */
     public int getAlbumCount() {
         return albums != null ? albums.size() : 0;
     }
