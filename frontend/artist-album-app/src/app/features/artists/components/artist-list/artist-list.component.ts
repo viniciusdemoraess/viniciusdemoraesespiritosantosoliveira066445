@@ -170,6 +170,8 @@ export class ArtistListComponent implements OnInit, OnDestroy {
     this.artistFacade.createArtist(newArtist).subscribe({
       next: () => {
         this.closeAddModal();
+        this.currentPage = 0;
+        this.loadArtists();
       },
       error: (error: any) => {
         console.error('Error creating artist:', error);
@@ -197,6 +199,7 @@ export class ArtistListComponent implements OnInit, OnDestroy {
     this.artistFacade.deleteArtist(this.selectedArtist.id).subscribe({
       next: () => {
         this.closeDeleteModal();
+        this.loadArtists();
       },
       error: (error: any) => {
         console.error('Error deleting artist:', error);

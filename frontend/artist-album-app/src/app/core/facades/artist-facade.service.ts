@@ -109,8 +109,6 @@ export class ArtistFacadeService {
     return new Observable(observer => {
       this.artistService.createArtist(data).subscribe({
         next: (artist) => {
-          const current = this.artistsSubject.value;
-          this.artistsSubject.next([...current, artist]);
           this.toastService.success('Artista criado com sucesso!');
           observer.next(artist);
           observer.complete();
