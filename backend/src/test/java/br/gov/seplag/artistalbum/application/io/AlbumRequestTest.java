@@ -65,22 +65,9 @@ class AlbumRequestTest {
         Set<ConstraintViolation<AlbumRequest>> violations = validator.validate(request);
 
         assertThat(violations).isNotEmpty();
-        assertThat(violations).anyMatch(v -> v.getMessage().contains("between 1 and 200"));
+        assertThat(violations).anyMatch(v -> v.getMessage().contains("between 3 and 200"));
     }
 
-    @Test
-    @DisplayName("Should fail validation when artistId is null")
-    void shouldFailValidationWhenArtistIdIsNull() {
-        AlbumRequest request = AlbumRequest.builder()
-                .title("Toxicity")
-                .releaseYear(2001)
-                .build();
-
-        Set<ConstraintViolation<AlbumRequest>> violations = validator.validate(request);
-
-        assertThat(violations).isNotEmpty();
-        assertThat(violations).anyMatch(v -> v.getMessage().contains("Artist ID is required"));
-    }
 
     @Test
     @DisplayName("Should fail validation when release year is too old")

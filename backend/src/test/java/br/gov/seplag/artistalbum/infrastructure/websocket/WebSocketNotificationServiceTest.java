@@ -70,7 +70,7 @@ class WebSocketNotificationServiceTest {
         assertThat(notification.get("albumId")).isEqualTo(1L);
         assertThat(notification.get("albumTitle")).isEqualTo("Toxicity");
         assertThat(notification.get("artistId")).isEqualTo(1L);
-        assertThat(notification.get("artistName")).isEqualTo("System of a Down");
+        assertThat(notification.get("artistNames")).isEqualTo("System of a Down");
         assertThat(notification.get("message")).isEqualTo("New album 'Toxicity' by System of a Down has been added!");
         assertThat(notification.get("timestamp")).isInstanceOf(LocalDateTime.class);
     }
@@ -109,7 +109,7 @@ class WebSocketNotificationServiceTest {
         Map<String, Object> notification = notificationCaptor.getValue();
         assertThat(notification).containsKeys(
                 "type", "albumId", "albumTitle", 
-                "artistId", "artistName", "timestamp", "message"
+                "artistId", "artistNames", "timestamp", "message"
         );
     }
 
@@ -137,6 +137,6 @@ class WebSocketNotificationServiceTest {
         assertThat(notification.get("albumId")).isEqualTo(99L);
         assertThat(notification.get("albumTitle")).isEqualTo("Mezmerize");
         assertThat(notification.get("artistId")).isEqualTo(10L);
-        assertThat(notification.get("artistName")).isEqualTo("SOAD");
+        assertThat(notification.get("artistNames")).isEqualTo("SOAD");
     }
 }

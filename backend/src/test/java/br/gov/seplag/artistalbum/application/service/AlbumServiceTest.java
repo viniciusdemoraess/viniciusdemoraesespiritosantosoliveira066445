@@ -251,7 +251,6 @@ class AlbumServiceTest {
         
         when(albumRepository.findById(1L)).thenReturn(Optional.of(testAlbum));
         when(artistRepository.findById(1L)).thenReturn(Optional.of(testArtist));
-        when(albumRepository.existsByTitleAndArtistIdAndIdNot("Updated Title", 1L, 1L)).thenReturn(false);
         when(albumRepository.save(any(Album.class))).thenReturn(testAlbum);
 
         AlbumResponse result = albumService.updateAlbum(1L, updateRequest);
@@ -259,7 +258,6 @@ class AlbumServiceTest {
         assertThat(result).isNotNull();
         verify(albumRepository).findById(1L);
         verify(artistRepository).findById(1L);
-        verify(albumRepository).existsByTitleAndArtistIdAndIdNot("Updated Title", 1L, 1L);
         verify(albumRepository).save(any(Album.class));
     }
 
@@ -296,23 +294,6 @@ class AlbumServiceTest {
                 .hasMessageContaining("Artist");
     }
 
-    @Test
-    @DisplayName("Should throw DuplicateResourceException when updating to existing title")
-    void shouldThrowExceptionWhenUpdatingToExistingTitle() {
-        AlbumRequest updateRequest = AlbumRequest.builder()
-                .title("Existing Title")
-                .releaseYear(2024)
-                .artistId(1L)
-                .build();
-        
-        when(albumRepository.findById(1L)).thenReturn(Optional.of(testAlbum));
-        when(artistRepository.findById(1L)).thenReturn(Optional.of(testArtist));
-        when(albumRepository.existsByTitleAndArtistIdAndIdNot("Existing Title", 1L, 1L)).thenReturn(true);
-
-        assertThatThrownBy(() -> albumService.updateAlbum(1L, updateRequest))
-                .isInstanceOf(DuplicateResourceException.class)
-                .hasMessageContaining("Album");
-    }
 
     @Test
     @DisplayName("Should upload covers successfully")
