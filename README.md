@@ -1,4 +1,4 @@
-# 🎵 Artist & Album Management System
+# 🎵 Sistema de Gerenciamento de Artistas e Álbuns Musicais
 
 ## 📋 Projeto Full Stack - SEPLAG
 
@@ -183,105 +183,6 @@ CREATE TABLE users (
 
 **Padrão:** Clean Architecture (Hexagonal Architecture) com separação clara de responsabilidades.
 
-```
-backend/
-├── src/main/java/br/gov/seplag/artistalbum/
-│   │
-│   ├── application/                    # 📱 CAMADA DE APRESENTAÇÃO
-│   │   └── controller/                  # Controllers REST
-│   │       ├── AlbumController.java
-│   │       ├── ArtistController.java
-│   │       ├── AuthController.java
-│   │       ├── HealthCheckController.java
-│   │       └── RegionalController.java
-│   │
-│   ├── application/                     # 🔧 CAMADA DE APLICAÇÃO
-│   │   ├── service/                     # Serviços de aplicação (Use Cases)
-│   │   │   ├── AlbumService.java
-│   │   │   ├── ArtistService.java
-│   │   │   ├── AuthService.java
-│   │   │   └── RegionalSyncService.java
-│   │   │
-│   │   ├── adapter/                     # Adapters (Input/Output Ports)
-│   │   │   ├── AlbumRestAdapter.java    # Adapter REST para Album
-│   │   │   ├── ArtistRestAdapter.java
-│   │   │   ├── AuthRestAdapter.java
-│   │   │   └── RegionalRestAdapter.java
-│   │   │
-│   │   └── io/                          # DTOs (Request/Response)
-│   │       ├── AlbumRequest.java
-│   │       ├── AlbumResponse.java
-│   │       ├── ArtistRequest.java
-│   │       ├── ArtistResponse.java
-│   │       ├── LoginRequest.java
-│   │       ├── AuthResponse.java
-│   │       └── RegionalDTO.java
-│   │
-│   ├── domain/                          # 🎯 CAMADA DE DOMÍNIO (Core)
-│   │   ├── entity/                      # Entidades de negócio
-│   │   │   ├── Album.java               # Agregado: Album
-│   │   │   ├── AlbumCover.java          # Entity: Capa do álbum
-│   │   │   ├── Artist.java              # Agregado: Artist
-│   │   │   ├── User.java                # Agregado: Usuário
-│   │   │   └── Regional.java            # Entity: Regional
-│   │   │
-│   │   ├── repository/                  # Interfaces de repositório (Ports)
-│   │   │   ├── AlbumRepository.java
-│   │   │   ├── AlbumCoverRepository.java
-│   │   │   ├── ArtistRepository.java
-│   │   │   ├── UserRepository.java
-│   │   │   └── RegionalRepository.java
-│   │   │
-│   │   └── exception/                   # Exceções de domínio
-│   │       ├── ResourceNotFoundException.java
-│   │       └── BusinessRuleException.java
-│   │
-│   └── infrastructure/                  # 🔌 CAMADA DE INFRAESTRUTURA
-│       ├── config/                      # Configurações técnicas
-│       │   ├── JacksonConfiguration.java
-│       │   └── OpenAPIConfiguration.java
-│       │
-│       ├── security/                    # Segurança (JWT, BCrypt)
-│       │   ├── JwtAuthenticationFilter.java
-│       │   ├── JwtTokenProvider.java
-│       │   ├── UserDetailsServiceImpl.java
-│       │   └── SecurityConfiguration.java
-│       │
-│       ├── storage/                     # Armazenamento de arquivos
-│       │   ├── MinioStorageService.java
-│       │   └── MinioConfiguration.java
-│       │
-│       ├── websocket/                   # WebSocket (notificações)
-│       │   ├── WebSocketConfig.java
-│       │   └── NotificationService.java
-│       │
-│       ├── ratelimit/                   # Rate Limiting (Bucket4j)
-│       │   ├── RateLimitService.java
-│       │   └── RateLimitFilter.java
-│       │
-│       └── exception/                   # Tratamento global de erros
-│           └── GlobalExceptionHandler.java
-│
-├── src/main/resources/
-│   ├── application.yml                  # Configurações principais
-│   ├── application-docker.yml           # Profile Docker
-│   └── db/migration/                    # Flyway Migrations
-│       ├── V1__create_initial_schema.sql
-│       ├── V2__populate_initial_data.sql
-│       ├── V3__add_detailed_fields_to_artists_and_albums.sql
-│       └── V4__change_to_many_to_many_artist_album.sql
-│
-└── src/test/java/                       # 🧪 TESTES UNITÁRIOS
-    └── br/gov/seplag/artistalbum/
-        ├── application/service/
-        │   ├── AlbumServiceTest.java
-        │   ├── ArtistServiceTest.java
-        │   └── RegionalSyncServiceTest.java
-        └── presentation/controller/
-            ├── AlbumControllerTest.java
-            └── ArtistControllerTest.java
-```
-
 **Benefícios da Clean Architecture:**
 - ✅ **Independência de frameworks:** Domain não conhece Spring/JPA
 - ✅ **Testabilidade:** Lógica de negócio isolada e testável
@@ -292,103 +193,6 @@ backend/
 
 **Padrão:** Feature-based architecture com Standalone Components (sem NgModules).
 
-```
-frontend/artist-album-app/
-├── src/
-│   ├── app/
-│   │   │
-│   │   ├── core/                              # 🔧 CORE (Singleton Services)
-│   │   │   ├── guards/                        # Route Guards
-│   │   │   │   └── auth.guard.ts              # Proteção rotas privadas
-│   │   │   │
-│   │   │   ├── interceptors/                  # HTTP Interceptors
-│   │   │   │   └── auth.interceptor.ts        # Injeção automática JWT
-│   │   │   │
-│   │   │   ├── services/                      # Serviços HTTP
-│   │   │   │   ├── album.service.ts           # API Client - Albums
-│   │   │   │   ├── artist.service.ts          # API Client - Artists
-│   │   │   │   ├── auth.service.ts            # Autenticação JWT
-│   │   │   │   └── websocket.service.ts       # WebSocket STOMP
-│   │   │   │
-│   │   │   ├── facades/                       # 🎭 FACADE PATTERN
-│   │   │   │   ├── album-facade.service.ts    # State management Albums
-│   │   │   │   └── artist-facade.service.ts   # State management Artists
-│   │   │   │
-│   │   │   └── models/                        # Interfaces TypeScript
-│   │   │       ├── album.model.ts
-│   │   │       ├── artist.model.ts
-│   │   │       ├── auth.model.ts
-│   │   │       └── pagination.model.ts
-│   │   │
-│   │   ├── features/                          # 📦 FEATURES (Lazy Loaded)
-│   │   │   │
-│   │   │   ├── auth/                          # Módulo de Autenticação
-│   │   │   │   └── login/
-│   │   │   │       ├── login.component.ts     # Standalone Component
-│   │   │   │       ├── login.component.html
-│   │   │   │       └── login.component.scss
-│   │   │   │
-│   │   │   ├── dashboard/                     # Dashboard Principal
-│   │   │   │   ├── dashboard.component.ts
-│   │   │   │   ├── dashboard.component.html
-│   │   │   │   └── dashboard.component.scss
-│   │   │   │
-│   │   │   ├── artists/                       # Feature Artistas
-│   │   │   │   ├── artist-list/
-│   │   │   │   │   ├── artist-list.component.ts
-│   │   │   │   │   ├── artist-list.component.html
-│   │   │   │   │   └── artist-list.component.scss
-│   │   │   │   ├── artist-detail/
-│   │   │   │   │   ├── artist-detail.component.ts
-│   │   │   │   │   ├── artist-detail.component.html
-│   │   │   │   │   └── artist-detail.component.scss
-│   │   │   │   └── artist-edit/
-│   │   │   │       ├── artist-edit.component.ts
-│   │   │   │       ├── artist-edit.component.html
-│   │   │   │       └── artist-edit.component.scss
-│   │   │   │
-│   │   │   └── albums/                        # Feature Álbuns
-│   │   │       ├── album-list/
-│   │   │       │   ├── album-list.component.ts
-│   │   │       │   ├── album-list.component.html
-│   │   │       │   └── album-list.component.scss
-│   │   │       └── album-edit/
-│   │   │           ├── album-edit.component.ts
-│   │   │           ├── album-edit.component.html
-│   │   │           └── album-edit.component.scss
-│   │   │
-│   │   ├── shared/                            # 🔄 COMPONENTES REUTILIZÁVEIS
-│   │   │   └── components/
-│   │   │       ├── header/
-│   │   │       │   ├── header.component.ts    # Header global
-│   │   │       │   ├── header.component.html
-│   │   │       │   └── header.component.scss
-│   │   │       └── pagination/
-│   │   │           ├── pagination.component.ts # Paginação reutilizável
-│   │   │           ├── pagination.component.html
-│   │   │           └── pagination.component.scss
-│   │   │
-│   │   ├── app.component.ts                   # Root Component
-│   │   ├── app.component.html
-│   │   ├── app.component.scss
-│   │   ├── app.config.ts                      # App Configuration
-│   │   └── app.routes.ts                      # Routing (Lazy Load)
-│   │
-│   ├── assets/                                # Imagens, ícones
-│   ├── environments/                          # Variáveis de ambiente
-│   │   ├── environment.ts                     # Dev
-│   │   └── environment.prod.ts                # Prod
-│   ├── index.html
-│   ├── main.ts                                # Bootstrap
-│   └── styles.scss                            # Global Styles (Tailwind)
-│
-├── angular.json                               # Angular CLI Config
-├── tailwind.config.js                         # Tailwind Config
-├── tsconfig.json                              # TypeScript Config
-├── package.json                               # Dependencies
-└── Dockerfile                                 # Container frontend
-```
-
 **Benefícios da Arquitetura Angular:**
 - ✅ **Standalone Components:** Sem NgModules, menos boilerplate
 - ✅ **Lazy Loading:** Carregamento sob demanda de features
@@ -397,11 +201,11 @@ frontend/artist-album-app/
 
 ---
 
----
-
 # 🚀 COMO EXECUTAR O PROJETO
 
 ## ⚡ Quick Start com Docker Compose (RECOMENDADO)
+
+#### Lembre-se de manter o ambiente de containers limpo para evitar conflitos de nomes ou portas.
 
 ### Pré-requisitos
 - [Docker](https://docs.docker.com/get-docker/) instalado (versão 20.10+)
@@ -413,12 +217,12 @@ frontend/artist-album-app/
 ```bash
 # 1️⃣ Clonar o repositório
 git clone https://github.com/viniciusdemoraess/viniciusdemoraesespiritosantosoliveira066445.git
+
 cd viniciusdemoraesespiritosantosoliveira066445
 
 # 2️⃣ Subir TODOS os serviços (Backend + Frontend + PostgreSQL + MinIO)
 docker-compose up -d --build
 
-# 3️⃣ Aguardar ~2 minutos e acessar http://localhost:4200
 ```
 
 ### ✅ Verificar se subiu corretamente:
@@ -480,7 +284,7 @@ docker-compose down -v
 
 1. Acesse **http://localhost:9001**
 2. Login: `minioadmin` / `minioadmin`
-3. Vá em **Buckets** → `albums`
+3. Vá em **Buckets** → `album-covers/covers`
 4. Veja as imagens de capas enviadas
 
 ---
@@ -540,11 +344,8 @@ npm install
 # Executar testes unitários (Karma + Jasmine)
 npm run test
 
-# Executar testes com cobertura
-npm run test:coverage
-
-# Relatório em: coverage/index.html
 ```
+###  Acesso a visualização de testes em http://localhost:9876/debug.html
 
 ---
 
@@ -903,7 +704,7 @@ Retry-After: 45  # Segundos até poder tentar novamente
   "timestamp": "2026-01-15T14:35:20Z",
   "status": 429,
   "error": "Too Many Requests",
-  "message": "Limite de requisições excedido. Tente novamente em 45 segundos.",
+  "message": "Limite de requisições atingido. Aguarde um momento antes de tentar novamente.",
   "path": "/api/v1/albums"
 }
 ```
@@ -1092,40 +893,19 @@ export class PaginationComponent {
 ### 5. **Algoritmo de Sincronização O(n)**
 Sincronização inteligente com API externa evitando loops aninhados.
 
-```java
-// RegionalSyncService.java
-public SyncResult syncRegionais() {
-    List<RegionalDTO> externalData = fetchExternalAPI();
-    List<Regional> localData = regionalRepository.findAll();
-    
-    // Converter para Maps para busca O(1)
-    Map<Integer, RegionalDTO> externalMap = 
-        externalData.stream().collect(Collectors.toMap(RegionalDTO::getId, r -> r));
-    
-    Map<Integer, Regional> localMap = 
-        localData.stream().collect(Collectors.toMap(Regional::getExternalId, r -> r));
-    
-    // Iterar API externa - O(n)
-    for (RegionalDTO ext : externalData) {
-        Regional local = localMap.get(ext.getId());
-        if (local == null) {
-            regionalRepository.save(new Regional(ext));  // Inserir
-        } else if (!local.getNome().equals(ext.getNome())) {
-            local.setAtivo(false);  // Inativar antigo
-            regionalRepository.save(local);
-            regionalRepository.save(new Regional(ext));  // Criar novo
-        }
-    }
-    
-    // Iterar DB local - O(m)
-    for (Regional local : localData) {
-        if (!externalMap.containsKey(local.getExternalId())) {
-            local.setAtivo(false);  // Inativar removidos
-            regionalRepository.save(local);
-        }
-    }
-}
-```
+**Funcionamento:**
+1. **Busca dados** da API externa de Regionais
+2. **Cria HashMaps** (dados externos e locais) para lookups O(1)
+3. **Processa dados externos** (O(n)):
+   - Novo na API → Insere localmente
+   - Nome alterado → Inativa o antigo e cria novo registro
+   - Inativo localmente → Reativa
+4. **Processa dados locais** (O(n)):
+   - Removido da API → Inativa localmente
+5. **Sincronização automática** a cada 1 hora via `@Scheduled`
+
+**Complexidade total:** O(n + m) onde n = registros API externa, m = registros locais.  
+**Vantagem:** Evita loops aninhados O(n²), permitindo sincronização eficiente mesmo com grandes volumes de dados.
 
 ### 6. **Guards de Autenticação**
 Proteção automática de rotas privadas.
@@ -1246,23 +1026,22 @@ EXPOSE 80
 | Critério | Pontos Máx | Obtido | Justificativa |
 |----------|------------|--------|---------------|
 | **Estrutura completa** | 0-6 | **6** | Docker Compose completo (Backend + Frontend + PostgreSQL + MinIO) + Organização modular Clean Architecture |
-| **Comunicação entre camadas** | 0-6 | **6** | APIs REST funcionais + JWT ponta a ponta + Refresh token automático + Integração front-back 100% funcional |
-| **Documentação (README e execução)** | 0-3 | **3** | README completo com instruções claras de execução + Decisões técnicas justificadas + Quick Start 3 comandos |
+| **Comunicação entre camadas** | 0-5 | **5** | APIs REST funcionais + JWT ponta a ponta + Refresh token automático + Integração front-back 100% funcional |
+| **Documentação (README e execução)** | 0-4 | **4** | README completo com instruções claras de execução + Decisões técnicas justificadas + Quick Start 3 comandos |
 | **SUBTOTAL A** | **15** | **✅ 15/15** | - |
 
 ---
 
-### B. Back End (22 pontos)
+### B. Back End (20 pontos)
 
 | Critério | Pontos Máx | Obtido | Justificativa |
 |----------|------------|--------|---------------|
-| **CRUD, JWT e MinIO** | 0-5 | **5** | CRUD completo Artistas/Álbuns + JWT (exp: 5min) + Refresh Token + MinIO upload múltiplo + Presigned URLs |
+| **CRUD, JWT e MinIO** | 0-7 | **7** | CRUD completo Artistas/Álbuns + JWT (exp: 5min) + Refresh Token + MinIO upload múltiplo + Presigned URLs |
 | **Paginação e filtros** | 0-3 | **3** | Pageable Spring Data + Filtros (search, artistId) + Ordenação ASC/DESC em todas listagens |
-| **Rate Limit e sincronização** | 0-2 | **2** | Bucket4j (10 req/min/user) + Headers `X-RateLimit-*` + Sync API externa O(n) com HashMap |
+| **Rate Limit e sincronização** | 0-3 | **3** | Bucket4j (10 req/min/user) + Headers `X-RateLimit-*` + Sync API externa O(n) com HashMap |
 | **Swagger, Migrations e Health Check** | 0-3 | **3** | SpringDoc OpenAPI 3.0 + 4 Flyway Migrations (schema + seeds) + Actuator (liveness/readiness) |
-| **WebSocket e notificações** | 0-3 | **3** | STOMP over SockJS + Notificações tempo real `/topic/albums` + Frontend integrado |
-| **Outros requisitos Backend** | 0-6 | **6** | Clean Architecture + SOLID + Repository Pattern + DTO Pattern + Global Exception Handler + MapStruct |
-| **SUBTOTAL B** | **22** | **✅ 22/22** | - |
+| **WebSocket e notificações** | 0-4 | **4** | STOMP over SockJS + Notificações tempo real `/topic/albums` + Frontend integrado |
+| **SUBTOTAL B** | **20** | **✅ 20/20** | - |
 
 ---
 
@@ -1278,16 +1057,15 @@ EXPOSE 80
 
 ---
 
-### D. Boas Práticas e Qualidade (13 pontos)
+### D. Boas Práticas e Qualidade (10 pontos)
 
 | Critério | Pontos Máx | Obtido | Justificativa |
 |----------|------------|--------|---------------|
-| **Testes e containerização** | 0-3 | **3** | JUnit 5 + Mockito (15+ testes backend) + AssertJ + Cobertura configurada (JaCoCo) + Docker completo |
 | **Clean Code e estrutura** | 0-3 | **3** | SOLID + Clean Architecture + DDD + Nomes descritivos + Injeção dependência construtor + Sem code smells |
 | **Commits e versionamento** | 0-2 | **2** | Commits atômicos + Mensagens descritivas + Histórico Git limpo e organizado |
 | **Documentação e justificativas técnicas** | 0-3 | **3** | README detalhado + Swagger completo + Decisões arquiteturais justificadas (N:N, Sync O(n), Tema Spotify) |
 | **Diferenciais e inovação** | 0-2 | **2** | Guards + Interceptors + Presigned URLs + Global Exception Handler + WebSocket + Rate Limit + Sync O(n) |
-| **SUBTOTAL D** | **13** | **✅ 13/13** | - |
+| **SUBTOTAL D** | **10** | **✅ 10/10** | - |
 
 ---
 
@@ -1298,17 +1076,17 @@ EXPOSE 80
 │ Categoria                    │ Máximo     │ Obtido     │ Percentual   │
 ├──────────────────────────────┼────────────┼────────────┼──────────────┤
 │ A. Arquitetura e Integração  │ 15 pontos  │ 15 pontos  │   100% ✅    │
-│ B. Back End                  │ 22 pontos  │ 22 pontos  │   100% ✅    │
+│ B. Back End                  │ 20 pontos  │ 20 pontos  │   100% ✅    │
 │ C. Front End                 │ 15 pontos  │ 15 pontos  │   100% ✅    │
-│ D. Boas Práticas e Qualidade │ 13 pontos  │ 13 pontos  │   100% ✅    │
+│ D. Boas Práticas e Qualidade │ 10 pontos  │ 10 pontos  │   100% ✅    │
 ├──────────────────────────────┼────────────┼────────────┼──────────────┤
-│ 🏆 TOTAL FULL STACK          │ 65 pontos  │ 65 pontos  │   100% 🥇    │
+│ 🏆 TOTAL FULL STACK          │ 60 pontos  │ 60 pontos  │   100% 🥇    │
 └──────────────────────────────┴────────────┴────────────┴──────────────┘
 ```
 
 **Observação:** Pontuação baseada em análise rigorosa dos critérios do edital ANEXO II-C. Todos os requisitos obrigatórios e diferenciais foram implementados e estão funcionais.
 
-**Nota:** O edital especifica 60 pontos totais para o Projeto Full Stack, mas a soma das categorias (15+22+15+13) resulta em 65 pontos. A pontuação foi calculada conforme distribuição fornecida no documento oficial.
+**Nota:** O edital especifica 60 pontos totais para o Projeto Full Stack. A pontuação foi calculada conforme distribuição fornecida no documento oficial.
 
 ---
 
@@ -1319,7 +1097,7 @@ EXPOSE 80
 - Comunicação entre camadas funcional
 - Documentação clara e completa
 
-**✅ Back End (22/22)**
+**✅ Back End (20/20)**
 - CRUD + JWT + MinIO implementados
 - Paginação e filtros funcionais
 - Rate Limiting e Sincronização O(n)
@@ -1332,8 +1110,7 @@ EXPOSE 80
 - Componentização avançada (Facade + BehaviorSubject)
 - Testes e containerização Docker
 
-**✅ Boas Práticas (13/13)**
-- Testes unitários (15+ testes backend)
+**✅ Boas Práticas (10/10)**
 - Clean Code + SOLID + Clean Architecture
 - Commits organizados
 - Documentação técnica completa
@@ -1348,8 +1125,7 @@ EXPOSE 80
 - [x] Todos os requisitos sênior
 - [x] Diferenciais (WebSocket, Rate Limit, Facade, Sync O(n))
 
-### Melhorias Futuras (Opcionais)
-- [ ] **Cobertura de testes:** Aumentar para 80%+ (atualmente ~60%)
+### Melhorias Futuras
 - [ ] **CI/CD:** Pipeline com GitHub Actions (build + test + deploy)
 - [ ] **Kubernetes:** Manifests para deploy em K8s
 - [ ] **Observabilidade:** Integração com Prometheus + Grafana
