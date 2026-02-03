@@ -132,7 +132,7 @@ describe('ArtistFacadeService', () => {
   });
 
   describe('createArtist', () => {
-    it('should create artist and update state', (done) => {
+    it('should create artist without adding to state (component will reload)', (done) => {
       const newArtist: Artist = { ...mockArtist, id: 2, name: 'New Artist' };
       artistServiceSpy.createArtist.and.returnValue(of(newArtist));
 
@@ -145,10 +145,9 @@ describe('ArtistFacadeService', () => {
           expect(artist).toEqual(newArtist);
           expect(artistServiceSpy.createArtist).toHaveBeenCalledWith({ name: 'New Artist' });
 
-          // Check if state was updated
           facade.artists$.subscribe(artists => {
-            expect(artists.length).toBe(2);
-            expect(artists).toContain(newArtist);
+            expect(artists.length).toBe(1);
+            expect(artists).not.toContain(newArtist);
             done();
           });
         }
