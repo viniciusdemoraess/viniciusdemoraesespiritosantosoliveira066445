@@ -215,7 +215,43 @@ CREATE TABLE users (
 - [Docker Compose](https://docs.docker.com/compose/install/) instalado (versão 2.0+)
 - Porta 4200, 8080, 5432 e 9000 disponíveis
 
-### 🎯 3 Comandos para rodar tudo:
+### 🎯 Opção 1: Scripts Automatizados (MAIS FÁCIL)
+
+> **⚠️ Nota:** Scripts disponíveis para **Linux**, **macOS** e **Windows com WSL/Git Bash**
+
+O projeto inclui scripts shell para facilitar o gerenciamento do ambiente:
+
+```bash
+# 1️⃣ Clonar o repositório
+git clone https://github.com/viniciusdemoraess/viniciusdemoraesespiritosantosoliveira066445.git
+
+cd viniciusdemoraesespiritosantosoliveira066445
+
+# 2️⃣ Dar permissão de execução aos scripts (necessário apenas uma vez)
+chmod +x start.sh cleanup.sh
+
+# 3️⃣ Subir TODO o ambiente (Backend + Frontend + PostgreSQL + MinIO)
+./start.sh
+
+# 4️⃣ Derrubar o ambiente e limpar volumes (quando terminar)
+./cleanup.sh
+```
+
+**O que o `start.sh` faz:**
+- ✅ Valida se Docker e Docker Compose estão instalados
+- ✅ Para e remove containers antigos (evita conflitos)
+- ✅ Faz build e sobe todos os serviços
+- ✅ Aguarda os serviços ficarem prontos (health checks)
+- ✅ Exibe as URLs de acesso
+
+**O que o `cleanup.sh` faz:**
+- ✅ Para todos os containers do projeto
+- ✅ Remove containers, networks e volumes
+- ✅ Limpa completamente o ambiente (útil para recomeçar do zero)
+
+---
+
+### 🎯 Opção 2: Docker Compose
 
 ```bash
 # 1️⃣ Clonar o repositório
