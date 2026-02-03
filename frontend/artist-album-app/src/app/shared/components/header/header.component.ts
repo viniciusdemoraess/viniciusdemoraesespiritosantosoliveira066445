@@ -14,14 +14,24 @@ import { NotificationBellComponent } from '@shared/components/notification-bell/
 export class HeaderComponent {
   @Input() title: string = 'Acervo Musical';
   @Input() showNotifications: boolean = true;
+  isMobileMenuOpen = false;
 
   constructor(
     public authService: AuthService,
     private router: Router
   ) {}
 
+  toggleMobileMenu(): void {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  closeMobileMenu(): void {
+    this.isMobileMenuOpen = false;
+  }
+
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/auth/login']);
+    this.closeMobileMenu();
   }
 }

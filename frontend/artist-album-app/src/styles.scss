@@ -626,3 +626,229 @@ textarea::placeholder {
   text-overflow: ellipsis;
 }
 
+/* ===== MOBILE RESPONSIVE UTILITIES ===== */
+
+/* Extra Small Breakpoint (xs) - Custom utility for very small screens */
+@media (min-width: 475px) {
+  .xs\:inline {
+    display: inline;
+  }
+  
+  .xs\:hidden {
+    display: none;
+  }
+  
+  .xs\:w-auto {
+    width: auto;
+  }
+  
+  .xs\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  
+  .xs\:flex-row {
+    flex-direction: row;
+  }
+}
+
+/* Mobile-First Touch Targets - Ensure minimum tap size of 44x44px */
+@media (max-width: 768px) {
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Larger touch targets for icon buttons */
+  button svg, a svg {
+    pointer-events: none;
+  }
+}
+
+/* Improve readability on small screens */
+@media (max-width: 640px) {
+  body {
+    font-size: 14px;
+  }
+  
+  h1 {
+    font-size: 28px;
+  }
+  
+  h2 {
+    font-size: 24px;
+  }
+  
+  h3 {
+    font-size: 20px;
+  }
+  
+  /* Better spacing for mobile cards */
+  .card {
+    border-radius: 12px;
+  }
+  
+  /* Optimize button sizes */
+  .btn-primary, .btn-secondary {
+    padding: 10px 24px;
+    font-size: 13px;
+  }
+}
+
+/* Prevent horizontal scroll on mobile */
+body {
+  overflow-x: hidden;
+}
+
+/* Mobile Navigation Animations */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-down {
+  animation: slideDown 0.3s ease-out;
+}
+
+/* Mobile Menu Overlay */
+.mobile-menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 30;
+  animation: fadeIn 0.2s;
+}
+
+/* Responsive Grid Utilities */
+.responsive-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 475px) {
+  .responsive-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 768px) {
+  .responsive-grid {
+    gap: 1.5rem;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .responsive-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Sticky Header Support */
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  backdrop-filter: blur(10px);
+}
+
+/* Better Focus States for Accessibility */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--spotify-green);
+  outline-offset: 2px;
+}
+
+/* Hide scrollbar on mobile for cleaner look */
+@media (max-width: 768px) {
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Mobile Safe Area Insets (for notched devices) */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* Truncate text with ellipsis - Multi-line support */
+.line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+/* Better Image Loading States */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+img[loading="lazy"] {
+  background: var(--bg-tertiary);
+}
+
+/* Mobile-optimized Modal/Drawer */
+@media (max-width: 768px) {
+  .drawer {
+    max-width: 100%;
+    width: 100%;
+  }
+  
+  .modal {
+    max-width: 95%;
+    margin: 1rem;
+  }
+}
+
+/* Touch-friendly Spacing */
+@media (max-width: 768px) {
+  .touch-spacing > * + * {
+    margin-top: 1rem;
+  }
+  
+  .touch-spacing-sm > * + * {
+    margin-top: 0.5rem;
+  }
+}
