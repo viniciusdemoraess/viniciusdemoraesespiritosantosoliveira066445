@@ -22,6 +22,9 @@ PROJETO PRÁTICO - IMPLEMENTAÇÃO FULL STACK SÊNIOR - JAVA + ANGULAR/REACT
 **Email:** viniciusdemoraespro@gmail.com  
 **Repositório:** https://github.com/viniciusdemoraess/viniciusdemoraesespiritosantosoliveira066445
 
+
+<img width="1301" height="1234" alt="arquitetura" src="https://github.com/user-attachments/assets/1f2893eb-0596-4bfc-a301-8f76b21ed474" />
+
 ---
 
 ## 🎯 Stack Tecnológica
