@@ -6,7 +6,7 @@ Sistema completo de gerenciamento de artistas e álbuns musicais desenvolvido co
 
 **Tema Visual:** Interface inspirada no design moderno e minimalista do Spotify, adaptada com identidade própria. Cores personalizadas, tipografia limpa e componentes reutilizáveis que proporcionam uma experiência de usuário fluida e profissional.
 
-<img width="1301" height="1234" alt="arquitetura" src="https://github.com/user-attachments/assets/1f2893eb-0596-4bfc-a301-8f76b21ed474" />
+<img width="1301" height="1234" alt="system_design" src="https://github.com/user-attachments/assets/2690a987-5225-4958-8a73-2447de5a1ad1" />
 
 ---
 
