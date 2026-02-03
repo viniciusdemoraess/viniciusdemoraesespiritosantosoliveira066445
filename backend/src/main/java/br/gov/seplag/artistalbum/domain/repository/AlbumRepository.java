@@ -34,4 +34,7 @@ public interface AlbumRepository extends JpaRepository<Album, Long> {
 
     @Query("SELECT COUNT(a) > 0 FROM Album a JOIN a.artists ar WHERE LOWER(a.title) = LOWER(:title) AND ar.id = :artistId")
     boolean existsByTitleAndArtistId(@Param("title") String title, @Param("artistId") Long artistId);
+
+    @Query("SELECT COUNT(DISTINCT a) FROM Album a WHERE SIZE(a.covers) > 0")
+    long countAlbumsWithCovers();
 }

@@ -108,7 +108,7 @@
           <div *ngFor="let album of recentAlbums" class="flex items-center justify-between p-3 sm:p-4 hover:bg-spotify-gray-medium rounded-lg transition cursor-pointer group">
             <div class="min-w-0 flex-1 pr-3">
               <p class="font-bold text-spotify-white group-hover:text-spotify-green transition text-sm sm:text-base truncate">{{ album.title }}</p>
-              <p class="text-xs sm:text-sm text-spotify-gray-lighter mt-1 truncate">{{ album.artistName }}</p>
+              <p class="text-xs sm:text-sm text-spotify-gray-lighter mt-1 truncate">{{ album.artistNames }}</p>
             </div>
             <span class="badge badge-success flex-shrink-0 text-xs">{{ album.releaseYear }}</span>
           </div>

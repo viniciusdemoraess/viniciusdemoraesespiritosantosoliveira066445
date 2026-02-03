@@ -23,4 +23,7 @@ public interface ArtistRepository extends JpaRepository<Artist, Long> {
 
     @Query("SELECT COUNT(a) > 0 FROM Artist a WHERE LOWER(a.name) = LOWER(:name)")
     boolean existsByNameIgnoreCase(@Param("name") String name);
+
+    @Query("SELECT COUNT(a) FROM Artist a WHERE SIZE(a.albums) = 0")
+    long countArtistsWithoutAlbums();
 }

@@ -19,8 +19,10 @@ interface DashboardStats {
 interface RecentAlbum {
   id: number;
   title: string;
-  artistName: string;
+  artistNames: string;
   releaseYear: number;
+  totalTracks?: number;
+  genre?: string;
 }
 
 @Component({
