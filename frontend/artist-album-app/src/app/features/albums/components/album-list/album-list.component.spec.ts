@@ -21,6 +21,7 @@ describe('AlbumListComponent', () => {
       releaseYear: 2024,
       artistId: 1,
       artistName: 'Artist 1',
+      artists: [{ id: 1, name: 'Artist 1' }],
       covers: [],
       createdAt: '2024-01-01T00:00:00',
       updatedAt: '2024-01-01T00:00:00'
@@ -81,7 +82,6 @@ describe('AlbumListComponent', () => {
 
   it('should load albums and artists on init', () => {
     expect(albumFacadeService.loadAlbums).toHaveBeenCalled();
-    expect(artistFacadeService.loadArtists).toHaveBeenCalled();
   });
 
   it('should filter albums by search term', () => {

@@ -141,7 +141,7 @@ describe('ArtistFacadeService', () => {
       facade.createArtist('New Artist').subscribe({
         next: (artist) => {
           expect(artist).toEqual(newArtist);
-          expect(artistServiceSpy.createArtist).toHaveBeenCalledWith('New Artist');
+          expect(artistServiceSpy.createArtist).toHaveBeenCalledWith({ name: 'New Artist' });
 
           // Check if state was updated
           facade.artists$.subscribe(artists => {

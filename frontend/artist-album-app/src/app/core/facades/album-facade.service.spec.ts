@@ -14,6 +14,7 @@ describe('AlbumFacadeService', () => {
     releaseYear: 2024,
     artistId: 1,
     artistName: 'Test Artist',
+    artists: [{ id: 1, name: 'Test Artist' }],
     covers: [
       { id: 1, fileName: 'cover1.jpg', contentType: 'image/jpeg', fileSize: 1024, url: 'http://localhost/cover1.jpg', uploadedAt: '2024-01-01' },
       { id: 2, fileName: 'cover2.jpg', contentType: 'image/jpeg', fileSize: 2048, url: 'http://localhost/cover2.jpg', uploadedAt: '2024-01-01' }
@@ -47,6 +48,7 @@ describe('AlbumFacadeService', () => {
     const spy = jasmine.createSpyObj('AlbumService', [
       'getAllAlbums',
       'createAlbum',
+      'updateAlbum',
       'deleteAlbum',
       'uploadCovers'
     ]);
@@ -236,7 +238,14 @@ describe('AlbumFacadeService', () => {
 
   describe('updateAlbum', () => {
     it('should update album in state', (done) => {
+      const updatedAlbum: Album = {
+        ...mockAlbum,
+        title: 'Test Album'
+      };
+
       albumServiceSpy.getAllAlbums.and.returnValue(of(mockPage));
+      albumServiceSpy.updateAlbum.and.returnValue(of(updatedAlbum));
+      
       facade.loadAlbums();
 
       setTimeout(() => {
@@ -254,9 +263,12 @@ describe('AlbumFacadeService', () => {
     });
 
     it('should handle album not found', (done) => {
+      const error = { status: 404, message: 'Album not found' };
+      albumServiceSpy.updateAlbum.and.returnValue(throwError(() => error));
+
       facade.updateAlbum(999, { title: 'Test' }).subscribe({
-        error: (error) => {
-          expect(error.message).toBe('Album not found');
+        error: (err) => {
+          expect(err.message).toBe('Album not found');
           done();
         }
       });

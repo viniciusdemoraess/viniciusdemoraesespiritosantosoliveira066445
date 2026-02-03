@@ -40,6 +40,7 @@ describe('DashboardFacadeService', () => {
     releaseYear: 2024,
     artistId: 1,
     artistName: 'Test Artist',
+    artists: [{ id: 1, name: 'Test Artist' }],
     covers: [{ id: 1, fileName: 'cover1.jpg', contentType: 'image/jpeg', fileSize: 1024, url: 'http://localhost/cover1.jpg', uploadedAt: '2024-01-01' }],
     createdAt: '2024-01-01',
     updatedAt: '2024-01-01'
@@ -51,6 +52,7 @@ describe('DashboardFacadeService', () => {
     releaseYear: 2023,
     artistId: 1,
     artistName: 'Test Artist',
+    artists: [{ id: 1, name: 'Test Artist' }],
     covers: [],
     createdAt: '2024-01-02',
     updatedAt: '2024-01-02'
