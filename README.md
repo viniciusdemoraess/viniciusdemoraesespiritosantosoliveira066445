@@ -6,6 +6,8 @@ Sistema completo de gerenciamento de artistas e álbuns musicais desenvolvido co
 
 **Tema Visual:** Interface inspirada no design moderno e minimalista do Spotify, adaptada com identidade própria. Cores personalizadas, tipografia limpa e componentes reutilizáveis que proporcionam uma experiência de usuário fluida e profissional.
 
+<img width="1301" height="1234" alt="arquitetura" src="https://github.com/user-attachments/assets/1f2893eb-0596-4bfc-a301-8f76b21ed474" />
+
 ---
 
 ## 👨‍💻 Dados da Inscrição
@@ -21,9 +23,6 @@ PROJETO PRÁTICO - IMPLEMENTAÇÃO FULL STACK SÊNIOR - JAVA + ANGULAR/REACT
 
 **Email:** viniciusdemoraespro@gmail.com  
 **Repositório:** https://github.com/viniciusdemoraess/viniciusdemoraesespiritosantosoliveira066445
-
-
-<img width="1301" height="1234" alt="arquitetura" src="https://github.com/user-attachments/assets/1f2893eb-0596-4bfc-a301-8f76b21ed474" />
 
 ---
 
