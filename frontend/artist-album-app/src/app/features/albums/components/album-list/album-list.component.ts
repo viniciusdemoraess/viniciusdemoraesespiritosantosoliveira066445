@@ -17,7 +17,6 @@ import { Subscription } from 'rxjs';
 })
 export class AlbumListComponent implements OnInit, OnDestroy {
   Math = Math;
-  allAlbums: Album[] = [];
   albums: Album[] = [];
   loading = false;
   searchTerm = '';
@@ -27,6 +26,7 @@ export class AlbumListComponent implements OnInit, OnDestroy {
   currentPage = 0;
   pageSize = 8;
   totalItems = 0;
+  totalPages = 0;
 
   // Sorting
   sortBy = 'title';
@@ -57,27 +57,25 @@ export class AlbumListComponent implements OnInit, OnDestroy {
 
   private subscribeToData(): void {
     const albumsSub = this.albumFacade.albums$.subscribe((albums: Album[]) => {
-      this.allAlbums = this.filterAlbums(albums);
-      this.totalItems = this.allAlbums.length;
-      this.applyPagination();
+      this.albums = albums;
+    });
+
+    const paginationSub = this.albumFacade.pagination$.subscribe((pagination) => {
+      this.totalItems = pagination.totalElements;
+      this.totalPages = pagination.totalPages;
+      this.currentPage = pagination.currentPage;
     });
 
     const loadingSub = this.albumFacade.loading$.subscribe((loading: boolean) => {
       this.loading = loading;
     });
 
-    this.subscriptions.push(albumsSub, loadingSub);
-  }
-
-  private applyPagination(): void {
-    const start = this.currentPage * this.pageSize;
-    const end = start + this.pageSize;
-    this.albums = this.allAlbums.slice(start, end);
+    this.subscriptions.push(albumsSub, paginationSub, loadingSub);
   }
 
   onPageChange(page: number): void {
     this.currentPage = page;
-    this.applyPagination();
+    this.loadData();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -92,62 +90,26 @@ export class AlbumListComponent implements OnInit, OnDestroy {
     return parts.length > 0 ? parts.join(' ') : undefined;
   }
 
-  private filterAlbums(albums: Album[]): Album[] {
-    let filtered = [...albums];
-
-    // Apply artist filter
-    if (this.filterArtistId) {
-      filtered = filtered.filter(album => album.artistId === this.filterArtistId);
-    }
-
-    // Apply search filter
-    if (this.searchTerm.trim()) {
-      const search = this.searchTerm.toLowerCase();
-      filtered = filtered.filter(album =>
-        album.title.toLowerCase().includes(search) ||
-        album.artistName.toLowerCase().includes(search)
-      );
-    }
-
-    // Apply sorting
-    filtered.sort((a, b) => {
-      let comparison = 0;
-
-      switch (this.sortBy) {
-        case 'title':
-          comparison = a.title.toLowerCase().localeCompare(b.title.toLowerCase());
-          break;
-        case 'year':
-          comparison = a.releaseYear - b.releaseYear;
-          break;
-        case 'artist':
-          comparison = a.artistName.toLowerCase().localeCompare(b.artistName.toLowerCase());
-          break;
-      }
-
-      return this.sortDirection === 'asc' ? comparison : -comparison;
-    });
-
-    return filtered;
-  }
-
   loadData(): void {
-    this.albumFacade.loadAlbums();
+    const sortMap: { [key: string]: string } = {
+      'title': 'title',
+      'year': 'releaseYear',
+      'artist': 'artistName'
+    };
+    const backendSortBy = sortMap[this.sortBy] || 'title';
+
+    this.albumFacade.loadAlbums(
+      this.currentPage,
+      this.pageSize,
+      backendSortBy,
+      this.sortDirection,
+      this.searchTerm.trim() || undefined
+    );
   }
 
   onSearch(): void {
-    // Reset to first page on search
     this.currentPage = 0;
-
-    // If search is empty, reload all data from backend
-    if (this.searchTerm.trim() === '') {
-      this.loadData();
-      return;
-    }
-
-    this.allAlbums = this.filterAlbums(this.allAlbums);
-    this.totalItems = this.allAlbums.length;
-    this.applyPagination();
+    this.loadData();
   }
 
   clearSearch(): void {
@@ -185,21 +147,13 @@ export class AlbumListComponent implements OnInit, OnDestroy {
       this.sortDirection = 'asc';
     }
     this.currentPage = 0;
-    this.albumFacade.albums$.subscribe((albums: Album[]) => {
-      this.allAlbums = this.filterAlbums(albums);
-      this.totalItems = this.allAlbums.length;
-      this.applyPagination();
-    }).unsubscribe();
+    this.loadData();
   }
 
   toggleSortDirection(): void {
     this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     this.currentPage = 0;
-    this.albumFacade.albums$.subscribe((albums: Album[]) => {
-      this.allAlbums = this.filterAlbums(albums);
-      this.totalItems = this.allAlbums.length;
-      this.applyPagination();
-    }).unsubscribe();
+    this.loadData();
   }
 
   openAddModal(): void {

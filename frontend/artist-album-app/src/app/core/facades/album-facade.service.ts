@@ -17,11 +17,15 @@ export class AlbumFacadeService {
   private albumsSubject = new BehaviorSubject<Album[]>([]);
   private loadingSubject = new BehaviorSubject<boolean>(false);
   private errorSubject = new BehaviorSubject<string | null>(null);
+  private paginationSubject = new BehaviorSubject<{ totalElements: number; totalPages: number; currentPage: number }>(
+    { totalElements: 0, totalPages: 0, currentPage: 0 }
+  );
 
   // Public Observables
   public readonly albums$ = this.albumsSubject.asObservable();
   public readonly loading$ = this.loadingSubject.asObservable();
   public readonly error$ = this.errorSubject.asObservable();
+  public readonly pagination$ = this.paginationSubject.asObservable();
 
   // Derived State
   public readonly totalAlbums$ = this.albums$.pipe(
@@ -42,22 +46,24 @@ export class AlbumFacadeService {
   ) {}
 
   /**
-   * Load all albums with pagination
+   * Load albums with server-side pagination
    */
-  loadAlbums(page: number = 0, size: number = 1000): void {
+  loadAlbums(page: number = 0, size: number = 10, sortBy: string = 'title', sortDirection: string = 'asc', searchTerm?: string): void {
     this.loadingSubject.next(true);
     this.errorSubject.next(null);
 
-    this.albumService.getAllAlbums(page, size).subscribe({
+    this.albumService.getAllAlbums(page, size, sortBy, sortDirection, undefined, searchTerm).subscribe({
       next: (response: Page<Album>) => {
         this.albumsSubject.next(response.content);
+        this.paginationSubject.next({
+          totalElements: response.totalElements,
+          totalPages: response.totalPages,
+          currentPage: response.number
+        });
         this.loadingSubject.next(false);
       },
       error: (error) => {
-        const errorMsg = 'Erro ao carregar álbuns';
-        this.errorSubject.next(errorMsg);
         this.loadingSubject.next(false);
-        this.toastService.error(errorMsg);
         console.error('Error loading albums:', error);
       }
     });
@@ -86,10 +92,7 @@ export class AlbumFacadeService {
           observer.complete();
         },
         error: (error) => {
-          const errorMsg = 'Erro ao carregar álbum';
-          this.errorSubject.next(errorMsg);
           this.loadingSubject.next(false);
-          this.toastService.error(errorMsg);
           observer.error(error);
           console.error('Error loading album by ID:', error);
         }
@@ -120,10 +123,7 @@ export class AlbumFacadeService {
           observer.complete();
         },
         error: (error) => {
-          const errorMsg = 'Erro ao carregar álbuns do artista';
-          this.errorSubject.next(errorMsg);
           this.loadingSubject.next(false);
-          this.toastService.error(errorMsg);
           console.error('Error loading artist albums:', error);
           observer.error(error);
         }
@@ -280,6 +280,11 @@ export class AlbumFacadeService {
    * Extract detailed error message from backend response
    */
   private extractErrorMessage(error: any, defaultMessage: string): string {
+    // Para erro 429, retornar apenas a mensagem do backend sem prefixo
+    if (error?.status === 429) {
+      return error?.error?.message || 'Limite de requisições atingido. Aguarde um momento.';
+    }
+
     if (error?.error?.errors) {
       // Handle validation errors from backend
       const errors = error.error.errors;

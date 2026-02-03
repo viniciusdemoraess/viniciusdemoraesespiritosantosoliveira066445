@@ -6,7 +6,8 @@ import { AlbumFacadeService } from '@core/facades/album-facade.service';
 import { ArtistFacadeService } from '@core/facades/artist-facade.service';
 import { HeaderComponent } from '@shared/components/header/header.component';
 import { Album, Artist } from '@core/models';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-album-edit',
@@ -21,7 +22,6 @@ export class AlbumEditComponent implements OnInit, OnDestroy {
   loading = false;
   saving = false;
 
-  // Form fields
   albumTitle = '';
   albumReleaseYear = new Date().getFullYear();
   albumGenre = '';
@@ -29,11 +29,17 @@ export class AlbumEditComponent implements OnInit, OnDestroy {
   albumTotalTracks?: number;
   albumTotalDurationSeconds?: number;
 
-  // Artist selection
   selectedArtistIds: Set<number> = new Set();
   showArtistDropdown = false;
 
-  // Cover files
+  artistSearchTerm = '';
+  private searchSubject = new Subject<string>();
+  artistPage = 0;
+  artistPageSize = 20;
+  hasMoreArtists = true;
+  loadingMoreArtists = false;
+  private isLoadingRequest = false;
+
   coverFiles: File[] = [];
   coverPreviews: string[] = [];
 
@@ -52,6 +58,37 @@ export class AlbumEditComponent implements OnInit, OnDestroy {
     if (id) {
       this.loadAlbum(+id);
     }
+
+    const searchSub = this.searchSubject.pipe(
+      debounceTime(500),
+      distinctUntilChanged()
+    ).subscribe(() => {
+      this.artistPage = 0;
+      this.artists = [];
+      this.loadArtists();
+    });
+    this.subscriptions.push(searchSub);
+
+    const artistsSub = this.artistFacade.artists$.subscribe((artists: Artist[]) => {
+      if (this.isLoadingRequest) {
+        if (this.artistPage === 0) {
+          this.artists = artists;
+        } else {
+          const existingIds = new Set(this.artists.map(a => a.id));
+          const newArtists = artists.filter(a => !existingIds.has(a.id));
+          this.artists = [...this.artists, ...newArtists];
+        }
+        this.loadingMoreArtists = false;
+        this.isLoadingRequest = false;
+      }
+    });
+    this.subscriptions.push(artistsSub);
+
+    const paginationSub = this.artistFacade.pagination$.subscribe((pagination) => {
+      this.hasMoreArtists = pagination.currentPage < pagination.totalPages - 1;
+    });
+    this.subscriptions.push(paginationSub);
+
     this.loadArtists();
   }
 
@@ -76,11 +113,38 @@ export class AlbumEditComponent implements OnInit, OnDestroy {
   }
 
   private loadArtists(): void {
-    const sub = this.artistFacade.artists$.subscribe((artists: Artist[]) => {
-      this.artists = artists;
-    });
-    this.subscriptions.push(sub);
-    this.artistFacade.loadArtists();
+    if (this.isLoadingRequest) return;
+
+    this.loadingMoreArtists = true;
+    this.isLoadingRequest = true;
+
+    this.artistFacade.loadArtists(
+      this.artistPage,
+      this.artistPageSize,
+      'name',
+      'asc',
+      this.artistSearchTerm.trim() || undefined
+    );
+  }
+
+  onArtistSearch(): void {
+    this.searchSubject.next(this.artistSearchTerm);
+  }
+
+  onArtistDropdownScroll(event: Event): void {
+    const element = event.target as HTMLElement;
+    const threshold = 50;
+
+    if (element.scrollHeight - element.scrollTop - element.clientHeight < threshold) {
+      if (this.hasMoreArtists && !this.loadingMoreArtists && !this.isLoadingRequest) {
+        this.artistPage++;
+        this.loadArtists();
+      }
+    }
+  }
+
+  get filteredArtists(): Artist[] {
+    return this.artists;
   }
 
   private populateForm(): void {
@@ -93,12 +157,9 @@ export class AlbumEditComponent implements OnInit, OnDestroy {
     this.albumTotalTracks = this.album.totalTracks;
     this.albumTotalDurationSeconds = this.album.totalDurationSeconds;
 
-    // Set selected artists
     this.selectedArtistIds.clear();
     if (this.album.artists && this.album.artists.length > 0) {
       this.album.artists.forEach(artist => this.selectedArtistIds.add(artist.id));
-    } else if (this.album.artistId) {
-      this.selectedArtistIds.add(this.album.artistId);
     }
   }
 
@@ -124,7 +185,6 @@ export class AlbumEditComponent implements OnInit, OnDestroy {
       const filesArray = Array.from(input.files);
       this.coverFiles.push(...filesArray);
 
-      // Create previews
       filesArray.forEach(file => {
         const reader = new FileReader();
         reader.onload = (e: any) => {
@@ -147,7 +207,7 @@ export class AlbumEditComponent implements OnInit, OnDestroy {
 
     this.saving = true;
 
-    const updates: Partial<Album> & { artistIds?: number[] } = {
+    const updateData = {
       title: this.albumTitle,
       releaseYear: this.albumReleaseYear,
       genre: this.albumGenre,
@@ -157,9 +217,8 @@ export class AlbumEditComponent implements OnInit, OnDestroy {
       artistIds: Array.from(this.selectedArtistIds)
     };
 
-    this.albumFacade.updateAlbum(this.album.id, updates).subscribe({
-      next: (updatedAlbum) => {
-        // If covers were selected, upload them
+    this.albumFacade.updateAlbum(this.album.id, updateData).subscribe({
+      next: (updatedAlbum: Album) => {
         if (this.coverFiles.length > 0) {
           this.albumFacade.uploadCovers(updatedAlbum.id, this.coverFiles).subscribe({
             next: () => {
@@ -193,19 +252,16 @@ export class AlbumEditComponent implements OnInit, OnDestroy {
   }
 
   preventNonNumeric(event: KeyboardEvent): void {
-    // Permite: backspace, delete, tab, escape, enter, home, end, arrows
     const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'Home', 'End', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
 
     if (allowedKeys.includes(event.key)) {
       return;
     }
 
-    // Bloqueia: e, E, +, -, . e outros caracteres não numéricos
     if (event.key === 'e' || event.key === 'E' || event.key === '+' || event.key === '-' || event.key === '.' || event.key === ',') {
       event.preventDefault();
     }
 
-    // Permite apenas números de 0-9
     if (!/^\d$/.test(event.key)) {
       event.preventDefault();
     }

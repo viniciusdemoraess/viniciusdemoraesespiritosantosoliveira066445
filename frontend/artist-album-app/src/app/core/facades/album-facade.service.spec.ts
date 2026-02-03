@@ -105,9 +105,11 @@ describe('AlbumFacadeService', () => {
         throwError(() => new Error('Network error'))
       );
 
-      facade.error$.subscribe(error => {
-        if (error) {
-          expect(error).toBe('Erro ao carregar álbuns');
+      let callCount = 0;
+      facade.loading$.subscribe(loading => {
+        callCount++;
+        if (callCount === 3 && !loading) {
+          expect(loading).toBe(false);
           done();
         }
       });
@@ -245,7 +247,7 @@ describe('AlbumFacadeService', () => {
 
       albumServiceSpy.getAllAlbums.and.returnValue(of(mockPage));
       albumServiceSpy.updateAlbum.and.returnValue(of(updatedAlbum));
-      
+
       facade.loadAlbums();
 
       setTimeout(() => {

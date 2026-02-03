@@ -36,6 +36,11 @@ describe('AlbumListComponent', () => {
     const albumsSubject = new BehaviorSubject<Album[]>(mockAlbums);
     const artistsSubject = new BehaviorSubject<Artist[]>(mockArtists);
     const loadingSubject = new BehaviorSubject<boolean>(false);
+    const paginationSubject = new BehaviorSubject<any>({
+      totalElements: 1,
+      totalPages: 1,
+      currentPage: 0
+    });
 
     const albumFacadeSpy = jasmine.createSpyObj('AlbumFacadeService', [
       'loadAlbums',
@@ -44,14 +49,16 @@ describe('AlbumListComponent', () => {
       'deleteAlbum'
     ], {
       albums$: albumsSubject.asObservable(),
-      loading$: loadingSubject.asObservable()
+      loading$: loadingSubject.asObservable(),
+      pagination$: paginationSubject.asObservable()
     });
 
     const artistFacadeSpy = jasmine.createSpyObj('ArtistFacadeService', [
       'loadArtists'
     ], {
       artists$: artistsSubject.asObservable(),
-      loading$: loadingSubject.asObservable()
+      loading$: loadingSubject.asObservable(),
+      pagination$: paginationSubject.asObservable()
     });
 
     const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
@@ -87,7 +94,7 @@ describe('AlbumListComponent', () => {
   it('should filter albums by search term', () => {
     component.searchTerm = 'Album 1';
     component.onSearch();
-    expect(component.allAlbums.length).toBeGreaterThan(0);
+    expect(component.albums.length).toBeGreaterThan(0);
   });
 
   it('should clear search', () => {

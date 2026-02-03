@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -6,6 +6,8 @@ import { AlbumFacadeService } from '@core/facades/album-facade.service';
 import { ArtistFacadeService } from '@core/facades/artist-facade.service';
 import { HeaderComponent } from '@shared/components/header/header.component';
 import { Artist } from '@core/models';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-album-create',
@@ -14,10 +16,21 @@ import { Artist } from '@core/models';
   templateUrl: './album-create.component.html',
   styleUrl: './album-create.component.scss'
 })
-export class AlbumCreateComponent implements OnInit {
+export class AlbumCreateComponent implements OnInit, OnDestroy {
   artists: Artist[] = [];
   loading = false;
   showArtistDropdown = false;
+  
+  // Artist search and pagination
+  artistSearchTerm = '';
+  private searchSubject = new Subject<string>();
+  artistPage = 0;
+  artistPageSize = 20;
+  hasMoreArtists = true;
+  loadingMoreArtists = false;
+  private isLoadingRequest = false;
+  
+  private subscriptions: Subscription[] = [];
 
   newAlbum = {
     title: '',
@@ -40,14 +53,72 @@ export class AlbumCreateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    const searchSub = this.searchSubject.pipe(
+      debounceTime(500),
+      distinctUntilChanged()
+    ).subscribe(() => {
+      this.artistPage = 0;
+      this.artists = [];
+      this.loadArtists();
+    });
+    this.subscriptions.push(searchSub);
+    
+    const artistsSub = this.artistFacade.artists$.subscribe((artists: Artist[]) => {
+      if (this.isLoadingRequest) {
+        if (this.artistPage === 0) {
+          this.artists = artists;
+        } else {
+          const existingIds = new Set(this.artists.map(a => a.id));
+          const newArtists = artists.filter(a => !existingIds.has(a.id));
+          this.artists = [...this.artists, ...newArtists];
+        }
+        this.loadingMoreArtists = false;
+        this.isLoadingRequest = false;
+      }
+    });
+    this.subscriptions.push(artistsSub);
+    
+    const paginationSub = this.artistFacade.pagination$.subscribe((pagination) => {
+      this.hasMoreArtists = pagination.currentPage < pagination.totalPages - 1;
+    });
+    this.subscriptions.push(paginationSub);
+    
     this.loadArtists();
+  }
+  
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
   private loadArtists(): void {
-    this.artistFacade.artists$.subscribe((artists: Artist[]) => {
-      this.artists = artists;
-    });
-    this.artistFacade.loadArtists();
+    if (this.isLoadingRequest) return;
+    
+    this.loadingMoreArtists = true;
+    this.isLoadingRequest = true;
+    
+    this.artistFacade.loadArtists(
+      this.artistPage,
+      this.artistPageSize,
+      'name',
+      'asc',
+      this.artistSearchTerm.trim() || undefined
+    );
+  }
+  
+  onArtistSearch(): void {
+    this.searchSubject.next(this.artistSearchTerm);
+  }
+  
+  onArtistDropdownScroll(event: Event): void {
+    const element = event.target as HTMLElement;
+    const threshold = 50;
+    
+    if (element.scrollHeight - element.scrollTop - element.clientHeight < threshold) {
+      if (this.hasMoreArtists && !this.loadingMoreArtists && !this.isLoadingRequest) {
+        this.artistPage++;
+        this.loadArtists();
+      }
+    }
   }
 
   toggleArtistSelection(artistId: number): void {
@@ -64,6 +135,10 @@ export class AlbumCreateComponent implements OnInit {
 
   getSelectedArtists(): Artist[] {
     return this.artists.filter(artist => this.selectedArtistIds.has(artist.id));
+  }
+  
+  get filteredArtists(): Artist[] {
+    return this.artists;
   }
 
   onCoverFileSelected(event: Event): void {
@@ -123,19 +198,16 @@ export class AlbumCreateComponent implements OnInit {
   }
 
   preventNonNumeric(event: KeyboardEvent): void {
-    // Permite: backspace, delete, tab, escape, enter, home, end, arrows
     const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'Home', 'End', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
 
     if (allowedKeys.includes(event.key)) {
       return;
     }
 
-    // Bloqueia: e, E, +, -, . e outros caracteres não numéricos
     if (event.key === 'e' || event.key === 'E' || event.key === '+' || event.key === '-' || event.key === '.' || event.key === ',') {
       event.preventDefault();
     }
 
-    // Permite apenas números de 0-9
     if (!/^\d$/.test(event.key)) {
       event.preventDefault();
     }
