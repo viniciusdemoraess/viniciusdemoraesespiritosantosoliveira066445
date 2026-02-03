@@ -90,4 +90,60 @@ class MinioStorageServiceTest {
                 .isInstanceOf(StorageException.class)
                 .hasMessageContaining("delete file");
     }
+
+
+
+    @Test
+    @DisplayName("Should delete file successfully")
+    void shouldDeleteFileSuccessfully() throws Exception {
+        String objectKey = "covers/test.jpg";
+        doNothing().when(minioClient).removeObject(any(RemoveObjectArgs.class));
+
+        minioStorageService.deleteFile(objectKey);
+
+        verify(minioClient).removeObject(any(RemoveObjectArgs.class));
+    }
+
+
+
+    @Test
+    @DisplayName("Should throw StorageException when bucket creation fails")
+    void shouldThrowExceptionWhenBucketCreationFails() throws Exception {
+        MinioStorageService service = new MinioStorageService();
+        ReflectionTestUtils.setField(service, "minioUrl", "http://minio:9000");
+        ReflectionTestUtils.setField(service, "accessKey", "minioadmin");
+        ReflectionTestUtils.setField(service, "secretKey", "minioadmin");
+        ReflectionTestUtils.setField(service, "bucketName", "album-covers");
+
+        MinioClient mockClient = mock(MinioClient.class);
+        ReflectionTestUtils.setField(service, "minioClient", mockClient);
+
+        when(mockClient.bucketExists(any(BucketExistsArgs.class)))
+                .thenThrow(new RuntimeException("Connection error"));
+
+        assertThatThrownBy(() -> {
+            java.lang.reflect.Method method = MinioStorageService.class.getDeclaredMethod("createBucketIfNotExists");
+            method.setAccessible(true);
+            method.invoke(service);
+        })
+        .hasCauseInstanceOf(StorageException.class);
+    }
+
+    @Test
+    @DisplayName("Should preserve URL when internal and external URLs are the same")
+    void shouldPreserveUrlWhenInternalAndExternalAreSame() throws Exception {
+        ReflectionTestUtils.setField(minioStorageService, "minioUrl", "http://localhost:9000");
+        ReflectionTestUtils.setField(minioStorageService, "minioExternalUrl", "http://localhost:9000");
+        
+        String objectKey = "covers/test.jpg";
+        String internalUrl = "http://localhost:9000/album-covers/covers/test.jpg?signature=xyz";
+        
+        when(minioClient.getPresignedObjectUrl(any(GetPresignedObjectUrlArgs.class)))
+                .thenReturn(internalUrl);
+
+        String presignedUrl = minioStorageService.getPresignedUrl(objectKey);
+
+        assertThat(presignedUrl).isEqualTo(internalUrl);
+    }
+
 }

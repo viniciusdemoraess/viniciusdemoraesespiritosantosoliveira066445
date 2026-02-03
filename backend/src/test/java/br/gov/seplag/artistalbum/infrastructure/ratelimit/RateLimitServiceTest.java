@@ -82,4 +82,81 @@ class RateLimitServiceTest {
         assertThat(bucket).isNotNull();
         assertThat(bucket.getAvailableTokens()).isEqualTo(10);
     }
+
+    @Test
+    @DisplayName("Should reuse same bucket for same key")
+    void shouldReuseSameBucketForSameKey() {
+        String key = "test-user";
+        
+        Bucket bucket1 = rateLimitService.resolveBucket(key);
+        bucket1.tryConsume(3);
+        
+        Bucket bucket2 = rateLimitService.resolveBucket(key);
+        
+        assertThat(bucket2.getAvailableTokens()).isEqualTo(7);
+        assertThat(bucket1).isSameAs(bucket2);
+    }
+
+    @Test
+    @DisplayName("Should allow zero available tokens after consuming all")
+    void shouldAllowZeroAvailableTokens() {
+        String key = "test-user";
+
+        for (int i = 0; i < 10; i++) {
+            rateLimitService.tryConsume(key);
+        }
+
+        long availableTokens = rateLimitService.getAvailableTokens(key);
+        assertThat(availableTokens).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("Should handle multiple users concurrently")
+    void shouldHandleMultipleUsersConcurrently() {
+        String user1 = "user1";
+        String user2 = "user2";
+        String user3 = "user3";
+
+        rateLimitService.tryConsume(user1);
+        rateLimitService.tryConsume(user1);
+        
+        rateLimitService.tryConsume(user2);
+        rateLimitService.tryConsume(user2);
+        rateLimitService.tryConsume(user2);
+        
+        rateLimitService.tryConsume(user3);
+
+        assertThat(rateLimitService.getAvailableTokens(user1)).isEqualTo(8);
+        assertThat(rateLimitService.getAvailableTokens(user2)).isEqualTo(7);
+        assertThat(rateLimitService.getAvailableTokens(user3)).isEqualTo(9);
+    }
+
+    @Test
+    @DisplayName("Should create bucket with correct capacity")
+    void shouldCreateBucketWithCorrectCapacity() {
+        String key = "new-user";
+        Bucket bucket = rateLimitService.resolveBucket(key);
+
+        assertThat(bucket.getAvailableTokens()).isEqualTo(10);
+    }
+
+    @Test
+    @DisplayName("Should handle rapid consumption attempts")
+    void shouldHandleRapidConsumptionAttempts() {
+        String key = "rapid-user";
+
+        boolean lastResult = true;
+        for (int i = 0; i < 15; i++) {
+            boolean result = rateLimitService.tryConsume(key);
+            if (i < 10) {
+                assertThat(result).isTrue();
+            } else {
+                assertThat(result).isFalse();
+                lastResult = result;
+            }
+        }
+
+        assertThat(lastResult).isFalse();
+        assertThat(rateLimitService.getAvailableTokens(key)).isEqualTo(0);
+    }
 }
