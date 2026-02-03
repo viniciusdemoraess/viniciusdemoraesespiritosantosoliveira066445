@@ -37,25 +37,30 @@ public class RateLimitFilter extends OncePerRequestFilter {
         }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
-            String username = authentication.getName();
-            String rateLimitKey = "rate-limit:" + username;
-
-            if (!rateLimitService.tryConsume(rateLimitKey)) {
-                log.warn("Rate limit exceeded for user: {}", username);
-                response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
-                response.setContentType("application/json");
-                response.getWriter().write(
-                        "{\"error\": \"Too Many Requests\", " +
-                                "\"message\": \"Rate limit exceeded. Maximum 10 requests per minute allowed.\"}"
-                );
-                return;
-            }
-
-            long availableTokens = rateLimitService.getAvailableTokens(rateLimitKey);
-            response.addHeader("X-RateLimit-Limit", "10");
-            response.addHeader("X-RateLimit-Remaining", String.valueOf(availableTokens));
+        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getName())) {
+            filterChain.doFilter(request, response);
+            return;
         }
+
+        String username = authentication.getName();
+        String rateLimitKey = "rate-limit:" + username;
+
+        if (!rateLimitService.tryConsume(rateLimitKey)) {
+            log.warn("Rate limit exceeded for user: {} on path: {}", username, path);
+            response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
+            response.setContentType("application/json");
+            response.getWriter().write(
+                    "{\"error\": \"Too Many Requests\", " +
+                            "\"message\": \"Limite de requisições atingido. Aguarde um momento antes de tentar novamente.\"}"
+            );
+            return;
+        }
+
+        long availableTokens = rateLimitService.getAvailableTokens(rateLimitKey);
+        response.addHeader("X-RateLimit-Limit", "10");
+        response.addHeader("X-RateLimit-Remaining", String.valueOf(availableTokens));
+        
+        log.debug("Rate limit check passed for user: {} on path: {}. Remaining: {}", username, path, availableTokens);
 
         filterChain.doFilter(request, response);
     }

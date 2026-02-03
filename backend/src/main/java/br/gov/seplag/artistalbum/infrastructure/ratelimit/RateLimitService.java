@@ -26,18 +26,28 @@ public class RateLimitService {
     }
 
     private Bucket createNewBucket() {
-        Bandwidth limit = Bandwidth.classic(
-                requestsPerMinute,
-                Refill.intervally(requestsPerMinute, Duration.ofMinutes(1))
-        );
-        return Bucket.builder()
+        // Capacidade máxima de 10 tokens
+        // Recarga de 10 tokens a cada 1 minuto de forma intervalar
+        // Isso garante exatamente 10 requisições por janela de 1 minuto
+        Bandwidth limit = Bandwidth.builder()
+                .capacity(requestsPerMinute)
+                .refillIntervally(requestsPerMinute, Duration.ofMinutes(1))
+                .build();
+        
+        Bucket bucket = Bucket.builder()
                 .addLimit(limit)
                 .build();
+                
+        log.debug("Created new rate limit bucket with capacity: {} tokens per minute", requestsPerMinute);
+        return bucket;
     }
 
     public boolean tryConsume(String key) {
         Bucket bucket = resolveBucket(key);
-        return bucket.tryConsume(1);
+        boolean consumed = bucket.tryConsume(1);
+        long available = bucket.getAvailableTokens();
+        log.debug("Rate limit attempt for key: {}. Consumed: {}, Remaining: {}", key, consumed, available);
+        return consumed;
     }
 
     public long getAvailableTokens(String key) {
