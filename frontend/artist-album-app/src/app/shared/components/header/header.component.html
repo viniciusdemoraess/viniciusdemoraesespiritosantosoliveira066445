@@ -2,14 +2,14 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex justify-between items-center h-16">
       <!-- Logo e Título -->
-      <div class="flex items-center space-x-2 sm:space-x-3">
+      <a [routerLink]="['/dashboard']" class="flex items-center space-x-2 sm:space-x-3 cursor-pointer">
         <div class="w-9 h-9 sm:w-10 sm:h-10 bg-spotify-green rounded-full flex items-center justify-center hover:scale-110 transition-transform flex-shrink-0">
           <svg class="w-5 h-5 sm:w-6 sm:h-6 text-spotify-black" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
           </svg>
         </div>
         <span class="text-base sm:text-xl font-bold text-spotify-white truncate">{{ title }}</span>
-      </div>
+      </a>
 
       <!-- Desktop Navigation -->
       <div class="hidden lg:flex space-x-1">
@@ -33,7 +33,7 @@
       <!-- Desktop Right Side -->
       <div class="hidden lg:flex items-center space-x-3">
         <app-notification-bell *ngIf="showNotifications"></app-notification-bell>
-        
+
         <div class="text-sm text-spotify-gray-lighter hidden xl:block">
           <span class="font-bold">Olá, <span class="text-spotify-green">{{ authService.getUsername() }}</span>!</span>
         </div>
@@ -50,7 +50,7 @@
       <!-- Mobile Menu Button -->
       <div class="flex lg:hidden items-center space-x-2">
         <app-notification-bell *ngIf="showNotifications"></app-notification-bell>
-        
+
         <button (click)="toggleMobileMenu()"
                 class="p-2 text-spotify-white hover:text-spotify-green hover:bg-spotify-gray-medium rounded-lg transition">
           <svg *ngIf="!isMobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -73,7 +73,7 @@
           <span class="font-bold">Olá, <span class="text-spotify-green">{{ authService.getUsername() }}</span>!</span>
         </p>
       </div>
-      
+
       <!-- Navigation Links -->
       <a [routerLink]="['/dashboard']"
          (click)="closeMobileMenu()"
@@ -84,7 +84,7 @@
         </svg>
         <span>Dashboard</span>
       </a>
-      
+
       <a [routerLink]="['/artists']"
          (click)="closeMobileMenu()"
          routerLinkActive="bg-spotify-gray-medium text-spotify-green"
@@ -94,7 +94,7 @@
         </svg>
         <span>Artistas</span>
       </a>
-      
+
       <a [routerLink]="['/albums']"
          (click)="closeMobileMenu()"
          routerLinkActive="bg-spotify-gray-medium text-spotify-green"
@@ -104,7 +104,7 @@
         </svg>
         <span>Álbuns</span>
       </a>
-      
+
       <!-- Logout Button -->
       <button (click)="logout()"
               class="flex items-center space-x-3 w-full px-4 py-3 text-red-400 hover:text-red-300 hover:bg-spotify-gray-medium rounded-lg transition font-bold mt-2">
