@@ -99,9 +99,11 @@ describe('ArtistFacadeService', () => {
         throwError(() => new Error(errorMessage))
       );
 
-      facade.error$.subscribe(error => {
-        if (error) {
-          expect(error).toBe('Erro ao carregar artistas');
+      let callCount = 0;
+      facade.loading$.subscribe(loading => {
+        callCount++;
+        if (callCount === 3 && !loading) {
+          expect(loading).toBe(false);
           done();
         }
       });

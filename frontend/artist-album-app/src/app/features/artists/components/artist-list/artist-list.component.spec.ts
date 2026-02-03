@@ -20,6 +20,11 @@ describe('ArtistListComponent', () => {
   beforeEach(async () => {
     const artistsSubject = new BehaviorSubject<Artist[]>(mockArtists);
     const loadingSubject = new BehaviorSubject<boolean>(false);
+    const paginationSubject = new BehaviorSubject<any>({
+      totalElements: 1,
+      totalPages: 1,
+      currentPage: 0
+    });
 
     const artistFacadeSpy = jasmine.createSpyObj('ArtistFacadeService', [
       'loadArtists',
@@ -28,7 +33,8 @@ describe('ArtistListComponent', () => {
       'deleteArtist'
     ], {
       artists$: artistsSubject.asObservable(),
-      loading$: loadingSubject.asObservable()
+      loading$: loadingSubject.asObservable(),
+      pagination$: paginationSubject.asObservable()
     });
 
     await TestBed.configureTestingModule({
@@ -62,7 +68,7 @@ describe('ArtistListComponent', () => {
   it('should filter artists by name', () => {
     component.searchTerm = 'Artist A';
     component.onSearch();
-    expect(component.allArtists.length).toBeGreaterThan(0);
+    expect(component.artists.length).toBeGreaterThan(0);
   });
 
   it('should clear search', () => {

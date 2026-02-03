@@ -409,31 +409,60 @@
                 <!-- Dropdown Menu -->
                 <div
                   *ngIf="showNewAlbumArtistDropdown"
-                  class="absolute z-50 w-full mt-2 bg-spotify-gray-dark border border-spotify-gray-light rounded-lg shadow-2xl max-h-60 overflow-y-auto"
+                  class="absolute z-50 w-full mt-2 bg-spotify-gray-dark border border-spotify-gray-light rounded-lg shadow-2xl overflow-hidden"
                 >
-                  <div class="p-2 space-y-1">
-                    <button
-                      *ngFor="let artist of allArtists"
-                      type="button"
-                      (click)="toggleNewAlbumArtistSelection(artist.id)"
-                      class="w-full px-3 py-2 text-left hover:bg-spotify-gray-medium rounded-lg transition flex items-center justify-between"
-                    >
-                      <span class="text-spotify-white">
-                        {{ artist.name }}
-                        <span *ngIf="artist.id === artistId" class="ml-2 text-xs text-spotify-green">(atual)</span>
-                      </span>
-                      <svg
-                        *ngIf="isNewAlbumArtistSelected(artist.id)"
-                        class="h-5 w-5 text-spotify-green flex-shrink-0"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  <!-- Search Input -->
+                  <div class="p-3 border-b border-spotify-gray-light bg-spotify-gray-medium sticky top-0 z-10">
+                    <div class="relative">
+                      <svg class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-spotify-gray-lighter pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                       </svg>
-                    </button>
-                    <div *ngIf="allArtists.length === 0" class="text-sm text-spotify-text-muted text-center py-4">
-                      Nenhum artista disponível
+                      <input
+                        type="text"
+                        [(ngModel)]="artistSearchTerm"
+                        (input)="onArtistSearch()"
+                        placeholder="Pesquisar artistas..."
+                        class="w-full pl-10 pr-3 py-2 bg-spotify-gray-dark border border-spotify-gray-light text-spotify-white rounded-lg focus:outline-none focus:border-spotify-green placeholder-spotify-text-muted text-sm"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Artists List with Scroll -->
+                  <div
+                    class="max-h-60 overflow-y-auto"
+                    (scroll)="onArtistDropdownScroll($event)"
+                  >
+                    <div class="p-2 space-y-1">
+                      <button
+                        *ngFor="let artist of allArtists"
+                        type="button"
+                        (click)="toggleNewAlbumArtistSelection(artist.id)"
+                        class="w-full px-3 py-2 text-left hover:bg-spotify-gray-medium rounded-lg transition flex items-center justify-between"
+                      >
+                        <span class="text-spotify-white">
+                          {{ artist.name }}
+                          <span *ngIf="artist.id === artistId" class="ml-2 text-xs text-spotify-green">(atual)</span>
+                        </span>
+                        <svg
+                          *ngIf="isNewAlbumArtistSelected(artist.id)"
+                          class="h-5 w-5 text-spotify-green flex-shrink-0"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                      </button>
+
+                      <!-- Loading Indicator -->
+                      <div *ngIf="loadingMoreArtists" class="text-center py-3">
+                        <div class="inline-block animate-spin rounded-full h-5 w-5 border-2 border-spotify-gray-lighter border-t-spotify-green"></div>
+                      </div>
+
+                      <!-- No Results -->
+                      <div *ngIf="allArtists.length === 0 && !loadingMoreArtists" class="text-sm text-spotify-text-muted text-center py-4">
+                        Nenhum artista encontrado
+                      </div>
                     </div>
                   </div>
                 </div>

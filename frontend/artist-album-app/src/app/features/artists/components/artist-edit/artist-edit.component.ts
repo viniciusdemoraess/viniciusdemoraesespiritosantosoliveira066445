@@ -2,7 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ArtistFacadeService } from '@core/facades/artist-facade.service';
 import { AlbumFacadeService } from '@core/facades/album-facade.service';
 import { HeaderComponent } from '@shared/components/header/header.component';
@@ -37,6 +38,15 @@ export class ArtistEditComponent implements OnInit, OnDestroy {
   allArtists: Artist[] = [];
   selectedNewAlbumArtistIds: Set<number> = new Set();
   showNewAlbumArtistDropdown = false;
+
+  // Artist search and pagination for multi-select
+  artistSearchTerm = '';
+  private artistSearchSubject = new Subject<string>();
+  artistPage = 0;
+  artistPageSize = 20;
+  hasMoreArtists = true;
+  loadingMoreArtists = false;
+  private isLoadingArtistsRequest = false;
 
   // New album form
   newAlbumTitle = '';
@@ -74,6 +84,41 @@ export class ArtistEditComponent implements OnInit, OnDestroy {
       this.artistId = +params['id'];
       this.loadArtistData();
     });
+
+    // Setup artist search with debounce
+    const artistSearchSub = this.artistSearchSubject.pipe(
+      debounceTime(500),
+      distinctUntilChanged()
+    ).subscribe(() => {
+      this.artistPage = 0;
+      this.allArtists = [];
+      this.loadArtists();
+    });
+    this.subscriptions.push(artistSearchSub);
+
+    // Subscribe to artist facade
+    const artistsSub = this.artistFacade.artists$.subscribe((artists: Artist[]) => {
+      if (this.isLoadingArtistsRequest) {
+        if (this.artistPage === 0) {
+          this.allArtists = artists;
+        } else {
+          const existingIds = new Set(this.allArtists.map(a => a.id));
+          const newArtists = artists.filter(a => !existingIds.has(a.id));
+          this.allArtists = [...this.allArtists, ...newArtists];
+        }
+        this.loadingMoreArtists = false;
+        this.isLoadingArtistsRequest = false;
+      }
+    });
+    this.subscriptions.push(artistsSub);
+
+    const artistPaginationSub = this.artistFacade.pagination$.subscribe((pagination) => {
+      this.hasMoreArtists = pagination.currentPage < pagination.totalPages - 1;
+    });
+    this.subscriptions.push(artistPaginationSub);
+
+    // Initial load of artists
+    this.loadArtists();
   }
 
   ngOnDestroy(): void {
@@ -99,11 +144,8 @@ export class ArtistEditComponent implements OnInit, OnDestroy {
     });
 
     // Load all artists for multi-select (needed for adding albums with multiple artists)
-    this.artistFacade.loadArtists();
-    const artistsSub = this.artistFacade.artists$.subscribe(artists => {
-      this.allArtists = artists;
-    });
-    this.subscriptions.push(artistsSub);
+    // Removed: this.artistFacade.loadArtists(); - now loaded in ngOnInit with pagination
+    // Removed: const artistsSub = this.artistFacade.artists$.subscribe - now in ngOnInit
 
     // Load only albums for this specific artist
     this.albumFacade.loadAlbumsByArtist(this.artistId).subscribe({
@@ -122,6 +164,37 @@ export class ArtistEditComponent implements OnInit, OnDestroy {
         this.loading = false;
       }
     });
+  }
+
+  private loadArtists(): void {
+    if (this.isLoadingArtistsRequest) return;
+
+    this.loadingMoreArtists = true;
+    this.isLoadingArtistsRequest = true;
+
+    this.artistFacade.loadArtists(
+      this.artistPage,
+      this.artistPageSize,
+      'name',
+      'asc',
+      this.artistSearchTerm.trim() || undefined
+    );
+  }
+
+  onArtistSearch(): void {
+    this.artistSearchSubject.next(this.artistSearchTerm);
+  }
+
+  onArtistDropdownScroll(event: Event): void {
+    const element = event.target as HTMLElement;
+    const threshold = 50;
+
+    if (element.scrollHeight - element.scrollTop - element.clientHeight < threshold) {
+      if (this.hasMoreArtists && !this.loadingMoreArtists && !this.isLoadingArtistsRequest) {
+        this.artistPage++;
+        this.loadArtists();
+      }
+    }
   }
 
   saveArtist(): void {

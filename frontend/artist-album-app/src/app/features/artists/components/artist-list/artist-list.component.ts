@@ -18,17 +18,17 @@ import { Artist } from '@core/models';
 })
 export class ArtistListComponent implements OnInit, OnDestroy {
   Math = Math;
-  allArtists: Artist[] = [];
   artists: Artist[] = [];
   loading = false;
   searchTerm = '';
   sortBy = 'name';
-  sortDirection = 'asc';
+  sortDirection: 'asc' | 'desc' = 'asc';
 
   // Pagination
   currentPage = 0;
   pageSize = 9;
   totalItems = 0;
+  totalPages = 0;
 
   showAddModal = false;
   showDeleteModal = false;
@@ -56,28 +56,26 @@ export class ArtistListComponent implements OnInit, OnDestroy {
 
   private subscribeToData(): void {
     const artistsSub = this.artistFacade.artists$.subscribe((artists: Artist[]) => {
-      // Apply client-side sorting and filtering
-      this.allArtists = this.filterAndSortArtists(artists);
-      this.totalItems = this.allArtists.length;
-      this.applyPagination();
+      this.artists = artists;
+    });
+
+    const paginationSub = this.artistFacade.pagination$.subscribe((pagination) => {
+      this.totalItems = pagination.totalElements;
+      this.totalPages = pagination.totalPages;
+      this.currentPage = pagination.currentPage;
     });
 
     const loadingSub = this.artistFacade.loading$.subscribe((loading: boolean) => {
       this.loading = loading;
     });
 
-    this.subscriptions.push(artistsSub, loadingSub);
-  }
-
-  private applyPagination(): void {
-    const start = this.currentPage * this.pageSize;
-    const end = start + this.pageSize;
-    this.artists = this.allArtists.slice(start, end);
+    this.subscriptions.push(artistsSub, paginationSub, loadingSub);
   }
 
   onPageChange(page: number): void {
     this.currentPage = page;
-    this.applyPagination();
+    this.loadArtists();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   get searchInfo(): string | undefined {
@@ -87,51 +85,25 @@ export class ArtistListComponent implements OnInit, OnDestroy {
     return undefined;
   }
 
-  private filterAndSortArtists(artists: Artist[]): Artist[] {
-    let filtered = [...artists];
-
-    // Apply search filter
-    if (this.searchTerm.trim()) {
-      const search = this.searchTerm.toLowerCase();
-      filtered = filtered.filter(artist =>
-        artist.name.toLowerCase().includes(search)
-      );
-    }
-
-    // Apply sorting
-    filtered.sort((a, b) => {
-      const aValue = a.name.toLowerCase();
-      const bValue = b.name.toLowerCase();
-      const comparison = aValue.localeCompare(bValue);
-      return this.sortDirection === 'asc' ? comparison : -comparison;
-    });
-
-    return filtered;
-  }
-
   loadArtists(): void {
-    this.artistFacade.loadArtists();
+    this.artistFacade.loadArtists(
+      this.currentPage,
+      this.pageSize,
+      this.sortBy,
+      this.sortDirection,
+      this.searchTerm.trim() || undefined
+    );
   }
 
   onSearch(): void {
-    // Reset to first page on search
     this.currentPage = 0;
-
-    // If search is empty, reload all data from backend
-    if (this.searchTerm.trim() === '') {
-      this.loadArtists();
-      return;
-    }
-
-    this.allArtists = this.filterAndSortArtists(this.allArtists);
-    this.totalItems = this.allArtists.length;
-    this.applyPagination();
+    this.loadArtists();
   }
 
   clearSearch(): void {
     this.searchTerm = '';
     this.currentPage = 0;
-    this.onSearch();
+    this.loadArtists();
   }
 
   clearFilters(): void {
@@ -148,11 +120,7 @@ export class ArtistListComponent implements OnInit, OnDestroy {
   toggleSortDirection(): void {
     this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     this.currentPage = 0;
-    this.artistFacade.artists$.subscribe((artists: Artist[]) => {
-      this.allArtists = this.filterAndSortArtists(artists);
-      this.totalItems = this.allArtists.length;
-      this.applyPagination();
-    }).unsubscribe();
+    this.loadArtists();
   }
 
   onSort(field: string): void {
@@ -162,8 +130,8 @@ export class ArtistListComponent implements OnInit, OnDestroy {
       this.sortBy = field;
       this.sortDirection = 'asc';
     }
-    // Trigger reactive update
-    this.subscribeToData();
+    this.currentPage = 0;
+    this.loadArtists();
   }
 
   openAddModal(): void {
