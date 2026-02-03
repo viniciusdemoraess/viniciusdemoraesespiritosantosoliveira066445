@@ -292,9 +292,13 @@ docker-compose down -v
 | **🎨 Frontend (Angular)** | http://localhost:4200 | - |
 | **🔐 Login da Aplicação** | http://localhost:4200/auth/login | `admin` / `admin123` |
 | **🔧 Backend API** | http://localhost:8080/api/v1 | JWT Token |
+| **🔧 Actuator API** | http://localhost:8080/actuator | - |
+| **🔧 Actuator API - Health** | http://localhost:8080/actuator/health | - |
+| **🔧 Actuator API - Liveness** | http://localhost:8080/actuator/health/liveness | - |
+| **🔧 Actuator API - Readiness** | http://localhost:8080/actuator/health/readiness | - |
 | **📚 Swagger UI (Docs)** | http://localhost:8080/swagger-ui.html | - |
 | **🗄️ MinIO Console** | http://localhost:9001 | `minioadmin` / `minioadmin` |
-| **🐘 PostgreSQL** | localhost:5432 | `postgres` / `postgres` (db: `artistalbum`) |
+| **🐘 PostgreSQL** | localhost:5432 | `postgres` / `postgres` (db: `artistdb`) |
 
 ---
 
