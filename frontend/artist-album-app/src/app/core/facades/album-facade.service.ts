@@ -48,11 +48,11 @@ export class AlbumFacadeService {
   /**
    * Load albums with server-side pagination
    */
-  loadAlbums(page: number = 0, size: number = 10, sortBy: string = 'title', sortDirection: string = 'asc', searchTerm?: string): void {
+  loadAlbums(page: number = 0, size: number = 10, sortBy: string = 'title', sortDirection: string = 'asc', searchTerm?: string, artistId?: number): void {
     this.loadingSubject.next(true);
     this.errorSubject.next(null);
 
-    this.albumService.getAllAlbums(page, size, sortBy, sortDirection, undefined, searchTerm).subscribe({
+    this.albumService.getAllAlbums(page, size, sortBy, sortDirection, artistId, searchTerm).subscribe({
       next: (response: Page<Album>) => {
         this.albumsSubject.next(response.content);
         this.paginationSubject.next({

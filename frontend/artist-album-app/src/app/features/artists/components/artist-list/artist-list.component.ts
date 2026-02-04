@@ -2,7 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ArtistFacadeService } from '@core/facades/artist-facade.service';
 import { AlbumFacadeService } from '@core/facades/album-facade.service';
 import { HeaderComponent } from '@shared/components/header/header.component';
@@ -39,6 +40,7 @@ export class ArtistListComponent implements OnInit, OnDestroy {
   newArtistBiography = '';
 
   private subscriptions: Subscription[] = [];
+  private searchSubject = new Subject<string>();
 
   constructor(
     private artistFacade: ArtistFacadeService,
@@ -47,11 +49,26 @@ export class ArtistListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscribeToData();
+    this.setupSearchDebounce();
     this.loadArtists();
   }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  private setupSearchDebounce(): void {
+    const searchSub = this.searchSubject
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged()
+      )
+      .subscribe(() => {
+        this.currentPage = 0;
+        this.loadArtists();
+      });
+
+    this.subscriptions.push(searchSub);
   }
 
   private subscribeToData(): void {
@@ -96,8 +113,7 @@ export class ArtistListComponent implements OnInit, OnDestroy {
   }
 
   onSearch(): void {
-    this.currentPage = 0;
-    this.loadArtists();
+    this.searchSubject.next(this.searchTerm);
   }
 
   clearSearch(): void {

@@ -2,11 +2,12 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AlbumFacadeService } from '@core/facades/album-facade.service';
 import { HeaderComponent } from '@shared/components/header/header.component';
 import { PaginationComponent } from '@shared/components/pagination/pagination.component';
 import { Album } from '@core/models';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-album-list',
@@ -33,6 +34,7 @@ export class AlbumListComponent implements OnInit, OnDestroy {
   sortDirection: 'asc' | 'desc' = 'asc';
 
   private subscriptions: Subscription[] = [];
+  private searchSubject = new Subject<string>();
 
   constructor(
     private albumFacade: AlbumFacadeService,
@@ -48,11 +50,26 @@ export class AlbumListComponent implements OnInit, OnDestroy {
     });
 
     this.subscribeToData();
+    this.setupSearchDebounce();
     this.loadData();
   }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  private setupSearchDebounce(): void {
+    const searchSub = this.searchSubject
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged()
+      )
+      .subscribe(() => {
+        this.currentPage = 0;
+        this.loadData();
+      });
+
+    this.subscriptions.push(searchSub);
   }
 
   private subscribeToData(): void {
@@ -103,19 +120,19 @@ export class AlbumListComponent implements OnInit, OnDestroy {
       this.pageSize,
       backendSortBy,
       this.sortDirection,
-      this.searchTerm.trim() || undefined
+      this.searchTerm.trim() || undefined,
+      this.filterArtistId
     );
   }
 
   onSearch(): void {
-    this.currentPage = 0;
-    this.loadData();
+    this.searchSubject.next(this.searchTerm);
   }
 
   clearSearch(): void {
     this.searchTerm = '';
     this.currentPage = 0;
-    this.onSearch();
+    this.searchSubject.next(this.searchTerm);
   }
 
   clearFilters(): void {
