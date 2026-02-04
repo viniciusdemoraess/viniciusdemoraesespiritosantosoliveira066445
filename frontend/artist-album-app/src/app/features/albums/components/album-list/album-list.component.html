@@ -23,7 +23,6 @@
               type="text"
               [(ngModel)]="searchTerm"
               (ngModelChange)="onSearch()"
-              (keyup.enter)="onSearch()"
               placeholder="Buscar por título, artista, gênero, gravadora ou ano..."
               class="w-full px-4 py-3 pr-20 bg-spotify-gray-dark border border-spotify-gray-light text-spotify-white rounded-lg focus:outline-none focus:border-spotify-green hover:border-spotify-gray-lighter transition-all placeholder:text-spotify-text-muted"
             />
