@@ -269,10 +269,10 @@ class RegionalSyncServiceTest {
     }
 
     private RegionalDTO createRegionalDTO(Integer id, String nome) {
-        RegionalDTO dto = new RegionalDTO();
-        dto.setId(id);
-        dto.setNome(nome);
-        return dto;
+        return RegionalDTO.builder()
+                .id(id)
+                .nome(nome)
+                .build();
     }
 
     private Regional createLocalRegional(Long id, Integer externalId, String nome, Boolean ativo) {

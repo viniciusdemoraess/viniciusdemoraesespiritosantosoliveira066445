@@ -2,37 +2,30 @@ package br.gov.seplag.artistalbum.application.io;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Schema(description = "Error response")
-public class ErrorResponse {
-
+public record ErrorResponse(
     @JsonProperty("timestamp")
     @Schema(description = "Error timestamp")
-    private LocalDateTime timestamp;
+    LocalDateTime timestamp,
 
     @JsonProperty("status")
     @Schema(description = "HTTP status code", example = "400")
-    private Integer status;
+    Integer status,
 
     @JsonProperty("error")
     @Schema(description = "Error type", example = "Bad Request")
-    private String error;
+    String error,
 
     @JsonProperty("message")
     @Schema(description = "Error message")
-    private String message;
+    String message,
 
     @JsonProperty("path")
     @Schema(description = "Request path")
-    private String path;
-}
+    String path
+) {}

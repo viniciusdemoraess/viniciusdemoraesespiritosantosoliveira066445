@@ -54,7 +54,7 @@ public class RegionalSyncService {
 
             // 2. Build maps for O(1) lookups - O(n)
             Map<Integer, RegionalDTO> externalMap = Arrays.stream(externalRegionais)
-                    .collect(Collectors.toMap(RegionalDTO::getId, dto -> dto));
+                    .collect(Collectors.toMap(RegionalDTO::id, dto -> dto));
 
             List<Regional> localRegionais = regionalRepository.findAll();
             Map<Integer, Regional> localMap = localRegionais.stream()
@@ -67,39 +67,39 @@ public class RegionalSyncService {
 
             // 3. Process external regionais - O(n)
             for (RegionalDTO externalDto : externalRegionais) {
-                Regional localRegional = localMap.get(externalDto.getId());
+                Regional localRegional = localMap.get(externalDto.id());
 
                 if (localRegional == null) {
                     // NEW: Insert
                     Regional newRegional = Regional.builder()
-                            .externalId(externalDto.getId())
-                            .nome(externalDto.getNome())
+                            .externalId(externalDto.id())
+                            .nome(externalDto.nome())
                             .ativo(true)
                             .build();
                     regionalRepository.save(newRegional);
                     inserted++;
-                    log.debug("Inserted new regional: {} - {}", externalDto.getId(), externalDto.getNome());
+                    log.debug("Inserted new regional: {} - {}", externalDto.id(), externalDto.nome());
 
-                } else if (!localRegional.getNome().equals(externalDto.getNome())) {
+                } else if (!localRegional.getNome().equals(externalDto.nome())) {
                     // UPDATED: Inactivate old and create new
                     localRegional.setAtivo(false);
                     regionalRepository.save(localRegional);
 
                     Regional newRegional = Regional.builder()
-                            .externalId(externalDto.getId())
-                            .nome(externalDto.getNome())
+                            .externalId(externalDto.id())
+                            .nome(externalDto.nome())
                             .ativo(true)
                             .build();
                     regionalRepository.save(newRegional);
                     updated++;
                     log.debug("Updated regional: {} - Old: '{}', New: '{}'",
-                            externalDto.getId(), localRegional.getNome(), externalDto.getNome());
+                            externalDto.id(), localRegional.getNome(), externalDto.nome());
 
                 } else if (!localRegional.getAtivo()) {
                     // Reactivate if it was inactive
                     localRegional.setAtivo(true);
                     regionalRepository.save(localRegional);
-                    log.debug("Reactivated regional: {} - {}", externalDto.getId(), externalDto.getNome());
+                    log.debug("Reactivated regional: {} - {}", externalDto.id(), externalDto.nome());
                 }
             }
 

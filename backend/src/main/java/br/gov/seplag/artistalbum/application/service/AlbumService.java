@@ -3,6 +3,7 @@ package br.gov.seplag.artistalbum.application.service;
 import br.gov.seplag.artistalbum.application.io.AlbumCoverResponse;
 import br.gov.seplag.artistalbum.application.io.AlbumRequest;
 import br.gov.seplag.artistalbum.application.io.AlbumResponse;
+import br.gov.seplag.artistalbum.application.util.ArtistIdExtractor;
 import br.gov.seplag.artistalbum.domain.entity.Album;
 import br.gov.seplag.artistalbum.domain.entity.AlbumCover;
 import br.gov.seplag.artistalbum.domain.entity.Artist;
@@ -65,19 +66,10 @@ public class AlbumService {
 
     @Transactional
     public AlbumResponse createAlbum(AlbumRequest request) {
-        log.info("Creating album: {}", request.getTitle());
+        log.info("Creating album: {}", request.title());
 
-        // Suporta tanto artistId (legacy) quanto artistIds (novo)
-        List<Long> artistIds = new ArrayList<>();
-        if (request.getArtistIds() != null && !request.getArtistIds().isEmpty()) {
-            artistIds.addAll(request.getArtistIds());
-        } else if (request.getArtistId() != null) {
-            artistIds.add(request.getArtistId());
-        }
-
-        if (artistIds.isEmpty()) {
-            throw new IllegalArgumentException("At least one artist must be provided");
-        }
+        ArtistIdExtractor.validateArtistIds(request);
+        List<Long> artistIds = ArtistIdExtractor.extractArtistIds(request);
 
         List<Artist> artists = new ArrayList<>();
         for (Long artistId : artistIds) {
@@ -86,18 +78,18 @@ public class AlbumService {
             artists.add(artist);
         }
 
-        if (request.getArtistId() != null && 
-            albumRepository.existsByTitleAndArtistId(request.getTitle(), request.getArtistId())) {
-            throw new DuplicateResourceException("Album", "title", request.getTitle());
+        if (request.artistId() != null && 
+            albumRepository.existsByTitleAndArtistId(request.title(), request.artistId())) {
+            throw new DuplicateResourceException("Album", "title", request.title());
         }
 
         Album album = Album.builder()
-                .title(request.getTitle())
-                .releaseYear(request.getReleaseYear())
-                .genre(request.getGenre())
-                .recordLabel(request.getRecordLabel())
-                .totalTracks(request.getTotalTracks())
-                .totalDurationSeconds(request.getTotalDurationSeconds())
+                .title(request.title())
+                .releaseYear(request.releaseYear())
+                .genre(request.genre())
+                .recordLabel(request.recordLabel())
+                .totalTracks(request.totalTracks())
+                .totalDurationSeconds(request.totalDurationSeconds())
                 .build();
 
         for (Artist artist : artists) {
@@ -119,20 +111,16 @@ public class AlbumService {
         Album album = albumRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Album", "id", id));
 
-        List<Long> artistIds = new ArrayList<>();
-        if (request.getArtistIds() != null && !request.getArtistIds().isEmpty()) {
-            artistIds.addAll(request.getArtistIds());
-        } else if (request.getArtistId() != null) {
-            artistIds.add(request.getArtistId());
-        }
+        // Extract artist IDs using utility
+        List<Long> artistIds = ArtistIdExtractor.extractArtistIds(request);
 
         // Atualizar campos básicos
-        album.setTitle(request.getTitle());
-        album.setReleaseYear(request.getReleaseYear());
-        album.setGenre(request.getGenre());
-        album.setRecordLabel(request.getRecordLabel());
-        album.setTotalTracks(request.getTotalTracks());
-        album.setTotalDurationSeconds(request.getTotalDurationSeconds());
+        album.setTitle(request.title());
+        album.setReleaseYear(request.releaseYear());
+        album.setGenre(request.genre());
+        album.setRecordLabel(request.recordLabel());
+        album.setTotalTracks(request.totalTracks());
+        album.setTotalDurationSeconds(request.totalDurationSeconds());
 
         if (!artistIds.isEmpty()) {
             new ArrayList<>(album.getArtists()).forEach(album::removeArtist);
