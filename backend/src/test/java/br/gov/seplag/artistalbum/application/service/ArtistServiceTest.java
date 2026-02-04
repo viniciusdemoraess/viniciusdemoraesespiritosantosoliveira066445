@@ -75,7 +75,7 @@ class ArtistServiceTest {
 
         assertThatThrownBy(() -> artistService.createArtist(artistRequest))
                 .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("already exists");
+                .hasMessageContaining("já existe");
 
         verify(artistRepository, never()).save(any(Artist.class));
     }

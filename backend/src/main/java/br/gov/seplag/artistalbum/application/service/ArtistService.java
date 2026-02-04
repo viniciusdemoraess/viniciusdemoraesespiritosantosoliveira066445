@@ -47,7 +47,7 @@ public class ArtistService {
         log.info("Creating artist: {}", request.getName());
 
         if (artistRepository.existsByNameIgnoreCase(request.getName())) {
-            throw new DuplicateResourceException("Artist", "name", request.getName());
+            throw new DuplicateResourceException("Artista", "nome", request.getName());
         }
 
         Artist artist = Artist.builder()
@@ -71,7 +71,7 @@ public class ArtistService {
                 .orElseThrow(() -> new ResourceNotFoundException("Artist", "id", id));
 
         if (artistRepository.existsByNameIgnoreCaseAndIdNot(request.getName(), id)) {
-            throw new DuplicateResourceException("Artist", "name", request.getName());
+            throw new DuplicateResourceException("Artista", "nome", request.getName());
         }
 
         artist.setName(request.getName());
