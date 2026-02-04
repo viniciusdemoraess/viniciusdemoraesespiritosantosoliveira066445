@@ -2,49 +2,42 @@ package br.gov.seplag.artistalbum.application.io;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Schema(description = "Artist response data")
-public class ArtistResponse {
-
+public record ArtistResponse(
     @JsonProperty("id")
     @Schema(description = "Artist ID", example = "1")
-    private Long id;
+    Long id,
 
     @JsonProperty("name")
     @Schema(description = "Artist name", example = "Serj Tankian")
-    private String name;
+    String name,
 
     @JsonProperty("artistType")
     @Schema(description = "Artist type", example = "Cantor")
-    private String artistType;
+    String artistType,
 
     @JsonProperty("country")
     @Schema(description = "Country of origin", example = "Brasil")
-    private String country;
+    String country,
 
     @JsonProperty("biography")
     @Schema(description = "Artist biography")
-    private String biography;
+    String biography,
 
     @JsonProperty("albumCount")
     @Schema(description = "Number of albums", example = "3")
-    private Integer albumCount;
+    Integer albumCount,
 
     @JsonProperty("createdAt")
     @Schema(description = "Creation timestamp")
-    private LocalDateTime createdAt;
+    LocalDateTime createdAt,
 
     @JsonProperty("updatedAt")
     @Schema(description = "Last update timestamp")
-    private LocalDateTime updatedAt;
-}
+    LocalDateTime updatedAt
+) {}
