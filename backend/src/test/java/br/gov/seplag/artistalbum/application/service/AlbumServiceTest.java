@@ -23,6 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -95,14 +96,14 @@ class AlbumServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Album> albumPage = new PageImpl<>(List.of(testAlbum));
 
-        when(albumRepository.findAll(pageable)).thenReturn(albumPage);
+        when(albumRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(albumPage);
 
         Page<AlbumResponse> result = albumService.getAllAlbums(null, null, pageable);
 
         assertThat(result).isNotNull();
         assertThat(result.getContent()).hasSize(1);
         assertThat(result.getContent().get(0).getTitle()).isEqualTo("Toxicity");
-        verify(albumRepository).findAll(pageable);
+        verify(albumRepository).findAll(any(Specification.class), eq(pageable));
     }
 
     @Test
@@ -111,13 +112,13 @@ class AlbumServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Album> albumPage = new PageImpl<>(List.of(testAlbum));
 
-        when(albumRepository.findByArtistId(1L, pageable)).thenReturn(albumPage);
+        when(albumRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(albumPage);
 
         Page<AlbumResponse> result = albumService.getAllAlbums(1L, null, pageable);
 
         assertThat(result).isNotNull();
         assertThat(result.getContent()).hasSize(1);
-        verify(albumRepository).findByArtistId(1L, pageable);
+        verify(albumRepository).findAll(any(Specification.class), eq(pageable));
     }
 
     @Test
@@ -126,13 +127,13 @@ class AlbumServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Album> albumPage = new PageImpl<>(List.of(testAlbum));
 
-        when(albumRepository.findByTitleContainingIgnoreCase("Toxicity", pageable)).thenReturn(albumPage);
+        when(albumRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(albumPage);
 
         Page<AlbumResponse> result = albumService.getAllAlbums(null, "Toxicity", pageable);
 
         assertThat(result).isNotNull();
         assertThat(result.getContent()).hasSize(1);
-        verify(albumRepository).findByTitleContainingIgnoreCase("Toxicity", pageable);
+        verify(albumRepository).findAll(any(Specification.class), eq(pageable));
     }
 
     @Test
@@ -141,14 +142,14 @@ class AlbumServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Album> albumPage = new PageImpl<>(List.of(testAlbum));
 
-        when(albumRepository.findByArtistIdAndTitleContainingIgnoreCase(1L, "Toxicity", pageable))
+        when(albumRepository.findAll(any(Specification.class), eq(pageable)))
                 .thenReturn(albumPage);
 
         Page<AlbumResponse> result = albumService.getAllAlbums(1L, "Toxicity", pageable);
 
         assertThat(result).isNotNull();
         assertThat(result.getContent()).hasSize(1);
-        verify(albumRepository).findByArtistIdAndTitleContainingIgnoreCase(1L, "Toxicity", pageable);
+        verify(albumRepository).findAll(any(Specification.class), eq(pageable));
     }
 
     @Test
