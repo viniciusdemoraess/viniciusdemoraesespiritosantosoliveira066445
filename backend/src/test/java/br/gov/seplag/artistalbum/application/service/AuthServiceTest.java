@@ -72,12 +72,11 @@ class AuthServiceTest {
         AuthResponse response = authService.login(loginRequest);
 
         assertThat(response).isNotNull();
-        assertThat(response.getAccessToken()).isEqualTo("access-token");
-        assertThat(response.getRefreshToken()).isEqualTo("refresh-token");
-        assertThat(response.getTokenType()).isEqualTo("Bearer");
-        assertThat(response.getUsername()).isEqualTo("admin");
-        assertThat(response.getExpiresIn()).isEqualTo(300);
-
+        assertThat(response.accessToken()).isEqualTo("access-token");
+        assertThat(response.refreshToken()).isEqualTo("refresh-token");
+        assertThat(response.tokenType()).isEqualTo("Bearer");
+        assertThat(response.username()).isEqualTo("admin");
+        assertThat(response.expiresIn()).isEqualTo(300);
         verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
         verify(jwtTokenProvider).generateToken(testUser);
         verify(jwtTokenProvider).generateRefreshToken(testUser);
@@ -111,9 +110,9 @@ class AuthServiceTest {
         AuthResponse response = authService.refreshToken(refreshToken);
 
         assertThat(response).isNotNull();
-        assertThat(response.getAccessToken()).isEqualTo("new-access-token");
-        assertThat(response.getRefreshToken()).isEqualTo("new-refresh-token");
-        assertThat(response.getUsername()).isEqualTo("admin");
+        assertThat(response.accessToken()).isEqualTo("new-access-token");
+        assertThat(response.refreshToken()).isEqualTo("new-refresh-token");
+        assertThat(response.username()).isEqualTo("admin");
 
         verify(jwtTokenProvider).extractUsername(refreshToken);
         verify(userRepository).findByUsername("admin");

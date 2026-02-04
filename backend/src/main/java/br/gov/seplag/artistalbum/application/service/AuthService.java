@@ -32,8 +32,8 @@ public class AuthService {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            request.getUsername(),
-                            request.getPassword()
+                            request.username(),
+                            request.password()
                     )
             );
 
@@ -52,7 +52,7 @@ public class AuthService {
                     .build();
 
         } catch (AuthenticationException e) {
-            log.error("Authentication failed for user: {}", request.getUsername());
+            log.error("Authentication failed for user: {}", request.username());
             throw new AuthenticationFailedException("Invalid username or password");
         }
     }
