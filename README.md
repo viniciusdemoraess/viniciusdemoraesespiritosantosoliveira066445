@@ -28,7 +28,7 @@ PROJETO PRÁTICO - IMPLEMENTAÇÃO FULL STACK SÊNIOR - JAVA + ANGULAR/REACT
 
 ## 🎯 Stack Tecnológica
 
-**Backend:** Spring Boot 3.2 + Java 21 + PostgreSQL 16 + MinIO (S3) + Flyway  
+**Backend:** Spring Boot 3.2 + Java 17 + PostgreSQL 16 + MinIO (S3) + Flyway  
 **Frontend:** Angular 18 + TypeScript + Tailwind CSS + RxJS  
 **Arquitetura:** Clean Architecture + DDD + SOLID + Facade Pattern  
 **Segurança:** JWT + BCrypt + Rate Limiting (Bucket4j) + CORS  
@@ -337,7 +337,7 @@ docker-compose down -v
 services:
   postgres:       # Banco de dados PostgreSQL 16
   minio:          # Object Storage S3-compatible
-  backend:        # Spring Boot 3.2 (Java 21)
+  backend:        # Spring Boot 3.2 (Java 17)
   frontend:       # Angular 18 (Nginx)
 ```
 
@@ -821,7 +821,7 @@ colors: {
 ### Backend
 | Tecnologia | Versão | Propósito |
 |------------|--------|-----------|
-| Java | 21 | Linguagem principal |
+| Java | 17 | Linguagem principal |
 | Spring Boot | 3.2.x | Framework backend |
 | Spring Security | 6.x | Autenticação e autorização |
 | Spring Data JPA | 3.2.x | ORM e persistência |
