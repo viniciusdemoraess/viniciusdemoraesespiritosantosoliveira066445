@@ -41,17 +41,18 @@ class RateLimitFilterTest {
     @Mock
     private FilterChain filterChain;
 
+    @Mock
+    private SecurityContext securityContext;
+
+    @Mock
+    private Authentication authentication;
+
     @InjectMocks
     private RateLimitFilter rateLimitFilter;
 
-    private SecurityContext securityContext;
-    private Authentication authentication;
-
     @BeforeEach
     void setUp() {
-        securityContext = mock(SecurityContext.class);
         SecurityContextHolder.setContext(securityContext);
-        authentication = new UsernamePasswordAuthenticationToken("testuser", "password");
     }
 
     @Test
@@ -102,6 +103,104 @@ class RateLimitFilterTest {
     @DisplayName("Should allow request to websocket endpoint")
     void shouldAllowRequestToWebsocketEndpoint() throws ServletException, IOException {
         when(request.getRequestURI()).thenReturn("/ws/notifications");
+
+        rateLimitFilter.doFilterInternal(request, response, filterChain);
+
+        verify(filterChain).doFilter(request, response);
+        verify(rateLimitService, never()).tryConsume(anyString());
+    }
+
+    @Test
+    @DisplayName("Should allow request when user is not authenticated")
+    void shouldAllowRequestWhenUserIsNotAuthenticated() throws ServletException, IOException {
+        when(request.getRequestURI()).thenReturn("/api/v1/albums");
+        when(securityContext.getAuthentication()).thenReturn(null);
+
+        rateLimitFilter.doFilterInternal(request, response, filterChain);
+
+        verify(filterChain).doFilter(request, response);
+        verify(rateLimitService, never()).tryConsume(anyString());
+    }
+
+    @Test
+    @DisplayName("Should allow request when authentication is anonymous")
+    void shouldAllowRequestWhenAuthenticationIsAnonymous() throws ServletException, IOException {
+        when(request.getRequestURI()).thenReturn("/api/v1/albums");
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(authentication.getName()).thenReturn("anonymousUser");
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+
+        rateLimitFilter.doFilterInternal(request, response, filterChain);
+
+        verify(filterChain).doFilter(request, response);
+        verify(rateLimitService, never()).tryConsume(anyString());
+    }
+
+    @Test
+    @DisplayName("Should apply rate limiting to authenticated user")
+    void shouldApplyRateLimitingToAuthenticatedUser() throws ServletException, IOException {
+        when(request.getRequestURI()).thenReturn("/api/v1/albums");
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(authentication.getName()).thenReturn("testuser");
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(rateLimitService.tryConsume("rate-limit:testuser")).thenReturn(true);
+        when(rateLimitService.getAvailableTokens("rate-limit:testuser")).thenReturn(7L);
+
+        rateLimitFilter.doFilterInternal(request, response, filterChain);
+
+        verify(rateLimitService).tryConsume("rate-limit:testuser");
+        verify(response).addHeader("X-RateLimit-Limit", "10");
+        verify(response).addHeader("X-RateLimit-Remaining", "7");
+        verify(filterChain).doFilter(request, response);
+    }
+
+    @Test
+    @DisplayName("Should block request when rate limit exceeded")
+    void shouldBlockRequestWhenRateLimitExceeded() throws ServletException, IOException {
+        when(request.getRequestURI()).thenReturn("/api/v1/albums");
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(authentication.getName()).thenReturn("testuser");
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(rateLimitService.tryConsume("rate-limit:testuser")).thenReturn(false);
+        
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter writer = new PrintWriter(stringWriter);
+        when(response.getWriter()).thenReturn(writer);
+
+        rateLimitFilter.doFilterInternal(request, response, filterChain);
+
+        verify(rateLimitService).tryConsume("rate-limit:testuser");
+        verify(response).setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
+        verify(response).setContentType("application/json");
+        verify(filterChain, never()).doFilter(request, response);
+        
+        String jsonResponse = stringWriter.toString();
+        assertThat(jsonResponse).contains("Too Many Requests");
+        assertThat(jsonResponse).contains("Limite de requisições atingido");
+    }
+
+    @Test
+    @DisplayName("Should set correct rate limit headers")
+    void shouldSetCorrectRateLimitHeaders() throws ServletException, IOException {
+        when(request.getRequestURI()).thenReturn("/api/v1/artists");
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(authentication.getName()).thenReturn("testuser");
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(rateLimitService.tryConsume("rate-limit:testuser")).thenReturn(true);
+        when(rateLimitService.getAvailableTokens("rate-limit:testuser")).thenReturn(3L);
+
+        rateLimitFilter.doFilterInternal(request, response, filterChain);
+
+        verify(response).addHeader("X-RateLimit-Limit", "10");
+        verify(response).addHeader("X-RateLimit-Remaining", "3");
+    }
+
+    @Test
+    @DisplayName("Should handle unauthenticated user in security context")
+    void shouldHandleUnauthenticatedUserInSecurityContext() throws ServletException, IOException {
+        when(request.getRequestURI()).thenReturn("/api/v1/albums");
+        when(authentication.isAuthenticated()).thenReturn(false);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
 
         rateLimitFilter.doFilterInternal(request, response, filterChain);
 

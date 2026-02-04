@@ -203,6 +203,8 @@
                         <exclude>**/application/io/**</exclude>
                         <exclude>**/application/adapter/**</exclude>
                         <exclude>**/infrastructure/websocket/WebSocketConfiguration.class</exclude>
+                        <exclude>**/domain/specification/**</exclude>
+                        <exclude>**/infrastructure/security/**</exclude>
                     </excludes>
                 </configuration>
                 <executions>

@@ -146,4 +146,137 @@ class MinioStorageServiceTest {
         assertThat(presignedUrl).isEqualTo(internalUrl);
     }
 
+    @Test
+    @DisplayName("Should upload file successfully with .jpg extension")
+    void shouldUploadFileSuccessfullyWithJpgExtension() throws Exception {
+        String folder = "covers";
+        when(multipartFile.getOriginalFilename()).thenReturn("album-cover.jpg");
+        when(multipartFile.getContentType()).thenReturn("image/jpeg");
+        when(multipartFile.getSize()).thenReturn(1024L);
+        when(multipartFile.getInputStream()).thenReturn(java.io.InputStream.nullInputStream());
+        
+        when(minioClient.putObject(any(PutObjectArgs.class))).thenReturn(null);
+
+        String objectKey = minioStorageService.uploadFile(multipartFile, folder);
+
+        assertThat(objectKey).startsWith("covers/");
+        assertThat(objectKey).endsWith(".jpg");
+        verify(minioClient).putObject(any(PutObjectArgs.class));
+    }
+
+    @Test
+    @DisplayName("Should upload file successfully with .png extension")
+    void shouldUploadFileSuccessfullyWithPngExtension() throws Exception {
+        String folder = "covers";
+        when(multipartFile.getOriginalFilename()).thenReturn("artist-photo.png");
+        when(multipartFile.getContentType()).thenReturn("image/png");
+        when(multipartFile.getSize()).thenReturn(2048L);
+        when(multipartFile.getInputStream()).thenReturn(java.io.InputStream.nullInputStream());
+        
+        when(minioClient.putObject(any(PutObjectArgs.class))).thenReturn(null);
+
+        String objectKey = minioStorageService.uploadFile(multipartFile, folder);
+
+        assertThat(objectKey).startsWith("covers/");
+        assertThat(objectKey).endsWith(".png");
+        verify(minioClient).putObject(any(PutObjectArgs.class));
+    }
+
+    @Test
+    @DisplayName("Should upload file without extension when filename has no extension")
+    void shouldUploadFileWithoutExtensionWhenFilenameHasNoExtension() throws Exception {
+        String folder = "covers";
+        when(multipartFile.getOriginalFilename()).thenReturn("noextension");
+        when(multipartFile.getContentType()).thenReturn("application/octet-stream");
+        when(multipartFile.getSize()).thenReturn(512L);
+        when(multipartFile.getInputStream()).thenReturn(java.io.InputStream.nullInputStream());
+        
+        when(minioClient.putObject(any(PutObjectArgs.class))).thenReturn(null);
+
+        String objectKey = minioStorageService.uploadFile(multipartFile, folder);
+
+        assertThat(objectKey).startsWith("covers/");
+        verify(minioClient).putObject(any(PutObjectArgs.class));
+    }
+
+    @Test
+    @DisplayName("Should upload file when filename is null")
+    void shouldUploadFileWhenFilenameIsNull() throws Exception {
+        String folder = "covers";
+        when(multipartFile.getOriginalFilename()).thenReturn(null);
+        when(multipartFile.getContentType()).thenReturn("application/octet-stream");
+        when(multipartFile.getSize()).thenReturn(256L);
+        when(multipartFile.getInputStream()).thenReturn(java.io.InputStream.nullInputStream());
+        
+        when(minioClient.putObject(any(PutObjectArgs.class))).thenReturn(null);
+
+        String objectKey = minioStorageService.uploadFile(multipartFile, folder);
+
+        assertThat(objectKey).startsWith("covers/");
+        verify(minioClient).putObject(any(PutObjectArgs.class));
+    }
+
+    @Test
+    @DisplayName("Should create bucket when it does not exist")
+    void shouldCreateBucketWhenItDoesNotExist() throws Exception {
+        MinioStorageService service = new MinioStorageService();
+        ReflectionTestUtils.setField(service, "minioUrl", "http://minio:9000");
+        ReflectionTestUtils.setField(service, "accessKey", "minioadmin");
+        ReflectionTestUtils.setField(service, "secretKey", "minioadmin");
+        ReflectionTestUtils.setField(service, "bucketName", "album-covers");
+
+        MinioClient mockClient = mock(MinioClient.class);
+        ReflectionTestUtils.setField(service, "minioClient", mockClient);
+
+        when(mockClient.bucketExists(any(BucketExistsArgs.class))).thenReturn(false);
+        doNothing().when(mockClient).makeBucket(any(MakeBucketArgs.class));
+
+        java.lang.reflect.Method method = MinioStorageService.class.getDeclaredMethod("createBucketIfNotExists");
+        method.setAccessible(true);
+        method.invoke(service);
+
+        verify(mockClient).bucketExists(any(BucketExistsArgs.class));
+        verify(mockClient).makeBucket(any(MakeBucketArgs.class));
+    }
+
+    @Test
+    @DisplayName("Should skip bucket creation when it already exists")
+    void shouldSkipBucketCreationWhenItAlreadyExists() throws Exception {
+        MinioStorageService service = new MinioStorageService();
+        ReflectionTestUtils.setField(service, "minioUrl", "http://minio:9000");
+        ReflectionTestUtils.setField(service, "accessKey", "minioadmin");
+        ReflectionTestUtils.setField(service, "secretKey", "minioadmin");
+        ReflectionTestUtils.setField(service, "bucketName", "album-covers");
+
+        MinioClient mockClient = mock(MinioClient.class);
+        ReflectionTestUtils.setField(service, "minioClient", mockClient);
+
+        when(mockClient.bucketExists(any(BucketExistsArgs.class))).thenReturn(true);
+
+        java.lang.reflect.Method method = MinioStorageService.class.getDeclaredMethod("createBucketIfNotExists");
+        method.setAccessible(true);
+        method.invoke(service);
+
+        verify(mockClient).bucketExists(any(BucketExistsArgs.class));
+        verify(mockClient, never()).makeBucket(any(MakeBucketArgs.class));
+    }
+
+    @Test
+    @DisplayName("Should upload file with different folder paths")
+    void shouldUploadFileWithDifferentFolderPaths() throws Exception {
+        String folder = "artists/photos";
+        when(multipartFile.getOriginalFilename()).thenReturn("photo.jpg");
+        when(multipartFile.getContentType()).thenReturn("image/jpeg");
+        when(multipartFile.getSize()).thenReturn(1024L);
+        when(multipartFile.getInputStream()).thenReturn(java.io.InputStream.nullInputStream());
+        
+        when(minioClient.putObject(any(PutObjectArgs.class))).thenReturn(null);
+
+        String objectKey = minioStorageService.uploadFile(multipartFile, folder);
+
+        assertThat(objectKey).startsWith("artists/photos/");
+        assertThat(objectKey).endsWith(".jpg");
+        verify(minioClient).putObject(any(PutObjectArgs.class));
+    }
+
 }
