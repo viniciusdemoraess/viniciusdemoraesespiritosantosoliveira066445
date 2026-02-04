@@ -211,6 +211,10 @@ export class ArtistFacadeService {
         .join(', ');
       return errorMessages || defaultMessage;
     }
+    // Prioriza message sobre error (message contém detalhes, error é genérico)
+    if (error?.error?.message) {
+      return error.error.message;
+    }
     if (error?.error?.error) {
       return error.error.error;
     }
