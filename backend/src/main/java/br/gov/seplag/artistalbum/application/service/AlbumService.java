@@ -9,15 +9,16 @@ import br.gov.seplag.artistalbum.domain.entity.Artist;
 import br.gov.seplag.artistalbum.domain.exception.DuplicateResourceException;
 import br.gov.seplag.artistalbum.domain.exception.InvalidFileException;
 import br.gov.seplag.artistalbum.domain.exception.ResourceNotFoundException;
-import br.gov.seplag.artistalbum.domain.repository.AlbumCoverRepository;
 import br.gov.seplag.artistalbum.domain.repository.AlbumRepository;
 import br.gov.seplag.artistalbum.domain.repository.ArtistRepository;
+import br.gov.seplag.artistalbum.domain.specification.AlbumSpecification;
 import br.gov.seplag.artistalbum.infrastructure.storage.MinioStorageService;
 import br.gov.seplag.artistalbum.infrastructure.websocket.WebSocketNotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,25 +34,24 @@ public class AlbumService {
 
     private final AlbumRepository albumRepository;
     private final ArtistRepository artistRepository;
-    private final AlbumCoverRepository albumCoverRepository;
     private final MinioStorageService minioStorageService;
     private final WebSocketNotificationService webSocketNotificationService;
 
     @Transactional(readOnly = true)
     public Page<AlbumResponse> getAllAlbums(Long artistId, String title, Pageable pageable) {
-        log.debug("Fetching albums - artistId: {}, title: {}, page: {}", artistId, title, pageable.getPageNumber());
+        log.debug("Fetching albums - artistId: {}, searchTerm: {}, page: {}", artistId, title, pageable.getPageNumber());
 
-        Page<Album> albums;
-        if (artistId != null && title != null && !title.trim().isEmpty()) {
-            albums = albumRepository.findByArtistIdAndTitleContainingIgnoreCase(artistId, title, pageable);
-        } else if (artistId != null) {
-            albums = albumRepository.findByArtistId(artistId, pageable);
-        } else if (title != null && !title.trim().isEmpty()) {
-            albums = albumRepository.findByTitleContainingIgnoreCase(title, pageable);
-        } else {
-            albums = albumRepository.findAll(pageable);
+        Specification<Album> spec = Specification.where(null);
+
+        if (artistId != null) {
+            spec = spec.and(AlbumSpecification.byArtist(artistId));
         }
 
+        if (title != null && !title.trim().isEmpty()) {
+            spec = spec.and(AlbumSpecification.searchByTerm(title));
+        }
+
+        Page<Album> albums = albumRepository.findAll(spec, pageable);
         return albums.map(this::toResponse);
     }
 

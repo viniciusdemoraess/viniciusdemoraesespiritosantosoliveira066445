@@ -6,10 +6,12 @@ import br.gov.seplag.artistalbum.domain.entity.Artist;
 import br.gov.seplag.artistalbum.domain.exception.DuplicateResourceException;
 import br.gov.seplag.artistalbum.domain.exception.ResourceNotFoundException;
 import br.gov.seplag.artistalbum.domain.repository.ArtistRepository;
+import br.gov.seplag.artistalbum.domain.specification.ArtistSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,15 +24,15 @@ public class ArtistService {
 
     @Transactional(readOnly = true)
     public Page<ArtistResponse> getAllArtists(String name, Pageable pageable) {
-        log.debug("Fetching artists with name filter: {}, page: {}", name, pageable.getPageNumber());
+        log.debug("Fetching artists with search term: {}, page: {}", name, pageable.getPageNumber());
         
-        Page<Artist> artists;
+        Specification<Artist> spec = Specification.where(null);
+        
         if (name != null && !name.trim().isEmpty()) {
-            artists = artistRepository.findByNameContainingIgnoreCase(name, pageable);
-        } else {
-            artists = artistRepository.findAll(pageable);
+            spec = spec.and(ArtistSpecification.searchByTerm(name));
         }
 
+        Page<Artist> artists = artistRepository.findAll(spec, pageable);
         return artists.map(this::toResponse);
     }
 
