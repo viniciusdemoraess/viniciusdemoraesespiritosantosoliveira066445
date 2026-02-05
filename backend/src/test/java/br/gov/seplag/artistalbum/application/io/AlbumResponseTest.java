@@ -32,53 +32,57 @@ class AlbumResponseTest {
                 .updatedAt(LocalDateTime.now())
                 .build();
 
-        assertThat(response.getId()).isEqualTo(1L);
-        assertThat(response.getTitle()).isEqualTo("Toxicity");
-        assertThat(response.getReleaseYear()).isEqualTo(2001);
-        assertThat(response.getArtistId()).isEqualTo(1L);
-        assertThat(response.getArtistName()).isEqualTo("System of a Down");
-        assertThat(response.getCovers()).hasSize(1);
-        assertThat(response.getCreatedAt()).isNotNull();
-        assertThat(response.getUpdatedAt()).isNotNull();
+        assertThat(response.id()).isEqualTo(1L);
+        assertThat(response.title()).isEqualTo("Toxicity");
+        assertThat(response.releaseYear()).isEqualTo(2001);
+        assertThat(response.artistId()).isEqualTo(1L);
+        assertThat(response.artistName()).isEqualTo("System of a Down");
+        assertThat(response.covers()).hasSize(1);
+        assertThat(response.createdAt()).isNotNull();
+        assertThat(response.updatedAt()).isNotNull();
     }
 
     @Test
-    @DisplayName("Should set and get all properties correctly")
-    void shouldSetAndGetAllPropertiesCorrectly() {
+    @DisplayName("Should create with builder and all properties")
+    void shouldCreateWithBuilderAndAllProperties() {
         LocalDateTime now = LocalDateTime.now();
         List<AlbumCoverResponse> covers = Arrays.asList(
                 AlbumCoverResponse.builder().id(1L).fileName("cover1.jpg").build(),
                 AlbumCoverResponse.builder().id(2L).fileName("cover2.jpg").build()
         );
 
-        AlbumResponse response = new AlbumResponse();
-        response.setId(2L);
-        response.setTitle("Mezmerize");
-        response.setReleaseYear(2005);
-        response.setArtistId(2L);
-        response.setArtistName("SOAD");
-        response.setCovers(covers);
-        response.setCreatedAt(now);
-        response.setUpdatedAt(now);
+        AlbumResponse response = AlbumResponse.builder()
+                .id(2L)
+                .title("Mezmerize")
+                .releaseYear(2005)
+                .artistId(2L)
+                .artistName("SOAD")
+                .covers(covers)
+                .createdAt(now)
+                .updatedAt(now)
+                .build();
 
-        assertThat(response.getId()).isEqualTo(2L);
-        assertThat(response.getTitle()).isEqualTo("Mezmerize");
-        assertThat(response.getReleaseYear()).isEqualTo(2005);
-        assertThat(response.getArtistId()).isEqualTo(2L);
-        assertThat(response.getArtistName()).isEqualTo("SOAD");
-        assertThat(response.getCovers()).hasSize(2);
-        assertThat(response.getCreatedAt()).isEqualTo(now);
-        assertThat(response.getUpdatedAt()).isEqualTo(now);
+        assertThat(response.id()).isEqualTo(2L);
+        assertThat(response.title()).isEqualTo("Mezmerize");
+        assertThat(response.releaseYear()).isEqualTo(2005);
+        assertThat(response.artistId()).isEqualTo(2L);
+        assertThat(response.artistName()).isEqualTo("SOAD");
+        assertThat(response.covers()).hasSize(2);
+        assertThat(response.createdAt()).isEqualTo(now);
+        assertThat(response.updatedAt()).isEqualTo(now);
     }
 
     @Test
-    @DisplayName("Should create with no args constructor")
-    void shouldCreateWithNoArgsConstructor() {
-        AlbumResponse response = new AlbumResponse();
+    @DisplayName("Should create with minimal builder")
+    void shouldCreateWithMinimalBuilder() {
+        AlbumResponse response = AlbumResponse.builder()
+                .id(1L)
+                .title("Minimal Album")
+                .build();
 
         assertThat(response).isNotNull();
-        assertThat(response.getId()).isNull();
-        assertThat(response.getTitle()).isNull();
+        assertThat(response.id()).isEqualTo(1L);
+        assertThat(response.title()).isEqualTo("Minimal Album");
     }
 
     @Test
@@ -98,12 +102,12 @@ class AlbumResponseTest {
                 .updatedAt(now)
                 .build();
 
-        assertThat(response.getId()).isEqualTo(3L);
-        assertThat(response.getTitle()).isEqualTo("Hypnotize");
-        assertThat(response.getReleaseYear()).isEqualTo(2005);
-        assertThat(response.getArtistId()).isEqualTo(3L);
-        assertThat(response.getArtistName()).isEqualTo("Artist Name");
-        assertThat(response.getCovers()).isEmpty();
+        assertThat(response.id()).isEqualTo(3L);
+        assertThat(response.title()).isEqualTo("Hypnotize");
+        assertThat(response.releaseYear()).isEqualTo(2005);
+        assertThat(response.artistId()).isEqualTo(3L);
+        assertThat(response.artistName()).isEqualTo("Artist Name");
+        assertThat(response.covers()).isEmpty();
     }
 
     @Test
@@ -115,7 +119,7 @@ class AlbumResponseTest {
                 .covers(Collections.emptyList())
                 .build();
 
-        assertThat(response.getCovers()).isEmpty();
+        assertThat(response.covers()).isEmpty();
     }
 
     @Test
@@ -126,6 +130,6 @@ class AlbumResponseTest {
                 .title("Unknown Year Album")
                 .build();
 
-        assertThat(response.getReleaseYear()).isNull();
+        assertThat(response.releaseYear()).isNull();
     }
 }

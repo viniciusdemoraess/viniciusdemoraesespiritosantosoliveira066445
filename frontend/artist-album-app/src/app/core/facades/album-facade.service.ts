@@ -147,8 +147,6 @@ export class AlbumFacadeService {
     return new Observable(observer => {
       this.albumService.createAlbum(album).subscribe({
         next: (newAlbum) => {
-          const current = this.albumsSubject.value;
-          this.albumsSubject.next([...current, newAlbum]);
           observer.next(newAlbum);
           observer.complete();
         },
@@ -219,8 +217,7 @@ export class AlbumFacadeService {
     return new Observable(observer => {
       this.albumService.deleteAlbum(id).subscribe({
         next: () => {
-          const current = this.albumsSubject.value;
-          this.albumsSubject.next(current.filter(a => a.id !== id));
+          // Don't modify state - let the component reload the list with proper pagination
           this.toastService.success('Álbum deletado com sucesso!');
           observer.next();
           observer.complete();

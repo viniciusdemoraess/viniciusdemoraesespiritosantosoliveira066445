@@ -49,3 +49,8 @@ logs/
 # Application
 application-local.yml
 application-dev.yml
+
+# Environment variables
+.env
+.env.local
+.env.*.local

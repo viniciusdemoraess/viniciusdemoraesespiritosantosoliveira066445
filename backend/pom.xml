@@ -104,6 +104,13 @@
             <version>${bucket4j.version}</version>
         </dependency>
         
+        <!-- Environment Variables -->
+        <dependency>
+            <groupId>io.github.cdimascio</groupId>
+            <artifactId>dotenv-java</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+        
         <!-- OpenAPI/Swagger -->
         <dependency>
             <groupId>org.springdoc</groupId>

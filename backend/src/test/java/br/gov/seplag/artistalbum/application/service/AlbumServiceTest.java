@@ -102,7 +102,7 @@ class AlbumServiceTest {
 
         assertThat(result).isNotNull();
         assertThat(result.getContent()).hasSize(1);
-        assertThat(result.getContent().get(0).getTitle()).isEqualTo("Toxicity");
+        assertThat(result.getContent().get(0).title()).isEqualTo("Toxicity");
         verify(albumRepository).findAll(any(Specification.class), eq(pageable));
     }
 
@@ -160,8 +160,8 @@ class AlbumServiceTest {
         AlbumResponse result = albumService.getAlbumById(1L);
 
         assertThat(result).isNotNull();
-        assertThat(result.getTitle()).isEqualTo("Toxicity");
-        assertThat(result.getReleaseYear()).isEqualTo(2001);
+        assertThat(result.title()).isEqualTo("Toxicity");
+        assertThat(result.releaseYear()).isEqualTo(2001);
         verify(albumRepository).findById(1L);
     }
 
@@ -185,7 +185,7 @@ class AlbumServiceTest {
         AlbumResponse result = albumService.createAlbum(albumRequest);
 
         assertThat(result).isNotNull();
-        assertThat(result.getTitle()).isEqualTo("Toxicity");
+        assertThat(result.title()).isEqualTo("Toxicity");
         verify(artistRepository).findById(1L);
         verify(albumRepository).existsByTitleAndArtistId("Toxicity", 1L);
         verify(albumRepository).save(any(Album.class));

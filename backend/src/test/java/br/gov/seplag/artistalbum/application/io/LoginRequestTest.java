@@ -78,14 +78,15 @@ class LoginRequestTest {
     }
 
     @Test
-    @DisplayName("Should set and get all properties correctly")
-    void shouldSetAndGetAllPropertiesCorrectly() {
-        LoginRequest request = new LoginRequest();
-        request.setUsername("testuser");
-        request.setPassword("testpass");
+    @DisplayName("Should create with builder correctly")
+    void shouldCreateWithBuilder() {
+        LoginRequest request = LoginRequest.builder()
+                .username("testuser")
+                .password("testpass")
+                .build();
 
-        assertThat(request.getUsername()).isEqualTo("testuser");
-        assertThat(request.getPassword()).isEqualTo("testpass");
+        assertThat(request.username()).isEqualTo("testuser");
+        assertThat(request.password()).isEqualTo("testpass");
     }
 
     @Test
@@ -93,17 +94,17 @@ class LoginRequestTest {
     void shouldCreateWithAllArgsConstructor() {
         LoginRequest request = new LoginRequest("user123", "pass456");
 
-        assertThat(request.getUsername()).isEqualTo("user123");
-        assertThat(request.getPassword()).isEqualTo("pass456");
+        assertThat(request.username()).isEqualTo("user123");
+        assertThat(request.password()).isEqualTo("pass456");
     }
 
     @Test
-    @DisplayName("Should create with no args constructor")
-    void shouldCreateWithNoArgsConstructor() {
-        LoginRequest request = new LoginRequest();
+    @DisplayName("Should be immutable")
+    void shouldBeImmutable() {
+        LoginRequest request = new LoginRequest("user", "pass");
 
         assertThat(request).isNotNull();
-        assertThat(request.getUsername()).isNull();
-        assertThat(request.getPassword()).isNull();
+        assertThat(request.username()).isEqualTo("user");
+        assertThat(request.password()).isEqualTo("pass");
     }
 }

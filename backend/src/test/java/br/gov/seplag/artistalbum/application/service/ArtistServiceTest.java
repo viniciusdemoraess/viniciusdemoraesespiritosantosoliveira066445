@@ -66,7 +66,7 @@ class ArtistServiceTest {
         ArtistResponse response = artistService.createArtist(artistRequest);
 
         assertThat(response).isNotNull();
-        assertThat(response.getName()).isEqualTo("Serj Tankian");
+        assertThat(response.name()).isEqualTo("Serj Tankian");
         verify(artistRepository, times(1)).save(any(Artist.class));
     }
 
@@ -90,8 +90,8 @@ class ArtistServiceTest {
         ArtistResponse response = artistService.getArtistById(1L);
 
         assertThat(response).isNotNull();
-        assertThat(response.getId()).isEqualTo(1L);
-        assertThat(response.getName()).isEqualTo("Serj Tankian");
+        assertThat(response.id()).isEqualTo(1L);
+        assertThat(response.name()).isEqualTo("Serj Tankian");
     }
 
     @Test
@@ -117,7 +117,7 @@ class ArtistServiceTest {
 
         assertThat(response).isNotNull();
         assertThat(response.getContent()).hasSize(1);
-        assertThat(response.getContent().get(0).getName()).isEqualTo("Serj Tankian");
+        assertThat(response.getContent().get(0).name()).isEqualTo("Serj Tankian");
     }
 
     @Test

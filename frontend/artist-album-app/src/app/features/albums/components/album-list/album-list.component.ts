@@ -187,7 +187,9 @@ export class AlbumListComponent implements OnInit, OnDestroy {
     if (!confirm(`Tem certeza que deseja deletar o álbum "${album.title}"?`)) return;
 
     this.albumFacade.deleteAlbum(album.id).subscribe({
-      next: () => {},
+      next: () => {
+        this.loadData();
+      },
       error: (error: any) => {
         console.error('Error deleting album:', error);
       }

@@ -100,16 +100,17 @@ class AlbumRequestTest {
     }
 
     @Test
-    @DisplayName("Should set and get all properties correctly")
-    void shouldSetAndGetAllPropertiesCorrectly() {
-        AlbumRequest request = new AlbumRequest();
-        request.setTitle("Mezmerize");
-        request.setReleaseYear(2005);
-        request.setArtistId(2L);
+    @DisplayName("Should create with builder correctly")
+    void shouldCreateWithBuilder() {
+        AlbumRequest request = AlbumRequest.builder()
+                .title("Mezmerize")
+                .releaseYear(2005)
+                .artistId(2L)
+                .build();
 
-        assertThat(request.getTitle()).isEqualTo("Mezmerize");
-        assertThat(request.getReleaseYear()).isEqualTo(2005);
-        assertThat(request.getArtistId()).isEqualTo(2L);
+        assertThat(request.title()).isEqualTo("Mezmerize");
+        assertThat(request.releaseYear()).isEqualTo(2005);
+        assertThat(request.artistId()).isEqualTo(2L);
     }
 
     @Test
@@ -125,13 +126,13 @@ class AlbumRequestTest {
                 .totalDurationSeconds(2400)
                 .build();
 
-        assertThat(request.getTitle()).isEqualTo("Hypnotize");
-        assertThat(request.getReleaseYear()).isEqualTo(2005);
-        assertThat(request.getArtistId()).isEqualTo(3L);
-        assertThat(request.getGenre()).isEqualTo("Rock");
-        assertThat(request.getRecordLabel()).isEqualTo("Columbia Records");
-        assertThat(request.getTotalTracks()).isEqualTo(12);
-        assertThat(request.getTotalDurationSeconds()).isEqualTo(2400);
+        assertThat(request.title()).isEqualTo("Hypnotize");
+        assertThat(request.releaseYear()).isEqualTo(2005);
+        assertThat(request.artistId()).isEqualTo(3L);
+        assertThat(request.genre()).isEqualTo("Rock");
+        assertThat(request.recordLabel()).isEqualTo("Columbia Records");
+        assertThat(request.totalTracks()).isEqualTo(12);
+        assertThat(request.totalDurationSeconds()).isEqualTo(2400);
     }
 
     @Test

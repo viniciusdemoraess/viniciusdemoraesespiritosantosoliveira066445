@@ -46,17 +46,17 @@ public class ArtistService {
 
     @Transactional
     public ArtistResponse createArtist(ArtistRequest request) {
-        log.info("Creating artist: {}", request.getName());
+        log.info("Creating artist: {}", request.name());
 
-        if (artistRepository.existsByNameIgnoreCase(request.getName())) {
-            throw new DuplicateResourceException("Artista", "nome", request.getName());
+        if (artistRepository.existsByNameIgnoreCase(request.name())) {
+            throw new DuplicateResourceException("Artista", "nome", request.name());
         }
 
         Artist artist = Artist.builder()
-                .name(request.getName())
-                .artistType(request.getArtistType())
-                .country(request.getCountry())
-                .biography(request.getBiography())
+                .name(request.name())
+                .artistType(request.artistType())
+                .country(request.country())
+                .biography(request.biography())
                 .build();
 
         Artist savedArtist = artistRepository.save(artist);
@@ -72,14 +72,14 @@ public class ArtistService {
         Artist artist = artistRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Artist", "id", id));
 
-        if (artistRepository.existsByNameIgnoreCaseAndIdNot(request.getName(), id)) {
-            throw new DuplicateResourceException("Artista", "nome", request.getName());
+        if (artistRepository.existsByNameIgnoreCaseAndIdNot(request.name(), id)) {
+            throw new DuplicateResourceException("Artista", "nome", request.name());
         }
 
-        artist.setName(request.getName());
-        artist.setArtistType(request.getArtistType());
-        artist.setCountry(request.getCountry());
-        artist.setBiography(request.getBiography());
+        artist.setName(request.name());
+        artist.setArtistType(request.artistType());
+        artist.setCountry(request.country());
+        artist.setBiography(request.biography());
         Artist updatedArtist = artistRepository.save(artist);
 
         log.info("Artist updated successfully: {}", id);
