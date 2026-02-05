@@ -19,13 +19,10 @@ export class AuthService {
   ) {}
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
-    console.log('🔑 AuthService: Chamando API de login:', `${this.apiUrl}/login`);
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
       tap(response => {
-        console.log('📦 AuthService: Resposta recebida:', response);
         this.setSession(response);
         this.currentUserSubject.next(response.username);
-        console.log('✅ AuthService: Sessão configurada para:', response.username);
       })
     );
   }
@@ -73,17 +70,12 @@ export class AuthService {
     const expiration = localStorage.getItem('tokenExpiration');
 
     if (!token || !expiration) {
-      console.log('⚠️ AuthService: isLoggedIn = false (sem token ou expiration)');
       return false;
     }
 
     const now = new Date().getTime();
     const isValid = now < parseInt(expiration);
-    console.log(`🔍 AuthService: isLoggedIn = ${isValid}`, {
-      now: new Date(now).toISOString(),
-      expiration: new Date(parseInt(expiration)).toISOString(),
-      hasToken: !!token
-    });
+
     return isValid;
   }
 

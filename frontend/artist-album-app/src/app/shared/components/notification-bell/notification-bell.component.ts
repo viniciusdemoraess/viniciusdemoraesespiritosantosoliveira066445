@@ -44,12 +44,10 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
   }
 
   subscribeToWebSocket() {
-    console.log('🔌 Conectando ao WebSocket...');
     this.websocketService.connect();
 
     this.subscription = this.websocketService.getNotifications().subscribe({
       next: (message: any) => {
-        console.log('✅ Notificação recebida:', message);
 
         const notification: Notification = {
           id: Date.now().toString(),
@@ -66,7 +64,6 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
 
         // Recarregar álbuns automaticamente quando novo álbum for adicionado
         if (message.type === 'album' || message.albumId) {
-          console.log('🔄 Recarregando lista de álbuns...');
           this.albumFacade.loadAlbums();
         }
 
@@ -76,7 +73,6 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
           : `🎵 ${notification.message}`;
 
         this.toastService.success(toastMessage);
-        console.log('📢 Toast exibido:', toastMessage);
       },
       error: (error) => {
         console.error('❌ Erro no WebSocket:', error);

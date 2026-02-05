@@ -19,7 +19,6 @@ export class WebsocketService {
 
   private setupConnectionStateLogging(): void {
     this.rxStomp.connectionState$.subscribe((state: RxStompState) => {
-      console.log('🔌 WebSocket State:', RxStompState[state]);
       this.connected = state === RxStompState.OPEN;
     });
   }
@@ -34,35 +33,30 @@ export class WebsocketService {
       wsUrl = `${protocol}//${host}${wsUrl}`;
     }
 
-    console.log('🔌 WebSocket URL resolved to:', wsUrl);
     return wsUrl;
   }
 
   connect(): void {
     if (this.connected) {
-      console.log('🔌 WebSocket already connected');
       return;
     }
 
     const wsUrl = this.getWebSocketUrl();
-    console.log('🔌 Initiating WebSocket connection to:', wsUrl);
 
     this.rxStomp.configure({
       // Use SockJS for better compatibility
       webSocketFactory: () => {
-        console.log('🔌 Creating SockJS connection...');
         return new SockJS(wsUrl);
       },
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
       debug: (msg: string) => {
-        console.log('🔌 WebSocket Debug:', msg);
+        console.log('')
       }
     });
 
     this.rxStomp.activate();
-    console.log('✅ WebSocket activation initiated');
   }
 
   disconnect(): void {
