@@ -205,6 +205,28 @@ CREATE TABLE users (
 
 # 🚀 COMO EXECUTAR O PROJETO
 
+## ⚙️ Configuração Inicial
+
+### 📝 Configurar Variáveis de Ambiente
+
+Antes de executar o projeto, você precisa configurar as variáveis de ambiente:
+
+```bash
+# Copiar o arquivo .env.example para .env
+cp .env.example .env
+```
+
+O arquivo `.env` contém todas as configurações necessárias para o ambiente Docker:
+- **Database:** Credenciais do PostgreSQL
+- **MinIO:** Configurações do storage S3
+- **JWT:** Secret key para autenticação (⚠️ **altere em produção!**)
+- **CORS:** Origins permitidas
+- **Spring Profile:** Perfil de execução
+
+> **💡 Dica:** O arquivo `.env.example` já vem com valores padrão que funcionam para desenvolvimento local. Você pode usá-los diretamente ou personalizá-los conforme necessário.
+
+---
+
 ## ⚡ Quick Start com Docker Compose (RECOMENDADO)
 
 #### Lembre-se de manter o ambiente de containers limpo para evitar conflitos de nomes ou portas.
@@ -226,13 +248,16 @@ git clone https://github.com/viniciusdemoraess/viniciusdemoraesespiritosantosoli
 
 cd viniciusdemoraesespiritosantosoliveira066445
 
-# 2️⃣ Dar permissão de execução aos scripts (necessário apenas uma vez)
+# 2️⃣ Configurar variáveis de ambiente
+cp .env.example .env
+
+# 3️⃣ Dar permissão de execução aos scripts (necessário apenas uma vez)
 chmod +x start.sh cleanup.sh
 
-# 3️⃣ Subir TODO o ambiente (Backend + Frontend + PostgreSQL + MinIO)
+# 4️⃣ Subir TODO o ambiente (Backend + Frontend + PostgreSQL + MinIO)
 ./start.sh
 
-# 4️⃣ Derrubar o ambiente e limpar volumes (quando terminar)
+# 5️⃣ Derrubar o ambiente e limpar volumes (quando terminar)
 ./cleanup.sh
 ```
 
@@ -258,7 +283,10 @@ git clone https://github.com/viniciusdemoraess/viniciusdemoraesespiritosantosoli
 
 cd viniciusdemoraesespiritosantosoliveira066445
 
-# 2️⃣ Subir TODOS os serviços (Backend + Frontend + PostgreSQL + MinIO)
+# 2️⃣ Configurar variáveis de ambiente
+cp .env.example .env
+
+# 3️⃣ Subir TODOS os serviços (Backend + Frontend + PostgreSQL + MinIO)
 docker-compose up -d --build
 
 ```
