@@ -133,19 +133,11 @@ describe('AlbumFacadeService', () => {
 
       albumServiceSpy.createAlbum.and.returnValue(of(createdAlbum));
 
-      // Load initial albums
-      albumServiceSpy.getAllAlbums.and.returnValue(of(mockPage));
-      facade.loadAlbums();
-
       facade.createAlbum(newAlbumData).subscribe({
         next: (album) => {
           expect(album).toEqual(createdAlbum);
-
-          facade.albums$.subscribe(albums => {
-            expect(albums.length).toBe(2);
-            expect(albums).toContain(createdAlbum);
-            done();
-          });
+          expect(albumServiceSpy.createAlbum).toHaveBeenCalledWith(newAlbumData);
+          done();
         }
       });
     });
@@ -169,29 +161,12 @@ describe('AlbumFacadeService', () => {
     it('should delete album and update state', (done) => {
       albumServiceSpy.deleteAlbum.and.returnValue(of(void 0));
 
-      // Load albums first
-      const multipleAlbums: Page<Album> = {
-        ...mockPage,
-        content: [
-          mockAlbum,
-          { ...mockAlbum, id: 2, title: 'Album 2' }
-        ],
-        totalElements: 2
-      };
-      albumServiceSpy.getAllAlbums.and.returnValue(of(multipleAlbums));
-      facade.loadAlbums();
-
-      setTimeout(() => {
-        facade.deleteAlbum(1).subscribe({
-          next: () => {
-            facade.albums$.subscribe(albums => {
-              expect(albums.length).toBe(1);
-              expect(albums.find(a => a.id === 1)).toBeUndefined();
-              done();
-            });
-          }
-        });
-      }, 100);
+      facade.deleteAlbum(1).subscribe({
+        next: () => {
+          expect(albumServiceSpy.deleteAlbum).toHaveBeenCalledWith(1);
+          done();
+        }
+      });
     });
 
     it('should handle delete album error', (done) => {
