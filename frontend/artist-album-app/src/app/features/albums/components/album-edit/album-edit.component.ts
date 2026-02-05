@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AlbumFacadeService } from '@core/facades/album-facade.service';
 import { ArtistFacadeService } from '@core/facades/artist-facade.service';
 import { HeaderComponent } from '@shared/components/header/header.component';
+import { ClickOutsideDirective } from '@shared/directives/click-outside.directive';
 import { Album, Artist } from '@core/models';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -12,7 +13,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 @Component({
   selector: 'app-album-edit',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderComponent],
+  imports: [CommonModule, FormsModule, HeaderComponent, ClickOutsideDirective],
   templateUrl: './album-edit.component.html',
   styleUrl: './album-edit.component.scss'
 })
@@ -94,6 +95,10 @@ export class AlbumEditComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  closeArtistDropdown(): void {
+    this.showArtistDropdown = false;
   }
 
   private loadAlbum(id: number): void {

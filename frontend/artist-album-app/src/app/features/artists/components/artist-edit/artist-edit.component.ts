@@ -7,12 +7,13 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ArtistFacadeService } from '@core/facades/artist-facade.service';
 import { AlbumFacadeService } from '@core/facades/album-facade.service';
 import { HeaderComponent } from '@shared/components/header/header.component';
+import { ClickOutsideDirective } from '@shared/directives/click-outside.directive';
 import { Artist, Album } from '@core/models';
 
 @Component({
   selector: 'app-artist-edit',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent],
+  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent, ClickOutsideDirective],
   templateUrl: './artist-edit.component.html',
   styleUrls: ['./artist-edit.component.scss']
 })
@@ -123,6 +124,10 @@ export class ArtistEditComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  closeNewAlbumArtistDropdown(): void {
+    this.showNewAlbumArtistDropdown = false;
   }
 
   private loadArtistData(): void {

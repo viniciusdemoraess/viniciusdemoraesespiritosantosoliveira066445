@@ -391,7 +391,7 @@
               </div>
 
               <!-- Dropdown Multi-Select -->
-              <div class="relative">
+              <div class="relative" (clickOutside)="closeNewAlbumArtistDropdown()">
                 <button
                   type="button"
                   (click)="showNewAlbumArtistDropdown = !showNewAlbumArtistDropdown"

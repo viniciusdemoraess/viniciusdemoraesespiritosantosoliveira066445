@@ -5,6 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { AlbumFacadeService } from '@core/facades/album-facade.service';
 import { ArtistFacadeService } from '@core/facades/artist-facade.service';
 import { HeaderComponent } from '@shared/components/header/header.component';
+import { ClickOutsideDirective } from '@shared/directives/click-outside.directive';
 import { Artist } from '@core/models';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -12,7 +13,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 @Component({
   selector: 'app-album-create',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent],
+  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent, ClickOutsideDirective],
   templateUrl: './album-create.component.html',
   styleUrl: './album-create.component.scss'
 })
@@ -88,6 +89,10 @@ export class AlbumCreateComponent implements OnInit, OnDestroy {
   
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  closeArtistDropdown(): void {
+    this.showArtistDropdown = false;
   }
 
   private loadArtists(): void {
